@@ -16,21 +16,21 @@ class CustomButton extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     return SizedBox(
-      width: MediaQuery.of(context).size.width / 5,
-      height: MediaQuery.of(context).size.height / 15,
+      width: screenWidth * 1,
+      height: screenWidth * 0.15,
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blueGrey,
+          backgroundColor: Color(0xffDFA000),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(40),
+            borderRadius: BorderRadius.circular(screenWidth * 0.4),
           ),
         ),
         child: isLoading
             ? CircularProgressIndicator(color: Colors.blueGrey)
             : Text(
                 text,
-                style: TextStyle(color: Colors.white, fontSize:  screenWidth * 0.017,),
+                style: TextStyle(color: Colors.black, fontSize:  screenWidth * 0.033,),
               ),
       ),
     );

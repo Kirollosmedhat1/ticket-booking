@@ -7,26 +7,51 @@ class TicketController extends GetxController {
   RxMap<String, String> seatsData = <String, String>{}.obs; // Seat statuses
   RxList<String> selectedSeats = <String>[].obs; // User-selected seats
   RxMap<String, DateTime> reservationTimers = <String, DateTime>{}.obs; // Reservation timers
+  RxMap<String, double> seatPrices = <String, double>{}.obs; // Stores seat prices
+  RxMap<String, String> seatCategories = <String, String>{}.obs; // Stores seat categories
 
   @override
   void onInit() {
     super.onInit();
-    _listenToSeatUpdates(); // Listen for real-time updates
+    _listenToSeatUpdates();
   }
 
-  /// **Real-time listener for seat status updates**
+  /// **🔹 Listen for real-time seat status updates from Firestore**
   void _listenToSeatUpdates() {
     _firestore.collection('seats').snapshots().listen((snapshot) {
       Map<String, String> updatedSeats = {};
+      Map<String, double> updatedPrices = {};
+      Map<String, String> updatedCategories = {};
+
       for (var doc in snapshot.docs) {
         updatedSeats[doc.id] = doc['status'].toString();
+        updatedPrices[doc.id] = (doc['price'] as num).toDouble();
+        updatedCategories[doc.id] = doc['category'] ?? "Unknown";
       }
+
       seatsData.assignAll(updatedSeats);
+      seatPrices.assignAll(updatedPrices);
+      seatCategories.assignAll(updatedCategories);
     });
   }
 
-  /// **Handle Seat Selection**
-  void selectSeat(String seatNumber) {
+  /// **🔹 Get Seat Price**
+  double getSeatPrice(String seatNumber) {
+    return seatPrices[seatNumber] ?? 0.0;
+  }
+
+  /// **🔹 Get Seat Category**
+  String getSeatCategory(String seatNumber) {
+    return seatCategories[seatNumber] ?? "Unknown";
+  }
+
+  /// **🔹 Get Total Price for Checkout**
+  double getTotalPrice() {
+    return selectedSeats.fold(0.0, (sum, seat) => sum + getSeatPrice(seat));
+  }
+
+  /// **🔹 Handle Seat Selection**
+  void selectSeat(String seatNumber) async {
     String currentStatus = seatsData[seatNumber] ?? "available";
 
     if (currentStatus == "booked") {
@@ -37,48 +62,53 @@ class TicketController extends GetxController {
     if (selectedSeats.contains(seatNumber)) {
       removeSeat(seatNumber);
     } else if (selectedSeats.length < 10) {
-      _reserveSeat(seatNumber);
+      await _reserveSeat(seatNumber);
     } else {
       Get.snackbar("Limit Reached", "You can select up to 10 seats.");
     }
   }
 
-  /// **Reserve a seat**
-  void _reserveSeat(String seatNumber) {
-    seatsData[seatNumber] = "reserved";
+  /// **🔹 Reserve a Seat and Store `reservedUntil` in Firestore**
+  Future<void> _reserveSeat(String seatNumber) async {
+    DateTime expiryTime = DateTime.now().add(Duration(minutes: 10));
     selectedSeats.add(seatNumber);
-    reservationTimers[seatNumber] = DateTime.now().add(Duration(minutes: 10));
+    reservationTimers[seatNumber] = expiryTime;
 
-    // Update Firestore
-    _firestore.collection('seats').doc(seatNumber).update({'status': 'reserved'});
+    await _firestore.collection('seats').doc(seatNumber).update({
+      'status': 'reserved',
+      'reservedUntil': expiryTime.toIso8601String(),
+    });
 
-    // Start timer to release seat after 10 minutes
+    // Start countdown to expire reservation
     Future.delayed(Duration(minutes: 10), () {
-      if (selectedSeats.contains(seatNumber)) {
-        _expireReservation(seatNumber);
-      }
+      _expireReservation(seatNumber);
     });
   }
 
-  /// **Remove a seat from selection**
-  void removeSeat(String seatNumber) {
+  /// **🔹 Remove a Seat from Cart and Reset in Firestore**
+  Future<void> removeSeat(String seatNumber) async {
     selectedSeats.remove(seatNumber);
-    seatsData[seatNumber] = "available";
     reservationTimers.remove(seatNumber);
 
-    // Update Firestore
-    _firestore.collection('seats').doc(seatNumber).update({'status': 'available'});
+    await _firestore.collection('seats').doc(seatNumber).update({
+      'status': 'available',
+      'reservedUntil': null,
+    });
   }
 
-  /// **Expire reservation if not purchased within 10 minutes**
-  void _expireReservation(String seatNumber) {
-    if (selectedSeats.contains(seatNumber)) {
+  /// **🔹 Expire Seat Reservation if Time Runs Out**
+  Future<void> _expireReservation(String seatNumber) async {
+    DateTime now = DateTime.now();
+    DateTime? reservedUntil = reservationTimers[seatNumber];
+
+    if (reservedUntil != null && now.isAfter(reservedUntil)) {
       selectedSeats.remove(seatNumber);
-      seatsData[seatNumber] = "available";
       reservationTimers.remove(seatNumber);
 
-      // Update Firestore
-      _firestore.collection('seats').doc(seatNumber).update({'status': 'available'});
+      await _firestore.collection('seats').doc(seatNumber).update({
+        'status': 'available',
+        'reservedUntil': null,
+      });
     }
   }
 }

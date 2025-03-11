@@ -13,6 +13,7 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final AuthController authController = Get.put(AuthController());
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController fullNameController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -27,79 +28,98 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    double screenhight = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Register"),
-        titleTextStyle: TextStyle(fontSize: screenWidth * 0.017,),
-      ),
-      body:Center(
-        child: Container(
-          child:Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  padding:EdgeInsets.all(MediaQuery.of(context).size.height / 20,) ,
-                  width: MediaQuery.of(context).size.width / 2,
-                  height: MediaQuery.of(context).size.height / 1.3,
-                  decoration: BoxDecoration(
-                    border: Border.all(width: 2),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Form(
-                    key: _formKey, // Attach form key
-                    child: Column(
-                      children: [
-                        CustomTextField(
-                          controller: fullNameController,
-                          labelText: "Full Name",
-                          validator: Validators.validateName,
-                        ),
-                        CustomTextField(
-                          controller: emailController,
-                          labelText: "Email",
-                          validator: Validators.validateEmail,
-                        ),
-                        CustomTextField(
-                          controller: passwordController,
-                          labelText: "Password",
-                          validator: Validators.validatePassword,
-                          obscureText: true,
-                        ),
-                        SizedBox(height: MediaQuery.of(context).size.height / 20),
-                        CustomButton(
-                          text: "Register",
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              authController.register(
-                                emailController.text.trim(),
-                                passwordController.text.trim(),
-                                fullNameController.text.trim(),
-                              );
-                            }
-                          },
-                        ),
-                        
-                      ],
-                    ),
-                  ),
+      backgroundColor: Colors.black,
+      body: Container(
+        width: screenWidth,
+        height: screenhight,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/image 3.png"),
+            fit: BoxFit.contain,
+          ),
+        ),
+        child: ListView(
+          children: [
+            Center(
+              child: Text(
+                "Sign up",
+                style: TextStyle(
+                  fontSize: screenWidth * 0.07,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
                 ),
-                SizedBox(height: MediaQuery.of(context).size.height / 60),
-                        Obx(() => TextButton(
-                              onPressed: authController.canResendEmail.value
-                                  ? authController.resendVerificationEmail
-                                  : null,
-                              child: Text(authController.canResendEmail.value
-                                  ? "Resend Verification Email"
-                                  : "Wait 1 min to resend"),
-                            )),
-                        SizedBox(height: MediaQuery.of(context).size.height / 60),
-                        TextButton(
-                          onPressed: () => Get.offNamed('/login'),
-                          child: Text("Already have an account? Login"),
-                        ),
-              ],
+              ),
             ),
+            SizedBox(height: screenhight / 20),
+            Center(
+              child: Container(
+                padding: EdgeInsets.all(screenWidth * 0.03),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Form(
+                      key: _formKey, // Attach form key
+                      child: Column(
+                        children: [
+                          CustomTextField(
+                            controller: fullNameController,
+                            labelText: "Full Name",
+                            validator: Validators.validateName,
+                          ),
+                          CustomTextField(
+                            controller: emailController,
+                            labelText: "Email",
+                            validator: Validators.validateEmail,
+                          ),
+                          CustomTextField(
+                            controller: phoneController,
+                            labelText: "Phone Number",
+                            validator: Validators.validatePhone,
+                          ),
+                          CustomTextField(
+                            controller: passwordController,
+                            labelText: "Password",
+                            validator: Validators.validatePassword,
+                            obscureText: true,
+                          ),
+                          SizedBox(height: screenhight / 20),
+                          CustomButton(
+                            text: "Register",
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                authController.register(
+                                  emailController.text.trim(),
+                                  passwordController.text.trim(),
+                                  fullNameController.text.trim(),
+                                );
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: screenhight / 60),
+                    Obx(() => TextButton(
+                          onPressed: authController.canResendEmail.value
+                              ? authController.resendVerificationEmail
+                              : null,
+                          child: Text(authController.canResendEmail.value
+                              ? "Resend Verification Email"
+                              : "Wait 1 min to resend"),
+                        )),
+                    SizedBox(height: screenhight / 60),
+                    TextButton(
+                      onPressed: () => Get.offNamed('/login'),
+                      child: Text("Already have an account? Login"),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

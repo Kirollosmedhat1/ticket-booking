@@ -30,12 +30,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      initialBinding: AuthBinding(), // Ensure this line is present if using bindings
+      initialBinding: AuthBinding(), 
       initialRoute: '/home',
       getPages: AppRoutes.routes,
       unknownRoute: GetPage(
         name: '/notfound',
-        page: () => Scaffold(
+        page: () => const Scaffold(
           body: Center(child: Text("Page not found")),
         ),
       ),

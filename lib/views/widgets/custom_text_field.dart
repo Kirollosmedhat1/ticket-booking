@@ -23,46 +23,59 @@ class CustomTextField extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Container(
-      margin: EdgeInsets.only(bottom: screenWidth * 0.03),
+      margin: EdgeInsets.only(bottom: screenWidth * 0.02),
       child: Theme(
         data: Theme.of(context).copyWith(
           inputDecorationTheme: InputDecorationTheme(
             errorStyle: TextStyle(
-              fontSize:
-                  screenWidth * 0.017, // 🔥 Dynamic error message font size
+              fontSize: screenWidth * 0.033,
               fontWeight: FontWeight.w500,
               color: Colors.red,
             ),
           ),
         ),
-        child: TextFormField(
-          controller: controller,
-          decoration: InputDecoration(
-            labelText: labelText,
-            labelStyle: TextStyle(
-              fontSize: screenWidth * 0.017,
-              fontWeight: FontWeight.w500,
-              color: Colors.blueGrey,
-            ),
-            border: UnderlineInputBorder(
-              borderSide: BorderSide(
-                color: Colors.blueGrey,
+        child: Column(
+          // mainAxisAlignment: MainAxisAlignment.,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "   $labelText",
+              style: TextStyle(
+                fontSize: screenWidth * 0.033,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
               ),
             ),
-            focusedBorder: UnderlineInputBorder(
-              borderSide:
-                  BorderSide(color: Colors.blue, width: screenWidth * 0.003),
+            TextFormField(
+              controller: controller,
+              decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(screenWidth * 0.02),
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                    width: screenWidth * 0.004,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                      color: Color(0xffDFA000), width: screenWidth * 0.004),
+                ),
+                errorMaxLines: 3,
+                prefixIcon: prefixIcon != null
+                    ? Icon(prefixIcon,
+                        color: Colors.white, size: screenWidth * 0.06)
+                    : null,
+              ),
+              validator: validator,
+              keyboardType: keyboardType,
+              obscureText: obscureText,
+              style: TextStyle(
+                fontSize: screenWidth * 0.033,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+              ),
             ),
-            errorMaxLines: 3,
-            prefixIcon: prefixIcon != null
-                ? Icon(prefixIcon,
-                    color: Colors.blueGrey, size: screenWidth * 0.06)
-                : null,
-          ),
-          validator: validator,
-          keyboardType: keyboardType,
-          obscureText: obscureText,
-          style: TextStyle(fontSize: screenWidth * 0.017),
+          ],
         ),
       ),
     );
