@@ -36,7 +36,7 @@ class _RegisterPageState extends State<RegisterPage> {
         height: screenhight,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("assets/images/image 3.png"),
+            image: AssetImage("assets/images/signupbackground.jpg"),
             fit: BoxFit.contain,
           ),
         ),
