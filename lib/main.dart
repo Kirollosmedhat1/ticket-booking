@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       initialBinding: AuthBinding(),
-      initialRoute: '/home',
+      initialRoute: '/login',
       getPages: AppRoutes.routes,
       unknownRoute: GetPage(
         name: '/notfound',
