@@ -34,12 +34,12 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       initialBinding: AuthBinding(), 
-      initialRoute: '/welcome',
+      initialRoute: '/selectsection',
       getPages: AppRoutes.routes,
       unknownRoute: GetPage(
         name: '/notfound',
         page: () => const Scaffold(
-          body: Center(child: Text("Page not found")),
+          body: Center(child: Text("Page not found")),  
         ),
       ),
     );
