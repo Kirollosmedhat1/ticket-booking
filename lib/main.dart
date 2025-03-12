@@ -33,8 +33,8 @@ class MyApp extends StatelessWidget {
         MediaQuery.of(context).size.width, MediaQuery.of(context).size.height);
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      initialBinding: AuthBinding(),
-      initialRoute: '/login',
+      initialBinding: AuthBinding(), 
+      initialRoute: '/welcome',
       getPages: AppRoutes.routes,
       unknownRoute: GetPage(
         name: '/notfound',

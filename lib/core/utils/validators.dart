@@ -16,12 +16,12 @@ class Validators {
   }
 
 static String? validatePhone(String? value) {
-     if (value == null || value.trim().length == 11) {
-      return "Phone Number must be 11 characters long.";
-    }
-    return null;
+  if (value == null || value.trim().length != 11 || !RegExp(r'^[0-9]+$').hasMatch(value)) {
+    return "Phone number must be 11 digits long.";
   }
-  // Password must be 8+ characters with at least 1 uppercase, 1 lowercase, 1 number, and 1 special character
+  return null;
+}
+
   static String? validatePassword(String? value) {
     List<String> errors = [];
 

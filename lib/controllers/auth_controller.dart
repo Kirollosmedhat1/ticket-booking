@@ -11,10 +11,10 @@ class AuthController extends GetxController {
   Timer? _timer;
 
   // Register and send verification email
-  Future<void> register(String email, String password, String fullName) async {
+  Future<void> register(String email, String password, String fullName , String phone) async {
     isLoading.value = true;
     try {
-      User? user = await _authService.registerWithEmail(email, password, fullName);
+      User? user = await _authService.registerWithEmail(email, password, fullName, phone);
       if (user != null) {
         startCooldown();
         Get.snackbar("Success", "Verification email sent! Please check your inbox.",
