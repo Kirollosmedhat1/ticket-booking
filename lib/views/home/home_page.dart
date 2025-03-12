@@ -24,6 +24,9 @@ class HomePage extends StatelessWidget {
             icon: Icon(Icons.shopping_cart),
           ),
           CustomButton(
+            textcolor: Colors.black,
+                              bordercolor: Color(0xffDFA000),
+                              backgroundcolor: Color(0xffDFA000),
             text: "Logout",
             onPressed: () => Get.find<AuthController>().logout(),
           ),

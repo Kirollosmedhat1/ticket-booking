@@ -32,6 +32,18 @@ class _RegisterPageState extends State<RegisterPage> {
     double screenhight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: Text(
+          "Sign up",
+          style: TextStyle(
+            fontSize: screenWidth * 0.07,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+          ),
+        ),
+      ),
       body: Container(
         width: screenWidth,
         height: screenhight,
@@ -43,16 +55,6 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
         child: ListView(
           children: [
-            Center(
-              child: Text(
-                "Sign up",
-                style: TextStyle(
-                  fontSize: screenWidth * 0.07,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                ),
-              ),
-            ),
             SizedBox(height: screenhight / 20),
             Center(
               child: Container(
@@ -86,20 +88,30 @@ class _RegisterPageState extends State<RegisterPage> {
                             validator: Validators.validatePassword,
                             obscureText: true,
                           ),
-                          SizedBox(height: screenhight / 20),
-                          CustomButton(
-                            text: "Register",
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                authController.register(
-                                  emailController.text.trim(),
-                                  passwordController.text.trim(),
-                                  fullNameController.text.trim(),
-                                  phoneController.text.trim(),
-                                );
-                              }
-                            },
+                          SizedBox(height: screenhight * 0.1),
+                          Container(
+                            height: screenhight * 0.1,
+                            width: screenWidth * 0.3,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: AssetImage("assets/images/logo.png"),
+                                    fit: BoxFit.cover)),
                           ),
+                          CustomButton(
+                              text: "Signup",
+                              textcolor: Colors.black,
+                              bordercolor: Color(0xffDFA000),
+                              backgroundcolor: Color(0xffDFA000),
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  authController.register(
+                                    emailController.text.trim(),
+                                    passwordController.text.trim(),
+                                    fullNameController.text.trim(),
+                                    phoneController.text.trim(),
+                                  );
+                                }
+                              }),
                         ],
                       ),
                     ),

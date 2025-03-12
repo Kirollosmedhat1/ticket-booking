@@ -1,3 +1,4 @@
+import 'package:darbelsalib/views/auth/welcom_page.dart';
 import 'package:darbelsalib/views/payment/checkout_page.dart';
 import 'package:darbelsalib/views/tickets/cart.dart';
 import 'package:get/get.dart';
@@ -12,5 +13,6 @@ class AppRoutes {
     GetPage(name: '/home', page: () => HomePage()),
     GetPage(name: '/cart', page: () => CartPage()),
     GetPage(name: '/checkout', page: () => CheckoutPage()),
+    GetPage(name: '/welcome', page: () => const WelcomPage()),
   ];
 }
