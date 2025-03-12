@@ -14,7 +14,7 @@ class AppRoutes {
     GetPage(name: '/home', page: () => HomePage()),
     GetPage(name: '/cart', page: () => CartPage()),
     GetPage(name: '/checkout', page: () => CheckoutPage()),
-    GetPage(name: '/selectsection', page: () => SelectSection())
+    GetPage(name: '/selectsection', page: () => SelectSection()),
     GetPage(name: '/welcome', page: () => const WelcomPage()),
   ];
 }
