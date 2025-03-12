@@ -17,7 +17,7 @@ class CustomButton extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     return SizedBox(
       width: screenWidth * 1,
-      height: screenWidth * 0.15,
+      height: screenWidth * 0.13,
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
@@ -30,7 +30,7 @@ class CustomButton extends StatelessWidget {
             ? CircularProgressIndicator(color: Colors.blueGrey)
             : Text(
                 text,
-                style: TextStyle(color: Colors.black, fontSize:  screenWidth * 0.033,),
+                style: TextStyle(color: Colors.black, fontSize:  screenWidth * 0.043,fontWeight: FontWeight.w900),
               ),
       ),
     );

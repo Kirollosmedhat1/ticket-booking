@@ -6,7 +6,7 @@ class AuthService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Register and send verification email
-  Future<User?> registerWithEmail(String email, String password, String fullName) async {
+  Future<User?> registerWithEmail(String email, String password, String fullName, String phone) async {
     try {
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: email, 
@@ -19,6 +19,7 @@ class AuthService {
 
         await _firestore.collection('users').doc(user.uid).set({
           'fullName': fullName,
+          'phone': phone,
           'email': email,
           'uid': user.uid,
           'emailVerified': user.emailVerified, 
