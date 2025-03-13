@@ -1,3 +1,4 @@
+import 'package:darbelsalib/controllers/auth_controller.dart';
 import 'package:darbelsalib/screen_size_handler.dart';
 import 'package:darbelsalib/views/widgets/contact_us_section.dart';
 import 'package:darbelsalib/views/widgets/current_service_poster.dart';
@@ -6,41 +7,52 @@ import 'package:darbelsalib/views/widgets/home_page_section.dart';
 import 'package:darbelsalib/views/widgets/image_viewer.dart';
 import 'package:darbelsalib/views/widgets/my_tickets_button.dart';
 import 'package:darbelsalib/views/widgets/welcome_text.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/ticket_controller.dart';
 
 class HomePage extends StatelessWidget {
   final TicketController ticketController =
-      Get.put(TicketController()); // Get the controller
+      Get.put(TicketController());
+        final AuthController authController = Get.put(AuthController()); 
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenhight = MediaQuery.of(context).size.height;
     return Scaffold(
         backgroundColor: Colors.black,
-        appBar: AppBar(
-          toolbarHeight: 150,
-          backgroundColor: Colors.black,
-          centerTitle: true,
-          title: const Image(
-            image: AssetImage("assets/images/darb el salib logo.png"),
-            width: 282.67,
-          ),
-        ),
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.03),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Center(
+                  child: Container(
+                    height: screenhight * 0.2,
+                    width: screenWidth * 0.7,
+                    decoration: BoxDecoration(
+                        // color: Colors.amber,
+                        image: DecorationImage(
+                            image: AssetImage("assets/images/logo.png"),
+                            fit: BoxFit.fill)),
+                  ),
+                ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    WelcomeText(
-                      name: "Joseph",
-                    ),
-                    MyTicketsButton()
+                   Obx(() => WelcomeText(name: authController.userName.value)),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                      MyTicketsButton(title: "My tickets",image: "assets/images/ticket-2.png",),
+
+                      MyTicketsButton(title: "Cart",image:"assets/images/cart_icon.png" ,)],
+                    )
                   ],
                 ),
                 const HomePageSection(
@@ -68,7 +80,7 @@ class HomePage extends StatelessWidget {
                   content: Text(
                     "We are an amazing team that does amazing things",
                     style: TextStyle(
-                      fontSize: ScreenSizeHandler.smaller*0.0372,
+                      fontSize: ScreenSizeHandler.smaller * 0.0372,
                       color: const Color(0xFFF2F2F2),
                     ),
                   ),
