@@ -33,13 +33,13 @@ class MyApp extends StatelessWidget {
         MediaQuery.of(context).size.width, MediaQuery.of(context).size.height);
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      initialBinding: AuthBinding(), 
-      initialRoute: '/home',
+      initialBinding: AuthBinding(),
+      initialRoute: '/selectsection',
       getPages: AppRoutes.routes,
       unknownRoute: GetPage(
         name: '/notfound',
         page: () => const Scaffold(
-          body: Center(child: Text("Page not found")),  
+          body: Center(child: Text("Page not found")),
         ),
       ),
     );
