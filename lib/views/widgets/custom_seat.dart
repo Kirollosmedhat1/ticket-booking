@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class CustomSeat extends StatelessWidget {
   final String seatNumber;
-  final String status; 
+  final String status;
   final Function(String) onSeatSelected;
 
   CustomSeat({
@@ -18,38 +18,48 @@ class CustomSeat extends StatelessWidget {
     Color textColor = Colors.white;
 
     switch (status) {
+      case "empty":
+        seatColor = Colors.black;
+        isDisabled = true;
+        break;
       case "available":
-        seatColor = Colors.green;
+        seatColor = Color(0xff1c1c1c);
         break;
       case "reserved":
-        seatColor = Colors.yellow;
+        seatColor = Color(0xff7cc3f6);
         isDisabled = true;
-        textColor = Colors.black; // Better readability
+        textColor = Colors.white; // Better readability
         break;
       case "booked":
-        seatColor = Colors.red;
+        seatColor = Color(0xffdfa000);
         isDisabled = true;
         break;
       default:
-        seatColor = Colors.grey;
+        seatColor = Colors.black;
+        print("default");
     }
 
     return GestureDetector(
       onTap: isDisabled ? null : () => _confirmSelection(context, seatNumber),
       child: Container(
-        margin: EdgeInsets.all(MediaQuery.of(context).size.width  * 0.001),
-        width: MediaQuery.of(context).size.width  * 0.03,
-        height: MediaQuery.of(context).size.width  * 0.03,
+        margin: EdgeInsets.all(MediaQuery.of(context).size.width * 0.001),
+        width: 40,
+        height: 40,
         decoration: BoxDecoration(
           color: seatColor,
-          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width  * 0.006,),
-          border: Border.all(color: Colors.black, width: MediaQuery.of(context).size.width  * 0.001,),
+          borderRadius: BorderRadius.circular(
+            MediaQuery.of(context).size.width * 0.006,
+          ),
+          border: Border.all(
+            color: Colors.black,
+            width: MediaQuery.of(context).size.width * 0.001,
+          ),
         ),
         alignment: Alignment.center,
         child: Text(
           seatNumber,
           style: TextStyle(
-            fontSize: MediaQuery.of(context).size.width  * 0.006,
+            fontSize: 12,
             fontWeight: FontWeight.bold,
             color: textColor,
           ),
