@@ -15,6 +15,7 @@ import '../../controllers/ticket_controller.dart';
 class HomePage extends StatelessWidget {
   // final TicketController ticketController =
   //     Get.put(TicketController()); // Get the controller
+  final AuthController authController = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -43,14 +44,20 @@ class HomePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                   Obx(() => WelcomeText(name: authController.userName.value)),
+                    Obx(() => WelcomeText(name: authController.userName.value)),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                      MyTicketsButton(title: "My tickets",image: "assets/images/ticket-2.png",),
-
-                      MyTicketsButton(title: "Cart",image:"assets/images/cart_icon.png" ,)],
+                        MyTicketsButton(
+                          title: "My tickets",
+                          image: "assets/images/ticket-2.png",
+                        ),
+                        MyTicketsButton(
+                          title: "Cart",
+                          image: "assets/images/cart_icon.png",
+                        )
+                      ],
                     )
                   ],
                 ),
