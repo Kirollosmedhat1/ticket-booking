@@ -5,8 +5,10 @@ import 'package:get/get.dart';
 class MyTicketsButton extends StatelessWidget {
   const MyTicketsButton({
     super.key,
+    required this.image, required this.title,
   });
-
+  final String title;
+  final String image;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -16,7 +18,7 @@ class MyTicketsButton extends StatelessWidget {
         child: Row(
           children: [
             Text(
-              "My Tickets",
+              title,
               style: TextStyle(
                   color: Colors.white,
                   fontSize: ScreenSizeHandler.smaller * 0.0326,
@@ -25,7 +27,7 @@ class MyTicketsButton extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(left: 10),
               child: ImageIcon(
-                const AssetImage("assets/images/ticket-2.png"),
+                AssetImage(image),
                 color: Colors.white,
                 size: ScreenSizeHandler.smaller * 0.058,
               ),
