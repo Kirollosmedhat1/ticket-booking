@@ -13,9 +13,8 @@ import 'package:get/get.dart';
 import '../../controllers/ticket_controller.dart';
 
 class HomePage extends StatelessWidget {
-  final TicketController ticketController =
-      Get.put(TicketController());
-        final AuthController authController = Get.put(AuthController()); 
+  // final TicketController ticketController =
+  //     Get.put(TicketController()); // Get the controller
 
   @override
   Widget build(BuildContext context) {
@@ -240,14 +239,14 @@ class HomePage extends StatelessWidget {
         );
   }
 
-  /// **Build Individual Seat Widget**
-  Widget _buildSeat(String seatNumber) {
-    String status = ticketController.seatsData[seatNumber] ?? "available";
+  // /// **Build Individual Seat Widget**
+  // Widget _buildSeat(String seatNumber) {
+  //   String status = ticketController.seatsData[seatNumber] ?? "available";
 
-    return CustomSeat(
-      seatNumber: seatNumber,
-      status: status,
-      onSeatSelected: ticketController.selectSeat,
-    );
-  }
+  //   return CustomSeat(
+  //     seatNumber: seatNumber,
+  //     status: status,
+  //     onSeatSelected: ticketController.selectSeat,
+  //   );
+  // }
 }
