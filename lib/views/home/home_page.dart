@@ -1,3 +1,5 @@
+// ignore_for_file: use_key_in_widget_constructors
+
 import 'package:darbelsalib/controllers/auth_controller.dart';
 import 'package:darbelsalib/screen_size_handler.dart';
 import 'package:darbelsalib/views/widgets/contact_us_section.dart';
@@ -7,14 +9,12 @@ import 'package:darbelsalib/views/widgets/home_page_section.dart';
 import 'package:darbelsalib/views/widgets/image_viewer.dart';
 import 'package:darbelsalib/views/widgets/my_tickets_button.dart';
 import 'package:darbelsalib/views/widgets/welcome_text.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../controllers/ticket_controller.dart';
+
 
 class HomePage extends StatelessWidget {
-  // final TicketController ticketController =
-  //     Get.put(TicketController()); // Get the controller
+
   final AuthController authController = Get.put(AuthController());
 
   @override
@@ -31,7 +31,7 @@ class HomePage extends StatelessWidget {
               children: [
                 Center(
                   child: Container(
-                    height: screenhight * 0.2,
+                    height: screenWidth * 0.3,
                     width: screenWidth * 0.7,
                     decoration: BoxDecoration(
                         // color: Colors.amber,
@@ -52,10 +52,13 @@ class HomePage extends StatelessWidget {
                         MyTicketsButton(
                           title: "My tickets",
                           image: "assets/images/ticket-2.png",
+                          navigate: 'mytickets',
                         ),
+                        SizedBox(height: screenhight * 0.02,),
                         MyTicketsButton(
                           title: "Cart",
                           image: "assets/images/cart_icon.png",
+                          navigate: 'cart',
                         )
                       ],
                     )
@@ -246,7 +249,7 @@ class HomePage extends StatelessWidget {
         );
   }
 
-  // /// **Build Individual Seat Widget**
+
   // Widget _buildSeat(String seatNumber) {
   //   String status = ticketController.seatsData[seatNumber] ?? "available";
 

@@ -5,14 +5,16 @@ import 'package:get/get.dart';
 class MyTicketsButton extends StatelessWidget {
   const MyTicketsButton({
     super.key,
-    required this.image, required this.title,
+    required this.image,
+    required this.title, required this.navigate,
   });
   final String title;
   final String image;
+  final String navigate;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Get.toNamed("/tickets"),
+      onTap: () => Get.toNamed("/$navigate"),
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         child: Row(

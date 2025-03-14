@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'package:darbelsalib/controllers/ticket_controller.dart';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -8,15 +9,13 @@ class SeatCard extends StatefulWidget {
   final String seatNumber;
   final String seatCategory;
   final double seatPrice;
-  final String eventImage;
-  final DateTime? expiryTime;
+  // final DateTime? expiryTime;
 
   SeatCard({
     required this.seatNumber,
     required this.seatCategory,
-    required this.seatPrice,
-    required this.eventImage,
-    required this.expiryTime,
+    required this.seatPrice, required String eventImage, DateTime? expiryTime,
+    // required this.expiryTime,
   });
 
   @override
@@ -26,37 +25,37 @@ class SeatCard extends StatefulWidget {
 class _SeatCardState extends State<SeatCard> {
   late Timer _timer;
   Duration _timeLeft = Duration.zero;
-   final TicketController ticketController = Get.put(TicketController());
 
-  @override
-  void initState() {
-    super.initState();
-    _updateTimeLeft();
-    _startTimer();
-  }
 
-  void _updateTimeLeft() {
-    if (widget.expiryTime != null) {
-      setState(() {
-        _timeLeft = widget.expiryTime!.difference(DateTime.now());
-      });
-    }
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _updateTimeLeft();
+  //   _startTimer();
+  // }
 
-  void _startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (widget.expiryTime != null) {
-        setState(() {
-          _timeLeft = widget.expiryTime!.difference(DateTime.now());
+  // void _updateTimeLeft() {
+  //   if (widget.expiryTime != null) {
+  //     setState(() {
+  //       _timeLeft = widget.expiryTime!.difference(DateTime.now());
+  //     });
+  //   }
+  // }
 
-          if (_timeLeft.isNegative) {
-            _timeLeft = Duration.zero;
-            _timer.cancel();
-          }
-        });
-      }
-    });
-  }
+  // void _startTimer() {
+  //   _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+  //     if (widget.expiryTime != null) {
+  //       setState(() {
+  //         _timeLeft = widget.expiryTime!.difference(DateTime.now());
+
+  //         if (_timeLeft.isNegative) {
+  //           _timeLeft = Duration.zero;
+  //           _timer.cancel();
+  //         }
+  //       });
+  //     }
+  //   });
+  // }
 
   @override
   void dispose() {
@@ -66,33 +65,71 @@ class _SeatCardState extends State<SeatCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: ListTile(
-        leading: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: Image.asset(widget.eventImage, width: 60, height: 60, fit: BoxFit.cover),
-        ),
-        title: Text("Seat: ${widget.seatNumber}", style: TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Category: ${widget.seatCategory}"),
-            Text("Price: \$${widget.seatPrice.toStringAsFixed(2)}"),
-            Text(
-              "Time Left: ${_timeLeft.inMinutes}:${(_timeLeft.inSeconds % 60).toString().padLeft(2, '0')}",
-              style: TextStyle(color: _timeLeft.inSeconds <= 30 ? Colors.red : Colors.black),
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenhight = MediaQuery.of(context).size.height;
+    return Container(
+      padding: EdgeInsets.all(screenWidth * 0.03),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(screenWidth * 0.05),
+          border:
+              Border.all(color: Color(0xffFCC434), width: screenWidth * 0.005)),
+      margin: EdgeInsets.fromLTRB(
+          screenWidth * 0.04, screenWidth * 0.02, screenWidth * 0.04, 0),
+      height: screenWidth * 0.25,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            width: screenWidth * 0.15,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(screenhight * 0.01),
+              color: Colors.amber,
+              image: DecorationImage(
+                image: AssetImage("assets/images/card_image.png"),
+                fit: BoxFit.cover,
+              ),
             ),
-          ],
-        ),
-        trailing: IconButton(
-          icon: Icon(Icons.delete, color: Colors.red), // Delete icon
-          onPressed: () {
-            ticketController.removeSeat(widget.seatNumber); // Remove seat from cart
-          },
-          tooltip: "Remove Seat",
-        ),
+          ),
+          RichText(
+            text: TextSpan(
+                style: TextStyle(
+                  fontSize: screenWidth * 0.05,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xffFCC434),
+                ),
+                children: [
+                  TextSpan(text: "Seat: ${widget.seatNumber} \n"),
+                  TextSpan(
+                      text:
+                          "Category: ${widget.seatCategory} \nPrice:  ${widget.seatPrice.toStringAsFixed(2)} ",
+                      style: TextStyle(
+                        fontSize: screenWidth * 0.04,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white,
+                      )),
+                  // TextSpan(
+                  //   text:
+                  //       "Time Left: ${_timeLeft.inMinutes}:${(_timeLeft.inSeconds % 60).toString().padLeft(2, '0')}",
+                  //   style: TextStyle(
+                  //       fontSize: screenWidth * 0.04,
+                  //       fontWeight: FontWeight.w400,
+                  //       color: _timeLeft.inSeconds <= 30
+                  //           ? Colors.red
+                  //           : Colors.white),
+                  // ),
+                ]),
+          ),
+          SizedBox(
+            width: screenWidth * 0.15,
+          ),
+          IconButton(
+            icon: Icon(Icons.delete, color: Colors.red),
+            onPressed: () {
+              // ticketController.removeSeat(widget.seatNumber);
+            },
+            tooltip: "Remove Seat",
+          ),
+        ],
       ),
     );
   }

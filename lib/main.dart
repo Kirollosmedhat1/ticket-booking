@@ -29,12 +29,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenhight = MediaQuery.of(context).size.height;
     ScreenSizeHandler.initialize(
         MediaQuery.of(context).size.width, MediaQuery.of(context).size.height);
     return GetMaterialApp(
+      theme: ThemeData(
+        scaffoldBackgroundColor: Colors.black,
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.black, // Default black AppBar
+          iconTheme: const IconThemeData(color: Colors.white), // White back button
+          titleTextStyle: TextStyle(
+            fontSize: screenWidth * 0.07,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+          ),
+          centerTitle: true, // Center the title (optional)
+        ),
+      ),
       debugShowCheckedModeBanner: false,
       initialBinding: AuthBinding(),
-      initialRoute: '/selectsection',
+      initialRoute: '/home',
       getPages: AppRoutes.routes,
       unknownRoute: GetPage(
         name: '/notfound',
