@@ -17,15 +17,22 @@ class AppRoutes {
     GetPage(name: '/home', page: () => HomePage()),
     GetPage(name: '/selectsection', page: () => const SelectSection()),
     GetPage(name: '/cart', page: () => CartPage()),
-    GetPage(name: '/checkout', page: () => CheckoutPage()),
     GetPage(name: '/selectsection', page: () => const SelectSection()),
     GetPage(name: '/selectseat/:sectionNumber', page: () => SelectSeat()),
     GetPage(name: '/welcome', page: () => const WelcomPage()),
     GetPage(name: '/mytickets', page: () => const MyTicketsPage()),
     GetPage(name: '/currentservice', page: () => const CurrentServicePage()),
     GetPage(name: '/selectseat', page: () => SelectSeat()),
-     GetPage(name: '/SelectSection', page: () => const SelectSection()),
-     GetPage(name: '/cart', page: () => CartPage()),
-   
+    GetPage(name: '/SelectSection', page: () => const SelectSection()),
+    GetPage(name: '/cart', page: () => CartPage()),
+    GetPage(
+      name: '/ticketdetails',
+      page: () => TicketDetailsPage(
+        eventBanner:
+            'assets/images/WhatsApp Image 2025-02-24 at 7.35.48 AM 1-2.png',
+        seatCategory: "Section 1",
+        seatNumber: "A1",
+      ),
+    ),
   ];
 }

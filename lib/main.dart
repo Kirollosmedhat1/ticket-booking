@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       initialBinding: AuthBinding(),
-      initialRoute: '/home',
+      initialRoute: '/ticketdetails',
       getPages: AppRoutes.routes,
       unknownRoute: GetPage(
         name: '/notfound',
