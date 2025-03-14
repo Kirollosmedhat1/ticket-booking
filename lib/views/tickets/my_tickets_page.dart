@@ -69,7 +69,7 @@ class MyTicketsPage extends StatelessWidget {
               ],
             ),
           ),
-          SeatCard(seatNumber: "A22", seatCategory: "first Line", seatPrice: 150, ),
+          SeatCard(seatNumber: "A22", seatCategory: "first Line", seatPrice: 150, eventImage: '', ),
           Container(
             padding: EdgeInsets.all(screenWidth * 0.03),
             decoration: BoxDecoration(

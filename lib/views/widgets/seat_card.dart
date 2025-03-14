@@ -14,7 +14,7 @@ class SeatCard extends StatefulWidget {
   SeatCard({
     required this.seatNumber,
     required this.seatCategory,
-    required this.seatPrice,
+    required this.seatPrice, required String eventImage, DateTime? expiryTime,
     // required this.expiryTime,
   });
 
