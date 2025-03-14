@@ -34,13 +34,16 @@ class CustomSeat extends StatelessWidget {
         seatColor = Color(0xffdfa000);
         isDisabled = true;
         break;
+      case "selected":
+        seatColor = Color(0xff7cc3f6);
+        break;
       default:
         seatColor = Colors.black;
         print("default");
     }
 
     return GestureDetector(
-      onTap: isDisabled ? null : () => _confirmSelection(context, seatNumber),
+      onTap: isDisabled ? null : () => onSeatSelected(seatNumber),
       child: Container(
         margin: EdgeInsets.all(MediaQuery.of(context).size.width * 0.001),
         width: 40,
@@ -64,30 +67,6 @@ class CustomSeat extends StatelessWidget {
             color: textColor,
           ),
         ),
-      ),
-    );
-  }
-
-  /// Show Confirmation Dialog Before Selecting a Seat
-  void _confirmSelection(BuildContext context, String seatNumber) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text("Confirm Selection"),
-        content: Text("Do you want to reserve seat $seatNumber?"),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context), // Cancel
-            child: Text("No"),
-          ),
-          TextButton(
-            onPressed: () {
-              onSeatSelected(seatNumber);
-              Navigator.pop(context); // Confirm
-            },
-            child: Text("Yes"),
-          ),
-        ],
       ),
     );
   }
