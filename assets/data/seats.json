@@ -1,0 +1,38 @@
+[
+    {
+      "category": "First Section",
+      "seats": [
+        { "line": "A", "even": 15, "odd": 15 },
+        { "line": "B", "even": 16, "odd": 16 },
+        { "line": "C", "even": 17, "odd": 18 },
+        { "line": "D", "even": 18, "odd": 18 },
+        { "line": "E", "even": 19, "odd": 20 },
+        { "line": "F", "even": 20, "odd": 20 }
+      ]
+    },
+    {
+      "category": "Second Section",
+      "seats": [
+        { "line": "G", "even": 22, "odd": 22 },
+        { "line": "H", "even": 23, "odd": 23 },
+        { "line": "I", "even": 24, "odd": 25 },
+        { "line": "J", "even": 25, "odd": 25 },
+        { "line": "K", "even": 27, "odd": 27 },
+        { "line": "L", "even": 26, "odd": 26 }
+      ]
+    },
+    {
+      "category": "Third Section",
+      "seats": [
+        { "line": "M", "even": 20, "odd": 17 },
+        { "line": "N", "even": 20, "odd": 20 },
+        { "line": "O", "even": 21, "odd": 20 },
+        { "line": "P", "even": 20, "odd": 20 },
+        { "line": "Q", "even": 22, "odd": 22 },
+        { "line": "R", "even": 23, "odd": 22 },
+        { "line": "S", "even": 26, "odd": 25 },
+        { "line": "T", "even": 20, "odd": 21 }
+      ]
+    }
+  ]
+  

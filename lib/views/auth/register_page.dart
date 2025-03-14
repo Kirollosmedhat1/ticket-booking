@@ -33,18 +33,12 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        iconTheme: const IconThemeData(color: Colors.white),
         title: Text(
           "Sign up",
-          style: TextStyle(
-            fontSize: screenWidth * 0.07,
-            fontWeight: FontWeight.w700,
-            color: Colors.white,
-          ),
         ),
       ),
       body: Container(
+        
         width: screenWidth,
         height: screenhight,
         decoration: BoxDecoration(
