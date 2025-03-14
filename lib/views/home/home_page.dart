@@ -14,7 +14,7 @@ import 'package:get/get.dart';
 
 
 class HomePage extends StatelessWidget {
-  // final TicketController ticketController = Get.put(TicketController());
+
   final AuthController authController = Get.put(AuthController());
 
   @override
@@ -249,7 +249,7 @@ class HomePage extends StatelessWidget {
         );
   }
 
-  /// **Build Individual Seat Widget**
+
   // Widget _buildSeat(String seatNumber) {
   //   String status = ticketController.seatsData[seatNumber] ?? "available";
 

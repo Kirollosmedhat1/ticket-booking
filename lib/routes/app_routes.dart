@@ -4,6 +4,7 @@ import 'package:darbelsalib/views/tickets/cart.dart';
 import 'package:darbelsalib/views/tickets/my_tickets_page.dart';
 import 'package:darbelsalib/views/tickets/select_seat.dart';
 import 'package:darbelsalib/views/tickets/select_section.dart';
+import 'package:darbelsalib/views/tickets/ticket_detail_page.dart';
 import 'package:get/get.dart';
 import '../views/auth/login_page.dart';
 import '../views/auth/register_page.dart';
@@ -15,6 +16,10 @@ class AppRoutes {
     GetPage(name: '/register', page: () => RegisterPage()),
     GetPage(name: '/home', page: () => HomePage()),
     GetPage(name: '/selectsection', page: () => const SelectSection()),
+    GetPage(name: '/cart', page: () => CartPage()),
+    GetPage(name: '/checkout', page: () => CheckoutPage()),
+    GetPage(name: '/selectsection', page: () => const SelectSection()),
+    GetPage(name: '/selectseat/:sectionNumber', page: () => SelectSeat()),
     GetPage(name: '/welcome', page: () => const WelcomPage()),
     GetPage(name: '/mytickets', page: () => const MyTicketsPage()),
     GetPage(name: '/currentservice', page: () => const CurrentServicePage()),
