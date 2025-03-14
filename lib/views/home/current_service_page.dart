@@ -43,6 +43,7 @@ class CurrentServicePage extends StatelessWidget {
             ),
             child: Column(
               children: [
+<<<<<<< HEAD
                 Storyline(),
                 SizedBox(
                   height: ScreenSizeHandler.screenWidth * 0.03,
@@ -73,6 +74,30 @@ class CurrentServicePage extends StatelessWidget {
                 SizedBox(
                   height: ScreenSizeHandler.screenWidth * 0.15,
                 )
+=======
+               Storyline(),
+               SizedBox(height: ScreenSizeHandler.screenWidth*0.03,),
+                 Container(
+            padding: EdgeInsets.symmetric(vertical: ScreenSizeHandler.screenWidth * 0.5),
+            height: ScreenSizeHandler.screenWidth * 0.15,
+            width: ScreenSizeHandler.screenWidth * 0.3,
+            decoration: BoxDecoration(
+              // color: Colors.amber,
+                image: DecorationImage(
+                    image: AssetImage("assets/images/logo.png"),
+                    fit: BoxFit.contain)),
+          ),
+          CustomButton(
+              text: "Book your seat",
+              textcolor: Colors.black,
+              bordercolor: Color(0xffDFA000),
+              backgroundcolor: Color(0xffDFA000),
+              onPressed:() => Get.toNamed("/SelectSection"),
+              ),
+              SizedBox(
+                height: ScreenSizeHandler.screenWidth * 0.15,
+              )
+>>>>>>> 2188bea (Deploying Flutter Web to Netlify)
               ],
             ),
           ),

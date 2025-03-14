@@ -4,7 +4,6 @@ import 'package:darbelsalib/views/tickets/cart.dart';
 import 'package:darbelsalib/views/tickets/my_tickets_page.dart';
 import 'package:darbelsalib/views/tickets/select_seat.dart';
 import 'package:darbelsalib/views/tickets/select_section.dart';
-import 'package:darbelsalib/views/tickets/ticket_detail_page.dart';
 import 'package:get/get.dart';
 import '../views/auth/login_page.dart';
 import '../views/auth/register_page.dart';
