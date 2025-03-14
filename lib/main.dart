@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.black,
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.black, // Default black AppBar
-          iconTheme: IconThemeData(color: Colors.white), // White back button
+          iconTheme: const IconThemeData(color: Colors.white), // White back button
           titleTextStyle: TextStyle(
             fontSize: screenWidth * 0.07,
             fontWeight: FontWeight.w700,

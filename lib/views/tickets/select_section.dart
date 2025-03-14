@@ -1,9 +1,6 @@
 import 'package:darbelsalib/screen_size_handler.dart';
-import 'package:darbelsalib/views/tickets/select_seat.dart';
-import 'package:darbelsalib/views/widgets/custom_seat.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 class SelectSection extends StatelessWidget {
   const SelectSection({super.key});
