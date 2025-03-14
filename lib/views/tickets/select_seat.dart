@@ -1,8 +1,14 @@
 import 'package:darbelsalib/screen_size_handler.dart';
 import 'package:darbelsalib/views/widgets/custom_seat.dart';
 import 'package:darbelsalib/views/widgets/seat_builder.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+bool isLoggedIn() {
+  final user = FirebaseAuth.instance.currentUser;
+  return user != null;
+}
 
 class SelectSeat extends StatefulWidget {
   @override
@@ -101,7 +107,8 @@ class _SelectSeatState extends State<SelectSeat> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text("Total",
-                            style: TextStyle(color: Colors.white, fontSize: 16)),
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 16)),
                         Text(
                           "$totalPrice EGP",
                           style: TextStyle(
@@ -118,6 +125,11 @@ class _SelectSeatState extends State<SelectSeat> {
                       color: Color(0xffdfa000),
                       onPressed: () {
                         // Add your onPressed logic here
+                        if (!isLoggedIn()) {
+                          Get.toNamed("/register");
+                        } else {
+                          Get.toNamed("/payment");
+                        }
                       },
                     ),
                   ],

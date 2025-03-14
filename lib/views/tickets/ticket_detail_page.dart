@@ -12,13 +12,11 @@ class TicketDetailsPage extends StatelessWidget {
   final String eventBanner;
   final String seatNumber;
   final String seatCategory;
-  final String qrCodeImage;
 
   TicketDetailsPage({
     required this.eventBanner,
     required this.seatNumber,
     required this.seatCategory,
-    required this.qrCodeImage,
   });
 
   @override
@@ -86,9 +84,9 @@ class TicketDetailsPage extends StatelessWidget {
               RepaintBoundary(
                 key: _ticketKey,
                 child: Ticket(
-                    seatCategory: seatCategory,
-                    seatNumber: seatNumber,
-                    qrCodeImage: qrCodeImage),
+                  seatCategory: seatCategory,
+                  seatNumber: seatNumber,
+                ),
               ),
               GestureDetector(
                 onTap: _captureAndDownloadTicket,

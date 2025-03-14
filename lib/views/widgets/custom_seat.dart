@@ -25,8 +25,8 @@ class CustomSeat extends StatelessWidget {
       case "available":
         seatColor = Color(0xff1c1c1c);
         break;
-      case "reserved":
-        seatColor = Color(0xff7cc3f6);
+      case "hold":
+        seatColor = Colors.red;
         isDisabled = true;
         textColor = Colors.white; // Better readability
         break;
