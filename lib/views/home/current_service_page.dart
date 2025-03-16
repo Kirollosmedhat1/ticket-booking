@@ -27,8 +27,12 @@ class CurrentServicePage extends StatelessWidget {
             height: ScreenSizeHandler.smaller * 0.05,
           ),
           Container(
-            height: ScreenSizeHandler.screenWidth * 1.1,
-            width: ScreenSizeHandler.screenWidth * 1,
+            height: ScreenSizeHandler.smaller * 1.02 >= 442
+                ? 442
+                : ScreenSizeHandler.smaller * 1.02,
+            width: ScreenSizeHandler.smaller * 1 >= 430
+                ? 430
+                : ScreenSizeHandler.smaller * 1,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(
                     ScreenSizeHandler.screenWidth * 0.03), // Rounded corners
@@ -50,8 +54,8 @@ class CurrentServicePage extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.symmetric(
                       vertical: ScreenSizeHandler.screenWidth * 0.5),
-                  height: ScreenSizeHandler.screenWidth * 0.15,
-                  width: ScreenSizeHandler.screenWidth * 0.3,
+                  height: ScreenSizeHandler.smaller * 0.195,
+                  width: ScreenSizeHandler.smaller * 0.3465,
                   decoration: BoxDecoration(
                       // color: Colors.amber,
                       image: DecorationImage(
