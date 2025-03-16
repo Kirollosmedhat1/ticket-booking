@@ -24,15 +24,6 @@ class AppRoutes {
     GetPage(name: '/currentservice', page: () => const CurrentServicePage()),
     GetPage(name: '/selectseat', page: () => SelectSeat()),
     GetPage(name: '/SelectSection', page: () => const SelectSection()),
-    GetPage(name: '/cart', page: () => CartPage()),
-    GetPage(
-      name: '/ticketdetails',
-      page: () => TicketDetailsPage(
-        eventBanner:
-            'assets/images/WhatsApp Image 2025-02-24 at 7.35.48 AM 1-2.png',
-        seatCategory: "Section 1",
-        seatNumber: "A1",
-      ),
-    ),
+    GetPage(name: '/cart', page: () => CartPage()), 
   ];
 }

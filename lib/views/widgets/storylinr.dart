@@ -6,7 +6,7 @@ class Storyline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double fontSize = ScreenSizeHandler.screenWidth * 0.04;
+    double fontSize = ScreenSizeHandler.smaller * 0.037;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

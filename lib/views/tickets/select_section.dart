@@ -3,14 +3,13 @@ import 'package:darbelsalib/views/tickets/select_seat.dart';
 import 'package:darbelsalib/views/widgets/custom_seat.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 class SelectSection extends StatelessWidget {
   const SelectSection({super.key});
 
   Widget buildSectionTrapezium(
       String section, bool isFinalRow, double topWidth, double bottomWidth) {
-    double height = ScreenSizeHandler.screenWidth *
+    double height = ScreenSizeHandler.smaller *
         (isFinalRow ? 0.3 : 0.25) *
         0.6666666666666666;
     return GestureDetector(
@@ -23,7 +22,7 @@ class SelectSection extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             CustomPaint(
-              size: Size(ScreenSizeHandler.screenWidth * (0.25), height),
+              size: Size(ScreenSizeHandler.smaller * (0.25), height),
               painter: TrapeziumPainter(
                   topWidth: topWidth, bottomWidth: bottomWidth),
             ),
@@ -60,72 +59,74 @@ class SelectSection extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         child: Padding(
           padding: const EdgeInsets.only(top: 120),
-          child: Column(
-            children: [
-              Center(
-                child: Image.asset(
-                  "assets/images/screen.png",
-                ),
-              ),
-              // Wide container to resemble the stage
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 15),
-                height: ScreenSizeHandler.smaller * 0.15,
-                width: ScreenSizeHandler.smaller * 0.88,
-                //rounded corners
-                decoration: BoxDecoration(
-                  color: Color(0xFFDFA000),
-                  //black outline
-                  border: Border.all(
-                    color: Colors.white,
-                    width: 4,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Center(
+                  child: Image.asset(
+                    "assets/images/screen.png",
                   ),
-                  borderRadius: BorderRadius.circular(20),
                 ),
-                child: Center(
-                  child: Text("STAGE",
-                      style: TextStyle(
-                        fontSize: ScreenSizeHandler.smaller * 0.05,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center),
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  buildSectionTrapezium('Section 1', false, 100, 150),
-                  SizedBox(width: 100),
-                  buildSectionTrapezium('Section 2', false, 100, 150),
-                ],
-              ),
-              // Second row with 3 boxes
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  buildSectionTrapezium('Section 3', false, 150, 190),
-                  SizedBox(width: 100),
-                  buildSectionTrapezium('Section 4', false, 150, 190)
-                ],
-              ),
-              // Third row with 4 boxes
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  buildSectionTrapezium('Section 5', true, 120, 140),
-                  SizedBox(width: 90),
-                  buildSectionTrapezium('Section 6', true, 120, 140)
-                ],
-              ),
-              SizedBox(height: 20),
-              Text("Please Choose a Selection to Proceed",
-                  style: TextStyle(
-                    fontSize: ScreenSizeHandler.smaller * 0.04,
-                    color: Colors.grey,
+                // Wide container to resemble the stage
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 15),
+                  height: ScreenSizeHandler.smaller * 0.15,
+                  width: ScreenSizeHandler.smaller * 0.88,
+                  //rounded corners
+                  decoration: BoxDecoration(
+                    color: Color(0xFFDFA000),
+                    //black outline
+                    border: Border.all(
+                      color: Colors.white,
+                      width: 4,
+                    ),
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                  textAlign: TextAlign.center),
-            ],
+                  child: Center(
+                    child: Text("STAGE",
+                        style: TextStyle(
+                          fontSize: ScreenSizeHandler.smaller * 0.05,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    buildSectionTrapezium('Section 1', false, 100, 150),
+                    SizedBox(width: 100),
+                    buildSectionTrapezium('Section 2', false, 100, 150),
+                  ],
+                ),
+                // Second row with 3 boxes
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    buildSectionTrapezium('Section 3', false, 150, 190),
+                    SizedBox(width: 100),
+                    buildSectionTrapezium('Section 4', false, 150, 190)
+                  ],
+                ),
+                // Third row with 4 boxes
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    buildSectionTrapezium('Section 5', true, 120, 140),
+                    SizedBox(width: 90),
+                    buildSectionTrapezium('Section 6', true, 120, 140)
+                  ],
+                ),
+                SizedBox(height: 20),
+                Text("Please Choose a Selection to Proceed",
+                    style: TextStyle(
+                      fontSize: ScreenSizeHandler.smaller * 0.04,
+                      color: Colors.grey,
+                    ),
+                    textAlign: TextAlign.center),
+              ],
+            ),
           ),
         ),
       ),
