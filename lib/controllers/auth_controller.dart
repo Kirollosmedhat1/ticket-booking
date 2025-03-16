@@ -1,65 +1,127 @@
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:darbelsalib/core/services/auth_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:get_storage/get_storage.dart';
+import 'package:flutter/material.dart';
 
 class AuthController extends GetxController {
-  final AuthService _authService = AuthService();
   var isLoading = false.obs;
   var canResendEmail = true.obs;
-  var isPhoneVerified = false.obs;
-  var userName = "Guest".obs; // 🔹 Store user's name dynamically
+  var userName = "Guest".obs;
+
   Timer? _timer;
-  String? verificationId;
+  final storage = GetStorage();
+
+  final String baseUrl = "https://your-api-url.com/api"; // 🔥 Replace with actual API URL
 
   @override
   void onInit() {
     super.onInit();
-    _fetchUserName(); // 🔹 Fetch user name on controller initialization
+    fetchUserName();
   }
-  /// **🔹 Register User**
-  
+
+  /// 🔹 Login
+  Future<bool> login(String email, String password) async {
+    isLoading.value = true;
+    try {
+      final response = await http.post(
+        Uri.parse("$baseUrl/login"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "email": email,
+          "password": password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        storage.write("token", data["token"]);
+        storage.write("userName", data["user"]["fullName"]);
+        userName.value = data["user"]["fullName"];
+        Get.snackbar("Success", "Logged in successfully!", backgroundColor: Colors.green);
+        return true;
+      } else {
+        var error = jsonDecode(response.body);
+        Get.snackbar("Error", error["message"] ?? "Login failed", backgroundColor: Colors.red);
+      }
+    } catch (e) {
+      Get.snackbar("Error", e.toString(), backgroundColor: Colors.red);
+    }
+    isLoading.value = false;
+    return false;
+  }
+
+  /// 🔹 Register
   Future<void> register(String email, String password, String fullName, String phone) async {
     isLoading.value = true;
     try {
-      User? user = await _authService.registerWithEmail(email, password, fullName, phone);
-      if (user != null) {
+      final response = await http.post(
+        Uri.parse("$baseUrl/register"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "email": email,
+          "password": password,
+          "fullName": fullName,
+          "phone": phone,
+        }),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.snackbar("Success", "Registered successfully! Please verify your email.", backgroundColor: Colors.green);
         startCooldown();
-        Get.snackbar("Success", "Verification email sent! Please check your inbox.", backgroundColor: Colors.green);
+      } else {
+        var error = jsonDecode(response.body);
+        Get.snackbar("Error", error["message"] ?? "Registration failed", backgroundColor: Colors.red);
       }
     } catch (e) {
       Get.snackbar("Error", e.toString(), backgroundColor: Colors.red);
     }
     isLoading.value = false;
   }
-   /// **🔹 Fetch User Name from Firestore**
-  Future<void> _fetchUserName() async {
-    User? user = _authService.getCurrentUser();
-    if (user != null) {
-      DocumentSnapshot userDoc =
-          await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
-      if (userDoc.exists && userDoc.data() != null) {
-        userName.value = userDoc['fullName'] ?? "Guest"; // 🔹 Update name
-      }
+
+  /// 🔹 Fetch user name from local storage
+  void fetchUserName() {
+    String? name = storage.read("userName");
+    if (name != null) {
+      userName.value = name;
     }
   }
 
+  /// 🔹 Logout
+  Future<void> logout() async {
+    await storage.erase();
+    Get.offAllNamed('/login');
+  }
 
-  /// **🔹 Send Email Verification Again (Cooldown)**
+  /// 🔹 Resend verification email
   Future<void> resendVerificationEmail() async {
-    if (!canResendEmail.value) return; // Prevent spam clicks
+    if (!canResendEmail.value) return;
+    isLoading.value = true;
+    try {
+      final token = storage.read("token");
+      final response = await http.post(
+        Uri.parse("$baseUrl/resend-verification"),
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json",
+        },
+      );
 
-    User? user = _authService.getCurrentUser();
-    if (user != null && !user.emailVerified) {
-      await _authService.sendEmailVerification(user);
-      startCooldown();
-      Get.snackbar("Success", "Verification email sent again!", backgroundColor: Colors.green);
+      if (response.statusCode == 200) {
+        Get.snackbar("Success", "Verification email sent again!", backgroundColor: Colors.green);
+        startCooldown();
+      } else {
+        var error = jsonDecode(response.body);
+        Get.snackbar("Error", error["message"] ?? "Failed", backgroundColor: Colors.red);
+      }
+    } catch (e) {
+      Get.snackbar("Error", e.toString(), backgroundColor: Colors.red);
     }
+    isLoading.value = false;
   }
 
-  /// **🔹 Start Cooldown Timer**
+  /// 🔹 Cooldown Timer
   void startCooldown() {
     canResendEmail.value = false;
     _timer?.cancel();
@@ -72,59 +134,5 @@ class AuthController extends GetxController {
   void onClose() {
     _timer?.cancel();
     super.onClose();
-  }
-
-  /// **🔹 Login User**
-  Future<bool> login(String email, String password) async {
-    isLoading.value = true;
-    try {
-      User? user = await _authService.loginWithEmail(email, password);
-      if (user != null) {
-        Get.snackbar("Success", "Logged in successfully!");
-        isLoading.value = false;
-        return true;
-      }
-    } catch (e) {
-      Get.snackbar("Error", e.toString(), backgroundColor: Colors.red);
-    }
-    isLoading.value = false;
-    return false;
-  }
-
-  /// **🔹 Logout User**
-  Future<void> logout() async {
-    try {
-      await _authService.signOut();
-      Get.offAllNamed('/login');
-    } catch (e) {
-      Get.snackbar("Logout Failed", "Something went wrong. Please try again.");
-    }
-  }
-
-  /// **🔹 Request Phone Verification (OTP)**
-  Future<void> sendPhoneVerification(String phoneNumber) async {
-    try {
-      await _authService.verifyPhoneNumber(phoneNumber, (verificationId, resendToken) {
-        this.verificationId = verificationId;
-        Get.snackbar("Success", "OTP sent to $phoneNumber", backgroundColor: Colors.green);
-      });
-    } catch (e) {
-      Get.snackbar("Error", "Failed to send OTP: $e", backgroundColor: Colors.red);
-    }
-  }
-
-  /// **🔹 Confirm OTP Code**
-  Future<void> verifyOtp(String otp) async {
-    if (verificationId == null) {
-      Get.snackbar("Error", "No verification request found!", backgroundColor: Colors.red);
-      return;
-    }
-    try {
-      await _authService.confirmOtpCode(verificationId!, otp);
-      isPhoneVerified.value = true;
-      Get.snackbar("Success", "Phone verified successfully!", backgroundColor: Colors.green);
-    } catch (e) {
-      Get.snackbar("Error", "Invalid OTP: $e", backgroundColor: Colors.red);
-    }
   }
 }

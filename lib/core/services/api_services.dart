@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String baseUrl = 'http://localhost:8000/api'; // Replace with your server IP when deploying to device/emulator
+  static const String baseUrl = 'darb-el-salib-f3e9ea716f85.herokuapp.com'; 
 
   // Register
   Future<http.Response> register({
