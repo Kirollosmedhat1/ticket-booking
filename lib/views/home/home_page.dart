@@ -65,13 +65,15 @@ class HomePage extends StatelessWidget {
                     )
                   ],
                 ),
-                ElevatedButton(
-          onPressed: () async {
-            await databaseService.uploadSeatsToFirestore();
-            Get.snackbar("Success", "Seats uploaded successfully!");
-          },
-          child: Text("Upload Seats"),
-        ),
+               ElevatedButton(
+  onPressed: () async {
+    DatabaseService databaseService = DatabaseService();
+    await databaseService.uploadSeatsToFirestore();
+    Get.snackbar("Success", "Seats uploaded successfully!");
+  },
+  child: Text("Upload Seats to Firestore"),
+),
+
                 const HomePageSection(
                   title: "Current Service",
                   content: Center(child: CurrentServicePoster()),
