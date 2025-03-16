@@ -1,6 +1,7 @@
 // ignore_for_file: use_key_in_widget_constructors
 
 import 'package:darbelsalib/controllers/auth_controller.dart';
+import 'package:darbelsalib/core/services/database_service.dart';
 import 'package:darbelsalib/screen_size_handler.dart';
 import 'package:darbelsalib/views/widgets/contact_us_section.dart';
 import 'package:darbelsalib/views/widgets/current_service_poster.dart';
@@ -12,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class HomePage extends StatelessWidget {
+   final DatabaseService databaseService = DatabaseService(); 
   final AuthController authController = Get.put(AuthController());
 
   @override
@@ -62,6 +64,8 @@ class HomePage extends StatelessWidget {
                     )
                   ],
                 ),
+               
+
                 const HomePageSection(
                   title: "Current Service",
                   content: Center(child: CurrentServicePoster()),
