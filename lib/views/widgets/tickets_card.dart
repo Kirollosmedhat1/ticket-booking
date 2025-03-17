@@ -33,7 +33,6 @@ class TicketsCard extends StatelessWidget {
               width: screenWidth * 0.15,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(screenhight * 0.01),
-                color: Colors.amber,
                 image: DecorationImage(
                   image: AssetImage("assets/images/card_image.png"),
                   fit: BoxFit.cover,
