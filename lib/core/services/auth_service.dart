@@ -7,8 +7,8 @@ import 'package:darbelsalib/models/user_model.dart'; // Import the UserModel
 class AuthService {
   static const String baseUrl = 'https://darb-el-salib-f3e9ea716f85.herokuapp.com/api';
 
-  /// **🔹 Register a new user**
-  Future<UserModel?> registerWithEmail(String email, String password, String fullName, String phone) async {
+  /// **🔹 Register a new user with phone number**
+  Future<UserModel?> registerWithPhone(String password, String fullName, String phone) async {
     try {
       final url = Uri.parse('$baseUrl/users/register/');
       print('URL: [$url]');
@@ -27,7 +27,6 @@ class AuthService {
         final responseData = jsonDecode(response.body);
         return UserModel(
           id: responseData['id'].toString(),
-          email: email,
           fullName: fullName,
           phone: phone,
           token: responseData['token'], // Ensure the API returns a token
@@ -40,15 +39,15 @@ class AuthService {
     }
   }
 
-  /// **🔹 Login user**
-   Future<UserModel?> loginWithPhone(String phone, String password) async {
+  /// **🔹 Login user with phone number**
+  Future<UserModel?> loginWithPhone(String phone, String password) async {
     try {
       final url = Uri.parse('$baseUrl/users/login/');
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          "phone_number": phone, // Use phone number instead of email
+          "phone_number": phone,
           "password": password,
         }),
       );
@@ -57,9 +56,8 @@ class AuthService {
         final responseData = jsonDecode(response.body);
         return UserModel(
           id: responseData['id'].toString(),
-          email: responseData['email'], // Assuming the API returns an email
           fullName: "${responseData['first_name']} ${responseData['last_name']}",
-          phone: phone, // Use the provided phone number
+          phone: phone,
           token: responseData['token'], // Ensure the API returns a token
         );
       } else {
@@ -70,23 +68,23 @@ class AuthService {
     }
   }
 
-  /// **🔹 Send Email Verification (if supported by the API)**
-  Future<void> sendEmailVerification(String email) async {
+  /// **🔹 Send Phone Verification (if supported by the API)**
+  Future<void> sendPhoneVerification(String phone) async {
     try {
-      final url = Uri.parse('$baseUrl/users/send-email-verification/');
+      final url = Uri.parse('$baseUrl/users/send-phone-verification/');
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          "email": email,
+          "phone_number": phone,
         }),
       );
 
       if (response.statusCode != 200) {
-        throw Exception("Failed to send email verification: ${response.body}");
+        throw Exception("Failed to send phone verification: ${response.body}");
       }
     } catch (e) {
-      throw Exception("Failed to send email verification: $e");
+      throw Exception("Failed to send phone verification: $e");
     }
   }
 }

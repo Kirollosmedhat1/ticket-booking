@@ -5,14 +5,14 @@ import 'package:get/get.dart';
 import 'package:darbelsalib/models/user_model.dart'; // Import the UserModel
 
 class AuthController extends GetxController {
-  final AuthService _authService = AuthService(); // Initialize AuthService
-  final TokenStorageService _tokenStorageService = TokenStorageService(); // Initialize TokenStorageService
-  var userName = "".obs; // Observable for user name
+  final AuthService _authService = AuthService();
+  final TokenStorageService _tokenStorageService = TokenStorageService();
+  var userName = "".obs;
 
-  // Register user using the API
-  Future<UserModel?> registerWithEmail(String email, String password, String fullName, String phone) async {
+  // Register user with phone number
+  Future<UserModel?> registerWithPhone(String password, String fullName, String phone) async {
     try {
-      final UserModel? user = await _authService.registerWithEmail(email, password, fullName, phone);
+      final UserModel? user = await _authService.registerWithPhone(password, fullName, phone);
       if (user != null) {
         userName.value = user.fullName; // Update the observable user name
         await _tokenStorageService.saveToken(user.token); // Save the token
@@ -28,7 +28,7 @@ class AuthController extends GetxController {
     }
   }
 
-  // Login user using the API
+  // Login user with phone number
   Future<UserModel?> loginWithPhone(String phone, String password) async {
     try {
       final UserModel? user = await _authService.loginWithPhone(phone, password);
@@ -47,25 +47,24 @@ class AuthController extends GetxController {
     }
   }
 
-
-  // Forgot password
-  Future<void> forgotPassword(String email) async {
+  // Forgot password (updated to use phone number)
+  Future<void> forgotPassword(String phone) async {
     try {
-      await _authService.sendEmailVerification(email);
-      Get.snackbar("Success", "Password reset email sent", backgroundColor: Colors.green);
+      await _authService.sendPhoneVerification(phone);
+      Get.snackbar("Success", "Password reset SMS sent", backgroundColor: Colors.green);
     } catch (e) {
       Get.snackbar("Error", e.toString(), backgroundColor: Colors.red);
     }
   }
 
-  // Logout user
+  // Logout user (unchanged)
   Future<void> logout() async {
     await _tokenStorageService.clearToken(); // Clear the token
     userName.value = ""; // Reset the user name
     Get.offNamed('/login'); // Redirect to the login page
   }
 
-  // Get the stored token
+  // Get the stored token (unchanged)
   Future<String?> getToken() async {
     return await _tokenStorageService.getToken();
   }

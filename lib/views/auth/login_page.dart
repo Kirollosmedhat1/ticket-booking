@@ -52,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
         height: screenHeight,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("assets/images/loginbackground.jpg"),
+            image: AssetImage("assets/images/signupbackground.jpg"),
             fit: BoxFit.cover,
           ),
         ),

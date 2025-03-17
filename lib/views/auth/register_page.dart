@@ -13,15 +13,13 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final AuthController authController = Get.put(AuthController());
-  final TextEditingController emailController = TextEditingController();
- final TextEditingController phoneController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController fullNameController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
-    emailController.dispose();
     phoneController.dispose();
     passwordController.dispose();
     fullNameController.dispose();
@@ -29,25 +27,24 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future<void> register() async {
-  try {
-    final user = await authController.registerWithEmail(
-      emailController.text.trim(),
-      passwordController.text.trim(),
-      fullNameController.text.trim(),
-      phoneController.text.trim(),
-    );
-    if (user != null) {
-      Get.offNamed('/home');
+    try {
+      final user = await authController.registerWithPhone(
+        passwordController.text.trim(),
+        fullNameController.text.trim(),
+        phoneController.text.trim(),
+      );
+      if (user != null) {
+        Get.offNamed('/home');
+      }
+    } catch (e) {
+      Get.snackbar("Error", e.toString(), backgroundColor: Colors.red);
     }
-  } catch (e) {
-    Get.snackbar("Error", e.toString(), backgroundColor: Colors.red);
   }
-}
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double screenhight = MediaQuery.of(context).size.height;
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -55,16 +52,16 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
       body: Container(
         width: screenWidth,
-        height: screenhight,
+        height: screenHeight,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage("assets/images/signupbackground.jpg"),
-            fit: BoxFit.contain,
+            fit: BoxFit.cover,
           ),
         ),
         child: ListView(
           children: [
-            SizedBox(height: screenhight / 20),
+            SizedBox(height: screenHeight / 20),
             Center(
               child: Container(
                 padding: EdgeInsets.all(screenWidth * 0.03),
@@ -82,11 +79,6 @@ class _RegisterPageState extends State<RegisterPage> {
                             validator: Validators.validateName,
                           ),
                           CustomTextField(
-                            controller: emailController,
-                            labelText: "Email",
-                            validator: Validators.validateEmail,
-                          ),
-                          CustomTextField(
                             controller: phoneController,
                             labelText: "Phone Number",
                             validator: Validators.validatePhone,
@@ -98,29 +90,22 @@ class _RegisterPageState extends State<RegisterPage> {
                             validator: Validators.validatePassword,
                             obscureText: true,
                           ),
-                          SizedBox(height: screenhight * 0.1),
-                          Container(
-                            height: screenhight * 0.1,
-                            width: screenWidth * 0.3,
-                            decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image: AssetImage("assets/images/logo.png"),
-                                    fit: BoxFit.cover)),
-                          ),
+                          SizedBox(height: screenHeight * 0.1),
                           CustomButton(
-                              text: "Signup",
-                              textcolor: Colors.black,
-                              bordercolor: Color(0xffDFA000),
-                              backgroundcolor: Color(0xffDFA000),
-                              onPressed: () async {
-                                if (_formKey.currentState!.validate()) {
-                                  await register();
-                                }
-                              }),
+                            text: "Signup",
+                            textcolor: Colors.black,
+                            bordercolor: Color(0xffDFA000),
+                            backgroundcolor: Color(0xffDFA000),
+                            onPressed: () async {
+                              if (_formKey.currentState!.validate()) {
+                                await register();
+                              }
+                            },
+                          ),
                         ],
                       ),
                     ),
-                    SizedBox(height: screenhight / 60),
+                    SizedBox(height: screenHeight / 60),
                     CustomTextButton(
                       text: "Already have an account? Login",
                       onPressed: () => Get.offNamed('/login'),
@@ -134,4 +119,4 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
     );
   }
-} 
+}
