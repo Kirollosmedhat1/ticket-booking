@@ -51,77 +51,76 @@ class _TicketDetailsPageState extends State<TicketDetailsPage> {
     }
 
     return Scaffold(
+    backgroundColor: Colors.black,
+    appBar: AppBar(
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: Text(
-          'Ticket Details',
-          style: TextStyle(
-              fontSize: ScreenSizeHandler.smaller * 0.06,
-              color: Colors.white,
-              fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding:
-              EdgeInsets.symmetric(vertical: ScreenSizeHandler.smaller * 0.07),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Center(
-                child: ClipRRect(
-                  borderRadius:
-                      BorderRadius.circular(ScreenSizeHandler.smaller * 0.028),
-                  child: Image.asset(
-                      "assetsimages/WhatsApp Image 2025-02-24 at 7.35.48 AM 1-3.png",
-                      width: ScreenSizeHandler.smaller * 0.894,
-                      height: ScreenSizeHandler.smaller * 0.588,
-                      fit: BoxFit.cover),
-                ),
-              ),
-              RepaintBoundary(
-                key: _ticketKey,
-                child: Ticket(
-                  seatCategory: 'First Section',
-                  seatNumber: "A1",
-                ),
-              ),
-              GestureDetector(
-                onTap: _captureAndDownloadTicket,
-                child: MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(
-                            right: ScreenSizeHandler.smaller * 0.023),
-                        child: Icon(
-                          Icons.download,
-                          size: ScreenSizeHandler.smaller * 0.058,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Text(
-                        "Download This Ticket",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: ScreenSizeHandler.smaller * 0.037,
-                            decoration: TextDecoration.underline,
-                            decorationColor: Colors.white,
-                            decorationThickness:
-                                ScreenSizeHandler.smaller * 0.005),
-                      ),
-                    ],
-                  ),
-                ),
-              )
-            ],
-          ),
+      title: Text(
+        'Ticket Details',
+        style: TextStyle(
+          fontSize: ScreenSizeHandler.smaller * 0.06,
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
         ),
       ),
-    );
+      centerTitle: true,
+    ),
+    body: SingleChildScrollView( // Add this
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: ScreenSizeHandler.smaller * 0.07),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(ScreenSizeHandler.smaller * 0.028),
+                child: Image.asset(
+                  "assets/images/WhatsApp Image 2025-02-24 at 7.35.48 AM 1-3.png",
+                  width: ScreenSizeHandler.smaller * 0.894,
+                  height: ScreenSizeHandler.smaller * 0.588,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            RepaintBoundary(
+              key: _ticketKey,
+              child: Ticket(
+                seatCategory: 'First Section',
+                seatNumber: "A1",
+              ),
+            ),
+            GestureDetector(
+              onTap: _captureAndDownloadTicket,
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(right: ScreenSizeHandler.smaller * 0.023),
+                      child: Icon(
+                        Icons.download,
+                        size: ScreenSizeHandler.smaller * 0.058,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      "Download This Ticket",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: ScreenSizeHandler.smaller * 0.037,
+                        decoration: TextDecoration.underline,
+                        decorationColor: Colors.white,
+                        decorationThickness: ScreenSizeHandler.smaller * 0.005,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
   }
 }

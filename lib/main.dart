@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:darbelsalib/%20bindings/%20auth_binding.dart';
 import 'package:darbelsalib/routes/app_routes.dart';
 import 'package:darbelsalib/controllers/auth_controller.dart';
+import 'package:darbelsalib/controllers/ticket_controller.dart'; // Import the TicketController
 import 'package:darbelsalib/screen_size_handler.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,10 @@ void main() async {
     sslEnabled: true, // Ensure it connects to Firestore
   );
 
+  // Initialize controllers
   Get.put(AuthController());
+  Get.put(TicketController()); // Initialize the TicketController
+
   await GetStorage.init();
 
   runApp(MyApp());
@@ -41,7 +45,7 @@ class MyApp extends StatelessWidget {
           iconTheme:
               const IconThemeData(color: Colors.white), // White back button
           titleTextStyle: TextStyle(
-            fontSize: ScreenSizeHandler.smaller*0.065,
+            fontSize: ScreenSizeHandler.smaller * 0.065,
             fontWeight: FontWeight.w700,
             color: Colors.white,
           ),
@@ -50,7 +54,7 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       initialBinding: AuthBinding(),
-      initialRoute: '/login',
+      initialRoute: '/payment-confirmation/:paymentId',
       getPages: AppRoutes.routes,
       unknownRoute: GetPage(
         name: '/notfound',

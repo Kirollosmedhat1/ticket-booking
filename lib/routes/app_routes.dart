@@ -1,8 +1,6 @@
 import 'package:darbelsalib/views/auth/welcom_page.dart';
 import 'package:darbelsalib/views/home/current_service_page.dart';
 // import 'package:darbelsalib/views/payment/checkout_page.dart';
-import 'package:darbelsalib/views/payment/payment_failed_page.dart';
-import 'package:darbelsalib/views/payment/payment_success_page.dart';
 import 'package:darbelsalib/views/tickets/cart.dart';
 import 'package:darbelsalib/views/tickets/my_tickets_page.dart';
 import 'package:darbelsalib/views/tickets/select_seat.dart';
@@ -12,6 +10,7 @@ import 'package:get/get.dart';
 import '../views/auth/login_page.dart';
 import '../views/auth/register_page.dart';
 import '../views/home/home_page.dart';
+import '../views/payment/payment_confirmation_page.dart'; // Import the new page
 
 class AppRoutes {
   static final routes = [
@@ -22,7 +21,7 @@ class AppRoutes {
     // GetPage(name: '/checkout', page: () => CheckoutPage()),
     GetPage(name: '/cart', page: () => CartPage()),
     GetPage(name: '/welcome', page: () => const WelcomPage()),
-    GetPage(name: '/mytickets', page: () => const MyTicketsPage()),
+    GetPage(name: '/mytickets', page: () =>  MyTicketsPage()),
     GetPage(name: '/currentservice', page: () => const CurrentServicePage()),
     GetPage(
       name: '/selectseat/:sectionNumber',
@@ -30,8 +29,11 @@ class AppRoutes {
     ),
     GetPage(name: '/SelectSection', page: () => const SelectSection()),
     GetPage(name: '/cart', page: () => CartPage()),
-    GetPage(name: '/Paymentsuccess', page: () => PaymentSuccessPage()),
-    GetPage(name: '/Paymentfaild', page: () => PaymentFailPage()),
     GetPage(name: '/ticketsdetails', page: () => TicketDetailsPage()),
+    // Add the new route for PaymentConfirmationPage
+    GetPage(
+      name: '/payment-confirmation/:paymentId',
+      page: () => PaymentConfirmationPage(paymentId: Get.parameters['paymentId']!),
+    ),
   ];
 }
