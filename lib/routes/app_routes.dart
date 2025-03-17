@@ -18,16 +18,22 @@ class AppRoutes {
     GetPage(name: '/register', page: () => RegisterPage()),
     GetPage(name: '/home', page: () => HomePage()),
     GetPage(name: '/selectsection', page: () => const SelectSection()),
-    GetPage(name: '/checkout', page: () =>  CheckoutPage()),
+    GetPage(name: '/checkout', page: () => CheckoutPage()),
     GetPage(name: '/cart', page: () => CartPage()),
     GetPage(name: '/welcome', page: () => const WelcomPage()),
     GetPage(name: '/mytickets', page: () => const MyTicketsPage()),
     GetPage(name: '/currentservice', page: () => const CurrentServicePage()),
-    GetPage(name: '/selectseat', page: () => SelectSeat()),
+    GetPage(
+      name: '/selectseat/:sectionNumber', page: () => SelectSeat(),),
     GetPage(name: '/SelectSection', page: () => const SelectSection()),
-    GetPage(name: '/cart', page: () => CartPage()), 
-    GetPage(name: '/Paymentsuccess', page: () =>  PaymentSuccessPage()), 
-    GetPage(name: '/ticketsdetails', page: () =>  TicketDetailsPage(eventBanner:"" , seatNumber: '', seatCategory: '',)),
-
+    GetPage(name: '/cart', page: () => CartPage()),
+    GetPage(name: '/Paymentsuccess', page: () => PaymentSuccessPage()),
+    GetPage(
+        name: '/ticketsdetails',
+        page: () => TicketDetailsPage(
+              eventBanner: "",
+              seatNumber: '',
+              seatCategory: '',
+            )),
   ];
 }

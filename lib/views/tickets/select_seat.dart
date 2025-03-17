@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-bool isLoggedIn() { 
+bool isLoggedIn() {
   final user = FirebaseAuth.instance.currentUser;
   return user != null;
 }
@@ -26,8 +26,8 @@ class _SelectSeatState extends State<SelectSeat> {
   @override
   void initState() {
     super.initState();
-    section = Get.parameters['sectionNumber']!;
-    listenToSeatsUpdates(section); // Call the function here
+    section = Get.parameters['sectionNumber'] ?? '1'; // ✅ Null check here
+    listenToSeatsUpdates(section);
   }
 
   void _onSeatSelected(String seatNumber) {
@@ -86,7 +86,7 @@ class _SelectSeatState extends State<SelectSeat> {
       case 4:
         return ['Section 2', 'Section 6', 'Section 3', ''];
       case 5:
-        return ['Section 3', '', '' 'Section 6'];
+        return ['Section 3', '', '', 'Section 6'];
       case 6:
         return ['Section 4', '', 'Section 5', ''];
       default:
@@ -95,6 +95,7 @@ class _SelectSeatState extends State<SelectSeat> {
   }
 
   void listenToSeatsUpdates(String sectionName) {
+    // Swap sections for Firestore structure consistency
     if (sectionName == '1') {
       sectionName = '2';
     } else if (sectionName == '2') {
@@ -142,15 +143,9 @@ class _SelectSeatState extends State<SelectSeat> {
       seatNames.forEach((seatNameKey, seatDetails) {
         if (seatDetails is Map<String, dynamic>) {
           String status = seatDetails['status'] ?? 'unknown';
-          String userId = seatDetails['user_id']?.toString() ?? 'none';
-          String uuid = seatDetails['uuid'] ?? 'none';
-
-          print(
-              'Section: $sectionName, Seat: $seatNameKey, Status: $status, User ID: $userId, UUID: $uuid');
           setState(() {
             seatStatus[seatNameKey] = status;
           });
-          print(seatStatus);
         }
       });
     });
@@ -185,7 +180,7 @@ class _SelectSeatState extends State<SelectSeat> {
                           color: Colors.white,
                         ),
                         Text(
-                          getNeighboringSections(sectionNumber)[0],
+                          neighboringSections[0],
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 20,
@@ -193,9 +188,7 @@ class _SelectSeatState extends State<SelectSeat> {
                         ),
                       ],
                     ),
-                    SizedBox(
-                      height: 30,
-                    ),
+                    SizedBox(height: 30),
                     Text(
                       "You are currently in section $sectionNumber",
                       style: TextStyle(
@@ -240,10 +233,7 @@ class _SelectSeatState extends State<SelectSeat> {
               ),
             ),
             if (selectedSeatsCount > 0) ...[
-              Divider(
-                color: Colors.grey,
-                thickness: 0.5,
-              ),
+              Divider(color: Colors.grey, thickness: 0.5),
               Padding(
                 padding:
                     EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 10),
@@ -271,7 +261,6 @@ class _SelectSeatState extends State<SelectSeat> {
                       height: 56,
                       color: Color(0xffdfa000),
                       onPressed: () {
-                        // Add your onPressed logic here
                         if (!isLoggedIn()) {
                           Get.toNamed("/register");
                         } else {
@@ -308,13 +297,10 @@ class SeatIndicator extends StatelessWidget {
             height: 24,
             decoration: BoxDecoration(
               color: color,
-              //rounded corners
               borderRadius: BorderRadius.circular(5),
             ),
           ),
-          const SizedBox(
-            width: 10,
-          ),
+          const SizedBox(width: 10),
           Text(
             description,
             style: const TextStyle(color: Colors.white, fontSize: 14),

@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 
 class SelectSection extends StatelessWidget { 
   const SelectSection({super.key});
-
+ 
   Widget buildSectionTrapezium(
       String section, bool isFinalRow, double topWidth, double bottomWidth) {
     double height = ScreenSizeHandler.smaller *
@@ -13,7 +13,7 @@ class SelectSection extends StatelessWidget {
         0.6666666666666666;
     return GestureDetector(
       onTap: () {
-        Get.toNamed('/selectseat/${int.parse(section.split(' ')[1])}');
+       Get.toNamed('/selectseat/${int.parse(section.split(' ')[1])}');
       },
       child: Container(
         margin: const EdgeInsets.all(8.0),
