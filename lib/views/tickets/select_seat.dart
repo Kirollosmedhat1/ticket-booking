@@ -1,10 +1,10 @@
 import 'dart:async';
-
 import 'package:darbelsalib/controllers/auth_controller.dart';
 import 'package:darbelsalib/core/services/api_services.dart';
 import 'package:darbelsalib/core/services/token_storage_service.dart';
 import 'package:darbelsalib/models/seat_model.dart';
 import 'package:darbelsalib/views/widgets/custom_appbar.dart';
+import 'package:darbelsalib/views/widgets/custom_loading_indicator.dart';
 import 'package:darbelsalib/views/widgets/seat_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,11 +18,12 @@ class SelectSeat extends StatefulWidget {
 class _SelectSeatState extends State<SelectSeat> {
   late final String section;
   int totalPrice = 0;
+  int seatPrice = 0;
   int selectedSeatsCount = 0;
+  bool _isInitialLoadCompleted = false;
   final Map<String, Seat> seats = {};
   final Map<String, Seat> selectedSeats = {};
   final AuthController _authController = Get.put(AuthController());
-  int seatPrice = 0;
   final ApiService _apiService = ApiService();
   final TokenStorageService _tokenStorageService = TokenStorageService();
   final Completer<void> _initialLoadCompleter = Completer<void>();
@@ -32,7 +33,6 @@ class _SelectSeatState extends State<SelectSeat> {
     super.initState();
     section = Get.parameters['sectionNumber'] ?? '1';
     listenToSeatsUpdates(section);
-    getCart();
   }
 
   Future<bool> isLoggedIn() async {
@@ -41,28 +41,65 @@ class _SelectSeatState extends State<SelectSeat> {
   }
 
   void addToCart(Seat seat) async {
-    String? token = await _tokenStorageService.getToken();
-    _apiService.addToCart(token!, {"seat_id": seat.id});
+    try {
+      String? token = await _tokenStorageService.getToken();
+      await _apiService.addToCart(token!, {"seat_id": seat.id});
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Seat added to cart successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('An error occurred while adding the seat to the cart.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   void removeFromCart(Seat seat) async {
-    String? token = await _tokenStorageService.getToken();
-    await _apiService.removeFromCart(token!, seat.id);
+    try {
+      String? token = await _tokenStorageService.getToken();
+      await _apiService.removeFromCart(token!, seat.id);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Seat removed from cart successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content:
+              Text('An error occurred while removing the seat from the cart.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   void getCart() async {
+    print('called');
     String? token = await _tokenStorageService.getToken();
     var response = await _apiService.getUserCart(token!);
     List<dynamic> items = response['items'];
-    setState(() {
-      for (var item in items) {
-        String seatNumber = item['seat']['seat_number'];
-        if (seats.containsKey(seatNumber)) {
-          seats[seatNumber]?.status = 'selected';
-          selectedSeats[seatNumber] = seats[seatNumber]!;
+    if (mounted) {
+      setState(() {
+        for (var item in items) {
+          String seatNumber = item['seat']['seat_number'];
+          if (seats.containsKey(seatNumber)) {
+            print('in');
+            seats[seatNumber]?.status = 'selected';
+            selectedSeats[seatNumber] = seats[seatNumber]!;
+            totalPrice += seats[seatNumber]?.price ?? 0;
+            selectedSeatsCount++;
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   void _onSeatSelected(String seatNumber) {
@@ -182,6 +219,7 @@ class _SelectSeatState extends State<SelectSeat> {
             setState(() {
               seats[seatNameKey] = seat;
             });
+            seats[seatNameKey]?.price = seatPrice;
           }
         }
       });
@@ -196,7 +234,13 @@ class _SelectSeatState extends State<SelectSeat> {
       if (!_initialLoadCompleter.isCompleted) {
         _initialLoadCompleter.complete();
       }
+
+      if (!_isInitialLoadCompleted) {
+        getCart();
+        _isInitialLoadCompleted = true;
+      }
     });
+    print('done');
   }
 
   @override
@@ -210,14 +254,17 @@ class _SelectSeatState extends State<SelectSeat> {
       body: FutureBuilder<void>(
         future: _initialLoadCompleter.future,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+          if (snapshot.connectionState == ConnectionState.waiting ||
+              !_isInitialLoadCompleted) {
+            return Center(
+              child: CustomLoadingIndicator(),
+            );
           }
           if (seats.isEmpty ||
               seatPrice == 0 ||
               seats == null ||
               seatPrice == null) {
-            return Center(child: CircularProgressIndicator());
+            return Center(child: CustomLoadingIndicator());
           }
 
           return Padding(
@@ -251,7 +298,7 @@ class _SelectSeatState extends State<SelectSeat> {
                         ),
                         SizedBox(height: 30),
                         Text(
-                          "You are currently in section $sectionNumber",
+                          "You are currently in Section $sectionNumber",
                           style: TextStyle(
                               color: Color(0xffdfa000),
                               fontSize: 22,
@@ -305,7 +352,7 @@ class _SelectSeatState extends State<SelectSeat> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("Total",
+                            Text("Total in Section",
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 16)),
                             Text(
@@ -326,7 +373,7 @@ class _SelectSeatState extends State<SelectSeat> {
                             if (!await isLoggedIn()) {
                               Get.toNamed("/register");
                             } else {
-                              Get.toNamed("/payment");
+                              Get.toNamed("/cart");
                             }
                           },
                         ),

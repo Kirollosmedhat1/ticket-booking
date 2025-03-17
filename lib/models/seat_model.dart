@@ -2,7 +2,7 @@ class Seat {
   final String id;
   final String seatNumber;
   String status;
-  final int price;
+  int price;
 
   Seat({
     required this.id,

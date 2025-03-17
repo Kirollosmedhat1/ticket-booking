@@ -1,10 +1,13 @@
 // ignore_for_file: use_key_in_widget_constructors
 
+import 'dart:convert';
+
 import 'package:darbelsalib/core/services/api_services.dart';
 import 'package:darbelsalib/core/services/token_storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:darbelsalib/views/widgets/seat_card.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CartPage extends StatefulWidget {
   @override
@@ -21,6 +24,40 @@ class _CartPageState extends State<CartPage> {
   void initState() {
     super.initState();
     getCart();
+  }
+
+  void requestPayment() async {
+    String? token = await _tokenStorageService.getToken();
+    var response = await _apiService.requestPayment(token!);
+    print(response.body);
+    if (response.statusCode == 200|| response.statusCode == 201) {
+      var responseData = json.decode(response.body);
+      String paymentUrl = responseData['url'];
+      print(response);
+      print("payment");
+      Uri redirectURL = Uri.parse(paymentUrl);
+      if (await canLaunchUrl(redirectURL)) {
+      await launchUrl(redirectURL);
+      } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+        content: Text("Could not launch payment URL"),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.only(top: 10.0),
+        ),
+      );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Failed to request payment"),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.only(top: 10.0),
+      ),
+      );
+    }
   }
 
   void getCart() async {
@@ -92,11 +129,13 @@ class _CartPageState extends State<CartPage> {
         children: [
           Text(
             "Total Price:",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           Text(
-            "\$${_totalPrice.toStringAsFixed(2)}",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            "${_totalPrice.toStringAsFixed(2)} EGP",
+            style: TextStyle(
+                fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
           ),
         ],
       ),
@@ -108,16 +147,18 @@ class _CartPageState extends State<CartPage> {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: ElevatedButton(
-        onPressed: () {
-          Get.toNamed('/checkout', arguments: {
-            'selectedSeats': _selectedSeats,
-            'totalPrice': _totalPrice,
-          });
+        onPressed: () async {
+          requestPayment();
         },
         style: ElevatedButton.styleFrom(
+          backgroundColor: Color(0xffdfa000),
           minimumSize: Size(double.infinity, 50),
         ),
-        child: Text("Proceed to Checkout"),
+        child: Text(
+          "Proceed to Checkout",
+          style: TextStyle(
+              color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }
