@@ -14,13 +14,16 @@ class TicketController extends GetxController {
   var isLoading = false.obs;
 
   // Fetch tickets for the authenticated user
-  Future<void> fetchTickets() async {
+Future<void> fetchTickets() async {
   try {
     isLoading.value = true; // Start loading
     final token = await _tokenStorageService.getToken();
 
     if (token != null) {
       final response = await _apiService.getMyTickets(token);
+
+      // Print the API response for debugging
+      print("API Response: $response");
 
       if (response is List) {
         tickets.value = response; // Update the reactive list

@@ -22,24 +22,40 @@ class MyTicketsPage extends StatelessWidget {
           ),
         ],
       ),
-      body: Obx(() {
-        if (_ticketController.isLoading.value) {
-          return Center(child: CircularProgressIndicator());
-        } else if (_ticketController.tickets.isEmpty) {
-          return Center(child: Text("No tickets found"));
-        } else {
-          return ListView.builder(
-            itemCount: _ticketController.tickets.length,
-            itemBuilder: (context, index) {
-              final ticket = _ticketController.tickets[index];
-              return TicketsCard(
-                seatNumber: ticket['seatNumber'] ?? "N/A",
-                seatCategory: ticket['seatCategory'] ?? "N/A",
-              );
-            },
-          );
-        }
-      }),
+     body: SafeArea(
+  child: Column(
+    children: [
+      Expanded(
+        child: Obx(() {
+          if (_ticketController.isLoading.value) {
+            return Center(child: CircularProgressIndicator());
+          } else if (_ticketController.tickets.isEmpty) {
+            return Center(child: Text("No tickets found"));
+          } else {
+            return RefreshIndicator(
+              onRefresh: () async {
+                await _ticketController.fetchTickets();
+              },
+              child: ListView.builder(
+                physics: AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(8.0),
+                itemCount: _ticketController.tickets.length,
+                itemBuilder: (context, index) {
+                  final ticket = _ticketController.tickets[index];
+                  return TicketsCard(
+                    seatNumber: ticket['seat']['seat_number'] ?? "N/A",
+                    seatCategory: ticket['seat']['category']['name'] ?? "N/A",
+                  );
+                },
+              ),
+            );
+          }
+        }),
+      ),
+    ],
+  ),
+),
+
     );
   }
 }
