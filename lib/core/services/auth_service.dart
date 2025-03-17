@@ -1,17 +1,17 @@
-// ignore_for_file: avoid_print
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:darbelsalib/models/user_model.dart'; // Import the UserModel
 
 class AuthService {
-  static const String baseUrl = 'https://darb-el-salib-f3e9ea716f85.herokuapp.com/api';
+  static const String baseUrl =
+      'https://darb-el-salib-f3e9ea716f85.herokuapp.com/api';
 
   /// **🔹 Register a new user with phone number**
-  Future<UserModel?> registerWithPhone(String password, String fullName, String phone) async {
+  Future<UserModel?> registerWithPhone(
+      String password, String fullName, String phone) async {
     try {
       final url = Uri.parse('$baseUrl/users/register/');
-      print('URL: [$url]');
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -26,8 +26,9 @@ class AuthService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final responseData = jsonDecode(response.body);
         return UserModel(
-          id: responseData['id'].toString(),
-          fullName: fullName,
+          id: responseData['user']['id'].toString(),
+          fullName:
+              "${responseData['user']['first_name']} ${responseData['user']['last_name']}",
           phone: phone,
           token: responseData['token'], // Ensure the API returns a token
         );
@@ -55,8 +56,9 @@ class AuthService {
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
         return UserModel(
-          id: responseData['id'].toString(),
-          fullName: "${responseData['first_name']} ${responseData['last_name']}",
+          id: responseData['user']['id'].toString(),
+          fullName:
+              "${responseData['user']['first_name']} ${responseData['user']['last_name']}",
           phone: phone,
           token: responseData['token'], // Ensure the API returns a token
         );
@@ -65,26 +67,6 @@ class AuthService {
       }
     } catch (e) {
       throw Exception("Login failed: $e");
-    }
-  }
-
-  /// **🔹 Send Phone Verification (if supported by the API)**
-  Future<void> sendPhoneVerification(String phone) async {
-    try {
-      final url = Uri.parse('$baseUrl/users/send-phone-verification/');
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          "phone_number": phone,
-        }),
-      );
-
-      if (response.statusCode != 200) {
-        throw Exception("Failed to send phone verification: ${response.body}");
-      }
-    } catch (e) {
-      throw Exception("Failed to send phone verification: $e");
     }
   }
 }

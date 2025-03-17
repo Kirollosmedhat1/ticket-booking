@@ -7,17 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:web/web.dart' as web;
 
-class TicketDetailsPage extends StatelessWidget {
-  final String eventBanner;
-  final String seatNumber;
-  final String seatCategory;
-
-  TicketDetailsPage({
-    required this.eventBanner,
-    required this.seatNumber,
-    required this.seatCategory,
+class TicketDetailsPage extends StatefulWidget {
+  const TicketDetailsPage({
+    super.key,
   });
 
+  @override
+  State<TicketDetailsPage> createState() => _TicketDetailsPageState();
+}
+
+class _TicketDetailsPageState extends State<TicketDetailsPage> {
   @override
   Widget build(BuildContext context) {
     final GlobalKey _ticketKey = GlobalKey();
@@ -42,7 +41,8 @@ class TicketDetailsPage extends StatelessWidget {
         final web.HTMLAnchorElement anchor = web.HTMLAnchorElement()
           ..href = dataUrl
           ..target = '_blank'
-          ..download = "$seatCategory $seatNumber.png";
+          // ..download = "$seatCategory $seatNumber.png";
+          ..download = "Section1 A1";
         anchor.click(); // Trigger download
       } catch (e) {
         ScaffoldMessenger.of(context)
@@ -74,7 +74,8 @@ class TicketDetailsPage extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius:
                       BorderRadius.circular(ScreenSizeHandler.smaller * 0.028),
-                  child: Image.asset(eventBanner,
+                  child: Image.asset(
+                      "assetsimages/WhatsApp Image 2025-02-24 at 7.35.48 AM 1-3.png",
                       width: ScreenSizeHandler.smaller * 0.894,
                       height: ScreenSizeHandler.smaller * 0.588,
                       fit: BoxFit.cover),
@@ -83,8 +84,8 @@ class TicketDetailsPage extends StatelessWidget {
               RepaintBoundary(
                 key: _ticketKey,
                 child: Ticket(
-                  seatCategory: seatCategory,
-                  seatNumber: seatNumber,
+                  seatCategory: 'First Section',
+                  seatNumber: "A1",
                 ),
               ),
               GestureDetector(

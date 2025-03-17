@@ -25,17 +25,13 @@ class AppRoutes {
     GetPage(name: '/mytickets', page: () => const MyTicketsPage()),
     GetPage(name: '/currentservice', page: () => const CurrentServicePage()),
     GetPage(
-      name: '/selectseat/:sectionNumber', page: () => SelectSeat(),),
+      name: '/selectseat/:sectionNumber',
+      page: () => SelectSeat(),
+    ),
     GetPage(name: '/SelectSection', page: () => const SelectSection()),
     GetPage(name: '/cart', page: () => CartPage()),
     GetPage(name: '/Paymentsuccess', page: () => PaymentSuccessPage()),
     GetPage(name: '/Paymentfaild', page: () => PaymentFailPage()),
-    GetPage(
-        name: '/ticketsdetails',
-        page: () => TicketDetailsPage(
-              eventBanner: "",
-              seatNumber: '',
-              seatCategory: '',
-            )),
+    GetPage(name: '/ticketsdetails', page: () => TicketDetailsPage()),
   ];
 }

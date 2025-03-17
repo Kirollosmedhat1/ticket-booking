@@ -22,8 +22,6 @@ class SeatCard extends StatefulWidget {
 }
 
 class _SeatCardState extends State<SeatCard> {
-  late Timer _timer;
-  final Duration _timeLeft = Duration.zero;
 
 
   // @override
@@ -58,7 +56,6 @@ class _SeatCardState extends State<SeatCard> {
 
   @override
   void dispose() {
-    _timer.cancel();
     super.dispose();
   }
 

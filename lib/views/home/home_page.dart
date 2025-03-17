@@ -1,7 +1,7 @@
 // ignore_for_file: use_key_in_widget_constructors
 
 import 'package:darbelsalib/controllers/auth_controller.dart';
-import 'package:darbelsalib/core/services/database_service.dart';
+import 'package:darbelsalib/core/services/user_storage_service.dart';
 import 'package:darbelsalib/screen_size_handler.dart';
 import 'package:darbelsalib/views/widgets/contact_us_section.dart';
 import 'package:darbelsalib/views/widgets/current_service_poster.dart';
@@ -12,9 +12,35 @@ import 'package:darbelsalib/views/widgets/welcome_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class HomePage extends StatelessWidget {
-  final DatabaseService databaseService = DatabaseService();
+class HomePage extends StatefulWidget {
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final AuthController authController = Get.put(AuthController());
+  final UserStorageService userStorageService = UserStorageService();
+  String userName = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _checkToken();
+    _getUserData();
+  }
+
+  void _checkToken() async {
+    String? token = await authController.getToken();
+    if (token == null) {
+      // Navigate to the login page if no token is found
+      Get.offAllNamed('/login');
+    }
+  }
+
+  void _getUserData() async {
+    authController.userName.value =
+        await userStorageService.getFullName() ?? "";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +103,6 @@ class HomePage extends StatelessWidget {
               ],
             ),
           ),
-        )
-        );
+        ));
   }
 }

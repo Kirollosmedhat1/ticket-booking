@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       initialBinding: AuthBinding(),
-      initialRoute: '/Paymentfaild',
+      initialRoute: '/login',
       getPages: AppRoutes.routes,
       unknownRoute: GetPage(
         name: '/notfound',

@@ -1,3 +1,4 @@
+import 'package:darbelsalib/models/seat_model.dart';
 import 'package:darbelsalib/views/widgets/custom_seat.dart';
 import 'package:flutter/widgets.dart';
 
@@ -5,13 +6,15 @@ class SeatBuilder extends StatelessWidget {
   const SeatBuilder({
     super.key,
     required this.sectionNumber,
-    required this.seatStatus,
+    required this.seats,
+    required this.price,
     required this.onSeatSelected,
   });
 
   final int sectionNumber;
-  final Map<String, String> seatStatus;
+  final Map<String, Seat> seats;
   final Function(String) onSeatSelected;
+  final int price;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +29,7 @@ class SeatBuilder extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (sectionNumber == 1)
+          if (sectionNumber == 2)
             for (int row = 0; row < 6; row++)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -44,31 +47,32 @@ class SeatBuilder extends StatelessWidget {
                     children: [
                       for (int seat = 0; seat <= (row + 15); seat++)
                         _buildSeat(
-                          seat ==
-                                  (row <= 1
-                                      ? 8
-                                      : row == 2 || row == 3
-                                          ? 9
-                                          : 10)
-                              ? ""
-                              : "${String.fromCharCode(65 + row)}${(seat < (row < 2 ? 8 : row < 4 ? 9 : 10) ? seat + 1 : seat) * 2}",
-                          seat !=
-                                  (row <= 1
-                                      ? 8
-                                      : row == 2 || row == 3
-                                          ? 9
-                                          : 10)
-                              ? seatStatus[
-                                      "${String.fromCharCode(65 + row)}${(seat < (row < 2 ? 8 : row < 4 ? 9 : 10) ? seat + 1 : seat) * 2}"] ??
-                                  "available"
-                              : "empty",
-                          onSeatSelected,
-                        ),
+                            seat ==
+                                    (row <= 1
+                                        ? 8
+                                        : row == 2 || row == 3
+                                            ? 9
+                                            : 10)
+                                ? ""
+                                : "${String.fromCharCode(65 + row)}${(seat < (row < 2 ? 8 : row < 4 ? 9 : 10) ? seat + 1 : seat) * 2}",
+                            seat !=
+                                    (row <= 1
+                                        ? 8
+                                        : row == 2 || row == 3
+                                            ? 9
+                                            : 10)
+                                ? seats["${String.fromCharCode(65 + row)}${(seat < (row < 2 ? 8 : row < 4 ? 9 : 10) ? seat + 1 : seat) * 2}"]
+                                        ?.status ??
+                                    "available"
+                                : "empty",
+                            onSeatSelected,
+                            price,
+                            seats),
                     ].reversed.toList(), // Reverse the order of the seats
                   ),
                 ),
               ),
-          if (sectionNumber == 2)
+          if (sectionNumber == 1)
             for (int row = 0; row < 6; row++)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -91,31 +95,32 @@ class SeatBuilder extends StatelessWidget {
                                       : 20);
                           seat++)
                         _buildSeat(
-                          seat ==
-                                  (row == 0 || row == 1
-                                      ? 8
-                                      : row == 2 || row == 3
-                                          ? 9
-                                          : 10)
-                              ? ""
-                              : "${String.fromCharCode(65 + row)}${(seat < (row < 2 ? 8 : row < 4 ? 9 : 10) ? seat + 1 : seat) * 2 - 1}",
-                          seat !=
-                                  (row == 0 || row == 1
-                                      ? 8
-                                      : row == 2 || row == 3
-                                          ? 9
-                                          : 10)
-                              ? seatStatus[
-                                      "${String.fromCharCode(65 + row)}${(seat < (row < 2 ? 8 : row < 4 ? 9 : 10) ? seat + 1 : seat) * 2 - 1}"] ??
-                                  "available"
-                              : "empty",
-                          onSeatSelected,
-                        ),
+                            seat ==
+                                    (row == 0 || row == 1
+                                        ? 8
+                                        : row == 2 || row == 3
+                                            ? 9
+                                            : 10)
+                                ? ""
+                                : "${String.fromCharCode(65 + row)}${(seat < (row < 2 ? 8 : row < 4 ? 9 : 10) ? seat + 1 : seat) * 2 - 1}",
+                            seat !=
+                                    (row == 0 || row == 1
+                                        ? 8
+                                        : row == 2 || row == 3
+                                            ? 9
+                                            : 10)
+                                ? seats["${String.fromCharCode(65 + row)}${(seat < (row < 2 ? 8 : row < 4 ? 9 : 10) ? seat + 1 : seat) * 2 - 1}"]
+                                        ?.status ??
+                                    "available"
+                                : "empty",
+                            onSeatSelected,
+                            price,
+                            seats),
                     ], // Do not reverse the order of the seats
                   ),
                 ),
               ),
-          if (sectionNumber == 3)
+          if (sectionNumber == 4)
             for (int row = 0; row < 6; row++)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -142,37 +147,38 @@ class SeatBuilder extends StatelessWidget {
                                       : 28);
                           seat++)
                         _buildSeat(
-                          seat ==
-                                  (row == 0 || row == 1
-                                      ? 11
-                                      : row == 2
-                                          ? 12
-                                          : row == 3
-                                              ? 12
-                                              : 13)
-                              ? ""
-                              : "${String.fromCharCode(71 + row)}${(seat < (row == 0 || row == 1 ? 11 : row == 2 ? 12 : row == 3 ? 12 : 13) ? seat + 1 : seat) * 2}",
-                          seat !=
-                                  (row == 0 || row == 1
-                                      ? 11
-                                      : row == 2
-                                          ? 12
-                                          : row == 3
-                                              ? 12
-                                              : 13)
-                              ? seatStatus[
-                                      "${String.fromCharCode(71 + row)}${(seat < (row == 0 || row == 1 ? 11 : row == 2 ? 12 : row == 3 ? 12 : 13) ? seat + 1 : seat) * 2}"] ??
-                                  "available"
-                              : "empty",
-                          onSeatSelected,
-                        ),
+                            seat ==
+                                    (row == 0 || row == 1
+                                        ? 11
+                                        : row == 2
+                                            ? 12
+                                            : row == 3
+                                                ? 12
+                                                : 13)
+                                ? ""
+                                : "${String.fromCharCode(71 + row)}${(seat < (row == 0 || row == 1 ? 11 : row == 2 ? 12 : row == 3 ? 12 : 13) ? seat + 1 : seat) * 2}",
+                            seat !=
+                                    (row == 0 || row == 1
+                                        ? 11
+                                        : row == 2
+                                            ? 12
+                                            : row == 3
+                                                ? 12
+                                                : 13)
+                                ? seats["${String.fromCharCode(71 + row)}${(seat < (row == 0 || row == 1 ? 11 : row == 2 ? 12 : row == 3 ? 12 : 13) ? seat + 1 : seat) * 2}"]
+                                        ?.status ??
+                                    "available"
+                                : "empty",
+                            onSeatSelected,
+                            price,
+                            seats),
                     ]
                         .reversed
                         .toList(), // Do not reverse the order of the seats
                   ),
                 ),
               ),
-          if (sectionNumber == 4)
+          if (sectionNumber == 3)
             for (int row = 0; row < 6; row++)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -196,31 +202,32 @@ class SeatBuilder extends StatelessWidget {
                                           : 28);
                           seat++)
                         _buildSeat(
-                          seat ==
-                                  (row == 0 || row == 1
-                                      ? 11
-                                      : row == 2 || row == 3
-                                          ? 12
-                                          : 13)
-                              ? ""
-                              : "${String.fromCharCode(71 + row)}${(seat < (row == 0 || row == 1 ? 11 : row == 2 || row == 3 ? 12 : 13) ? seat + 1 : seat) * 2 - 1}",
-                          seat !=
-                                  (row == 0 || row == 1
-                                      ? 11
-                                      : row == 2 || row == 3
-                                          ? 12
-                                          : 13)
-                              ? seatStatus[
-                                      "${String.fromCharCode(71 + row)}${(seat < (row == 0 || row == 1 ? 11 : row == 2 || row == 3 ? 12 : 13) ? seat + 1 : seat) * 2 - 1}"] ??
-                                  "available"
-                              : "empty",
-                          onSeatSelected,
-                        ),
+                            seat ==
+                                    (row == 0 || row == 1
+                                        ? 11
+                                        : row == 2 || row == 3
+                                            ? 12
+                                            : 13)
+                                ? ""
+                                : "${String.fromCharCode(71 + row)}${(seat < (row == 0 || row == 1 ? 11 : row == 2 || row == 3 ? 12 : 13) ? seat + 1 : seat) * 2 - 1}",
+                            seat !=
+                                    (row == 0 || row == 1
+                                        ? 11
+                                        : row == 2 || row == 3
+                                            ? 12
+                                            : 13)
+                                ? seats["${String.fromCharCode(71 + row)}${(seat < (row == 0 || row == 1 ? 11 : row == 2 || row == 3 ? 12 : 13) ? seat + 1 : seat) * 2 - 1}"]
+                                        ?.status ??
+                                    "available"
+                                : "empty",
+                            onSeatSelected,
+                            price,
+                            seats),
                     ],
                   ),
                 ),
               ),
-          if (sectionNumber == 5)
+          if (sectionNumber == 6)
             for (int row = 0; row < 8; row++)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -252,34 +259,35 @@ class SeatBuilder extends StatelessWidget {
                                                 : 20);
                         seat++)
                       _buildSeat(
-                        seat ==
-                                (row == 0 || row == 1 || row == 3
-                                    ? 10
-                                    : row == 2 || row == 4 || row == 5
-                                        ? 11
-                                        : row == 6
-                                            ? 12
-                                            : 11)
-                            ? ""
-                            : "${String.fromCharCode(77 + row)}${(seat < (row == 0 || row == 1 || row == 3 ? 10 : row == 2 || row == 4 || row == 5 ? 11 : row == 6 ? 12 : 11) ? seat + 1 : seat) * 2}",
-                        seat !=
-                                (row == 0 || row == 1 || row == 3
-                                    ? 10
-                                    : row == 2 || row == 4 || row == 5
-                                        ? 11
-                                        : row == 6
-                                            ? 12
-                                            : 11)
-                            ? seatStatus[
-                                    "${String.fromCharCode(77 + row)}${(seat < (row == 0 || row == 1 || row == 3 ? 10 : row == 2 || row == 4 || row == 5 ? 11 : row == 6 ? 12 : 11) ? seat + 1 : seat) * 2}"] ??
-                                "available"
-                            : "empty",
-                        onSeatSelected,
-                      ),
+                          seat ==
+                                  (row == 0 || row == 1 || row == 3
+                                      ? 10
+                                      : row == 2 || row == 4 || row == 5
+                                          ? 11
+                                          : row == 6
+                                              ? 12
+                                              : 11)
+                              ? ""
+                              : "${String.fromCharCode(77 + row)}${(seat < (row == 0 || row == 1 || row == 3 ? 10 : row == 2 || row == 4 || row == 5 ? 11 : row == 6 ? 12 : 11) ? seat + 1 : seat) * 2}",
+                          seat !=
+                                  (row == 0 || row == 1 || row == 3
+                                      ? 10
+                                      : row == 2 || row == 4 || row == 5
+                                          ? 11
+                                          : row == 6
+                                              ? 12
+                                              : 11)
+                              ? seats["${String.fromCharCode(77 + row)}${(seat < (row == 0 || row == 1 || row == 3 ? 10 : row == 2 || row == 4 || row == 5 ? 11 : row == 6 ? 12 : 11) ? seat + 1 : seat) * 2}"]
+                                      ?.status ??
+                                  "available"
+                              : "empty",
+                          onSeatSelected,
+                          price,
+                          seats),
                   ].reversed.toList()),
                 ),
               ),
-          if (sectionNumber == 6)
+          if (sectionNumber == 5)
             for (int row = 0; row < 8; row++)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -309,30 +317,31 @@ class SeatBuilder extends StatelessWidget {
                                                   : 21);
                           seat++)
                         _buildSeat(
-                          seat ==
-                                  (row == 0
-                                      ? 8
-                                      : row == 1 || row == 2 || row == 3
-                                          ? 10
-                                          : row == 4 || row == 5 || row == 7
-                                              ? 11
-                                              : 12)
-                              ? ""
-                              : "${String.fromCharCode(77 + row)}${(seat < (row == 0 ? 8 : row == 1 || row == 2 || row == 3 ? 10 : row == 4 || row == 5 || row == 7 ? 11 : 12) ? seat + 1 : seat) * 2 - 1}",
-                          seat !=
-                                  (row == 0
-                                      ? 8
-                                      : row == 1 || row == 2 || row == 3
-                                          ? 10
-                                          : row == 4 || row == 5 || row == 7
-                                              ? 11
-                                              : 12)
-                              ? seatStatus[
-                                      "${String.fromCharCode(77 + row)}${(seat < (row == 0 ? 8 : row == 1 || row == 2 || row == 3 ? 10 : row == 4 || row == 5 || row == 7 ? 11 : 12) ? seat + 1 : seat) * 2 - 1}"] ??
-                                  "available"
-                              : "empty",
-                          onSeatSelected,
-                        ),
+                            seat ==
+                                    (row == 0
+                                        ? 8
+                                        : row == 1 || row == 2 || row == 3
+                                            ? 10
+                                            : row == 4 || row == 5 || row == 7
+                                                ? 11
+                                                : 12)
+                                ? ""
+                                : "${String.fromCharCode(77 + row)}${(seat < (row == 0 ? 8 : row == 1 || row == 2 || row == 3 ? 10 : row == 4 || row == 5 || row == 7 ? 11 : 12) ? seat + 1 : seat) * 2 - 1}",
+                            seat !=
+                                    (row == 0
+                                        ? 8
+                                        : row == 1 || row == 2 || row == 3
+                                            ? 10
+                                            : row == 4 || row == 5 || row == 7
+                                                ? 11
+                                                : 12)
+                                ? seats["${String.fromCharCode(77 + row)}${(seat < (row == 0 ? 8 : row == 1 || row == 2 || row == 3 ? 10 : row == 4 || row == 5 || row == 7 ? 11 : 12) ? seat + 1 : seat) * 2 - 1}"]
+                                        ?.status ??
+                                    "available"
+                                : "empty",
+                            onSeatSelected,
+                            price,
+                            seats),
                     ],
                   ),
                 ),
@@ -344,13 +353,15 @@ class SeatBuilder extends StatelessWidget {
 }
 
 /// **Build Individual Seat Widget**
-Widget _buildSeat(
-    String seatNumber, String status, Function(String) onSeatSelected) {
-  // String status = ticketController.seatsData[seatNumber] ?? "available";
+Widget _buildSeat(String seatNumber, String status,
+    Function(String) onSeatSelected, int price, Map<String, Seat> seats) {
+  seats[seatNumber]?.status = status;
+
 
   return CustomSeat(
-    seatNumber: seatNumber,
-    status: status,
+    seat: status == "empty"
+        ? Seat(id: "", seatNumber: "", status: "empty", price: 0)
+        : seats[seatNumber]!,
     onSeatSelected: onSeatSelected,
   );
 }

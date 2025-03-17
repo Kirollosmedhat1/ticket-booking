@@ -5,7 +5,8 @@ class TicketsCard extends StatelessWidget {
   final String seatNumber;
   final String seatCategory;
 
-  const TicketsCard({super.key, 
+  const TicketsCard({
+    super.key,
     required this.seatNumber,
     required this.seatCategory,
     DateTime? expiryTime,
@@ -21,8 +22,8 @@ class TicketsCard extends StatelessWidget {
         padding: EdgeInsets.all(screenWidth * 0.03),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(screenWidth * 0.05),
-            border:
-                Border.all(color: Color(0xffFCC434), width: screenWidth * 0.005)),
+            border: Border.all(
+                color: Color(0xffFCC434), width: screenWidth * 0.005)),
         margin: EdgeInsets.fromLTRB(
             screenWidth * 0.04, screenWidth * 0.02, screenWidth * 0.04, 0),
         height: screenWidth * 0.25,
@@ -38,7 +39,9 @@ class TicketsCard extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(width: 40,),
+            SizedBox(
+              width: 40,
+            ),
             RichText(
               text: TextSpan(
                   style: TextStyle(
@@ -49,8 +52,7 @@ class TicketsCard extends StatelessWidget {
                   children: [
                     TextSpan(text: "Seat: $seatNumber \n"),
                     TextSpan(
-                        text:
-                            "Section: $seatCategory",
+                        text: "Section: $seatCategory",
                         style: TextStyle(
                           fontSize: screenWidth * 0.04,
                           fontWeight: FontWeight.w400,

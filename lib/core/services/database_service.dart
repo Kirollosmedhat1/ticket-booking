@@ -1,4 +1,3 @@
-// ignore_for_file: avoid_print, unused_element
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';

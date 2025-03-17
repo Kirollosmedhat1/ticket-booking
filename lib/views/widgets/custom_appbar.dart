@@ -23,7 +23,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       actions: [
-         Padding(
+        Padding(
           padding: const EdgeInsets.only(right: 12.0),
           child: GestureDetector(
             onTap: () => Get.toNamed("/mytickets"),
@@ -48,7 +48,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         Padding(
           padding: const EdgeInsets.only(right: 12.0),
           child: GestureDetector(
-            onTap:() => Get.toNamed("/cart"),
+            onTap: () => Get.toNamed("/cart"),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

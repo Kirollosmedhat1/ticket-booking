@@ -79,7 +79,6 @@ class _LoginPageState extends State<LoginPage> {
                           CustomTextField(
                             controller: passwordController,
                             labelText: "Password",
-                            validator: Validators.validatePassword,
                             obscureText: true,
                           ),
                           SizedBox(height: screenHeight * 0.1),

@@ -1,13 +1,13 @@
+import 'package:darbelsalib/models/seat_model.dart';
 import 'package:flutter/material.dart';
+// ...existing code...
 
 class CustomSeat extends StatelessWidget {
-  final String seatNumber;
-  final String status;
+  final Seat seat;
   final Function(String) onSeatSelected;
 
   CustomSeat({
-    required this.seatNumber,
-    required this.status,
+    required this.seat,
     required this.onSeatSelected,
   });
 
@@ -17,7 +17,7 @@ class CustomSeat extends StatelessWidget {
     bool isDisabled = false;
     Color textColor = Colors.white;
 
-    switch (status) {
+    switch (seat.status) {
       case "empty":
         seatColor = Colors.black;
         isDisabled = true;
@@ -25,7 +25,7 @@ class CustomSeat extends StatelessWidget {
       case "available":
         seatColor = Color(0xff1c1c1c);
         break;
-      case "hold":
+      case "reserved":
         seatColor = Colors.red;
         isDisabled = true;
         textColor = Colors.white; // Better readability
@@ -39,11 +39,10 @@ class CustomSeat extends StatelessWidget {
         break;
       default:
         seatColor = Colors.black;
-        print("default");
     }
 
     return GestureDetector(
-      onTap: isDisabled ? null : () => onSeatSelected(seatNumber),
+      onTap: isDisabled ? null : () => onSeatSelected(seat.seatNumber),
       child: Container(
         margin: EdgeInsets.all(MediaQuery.of(context).size.width * 0.001),
         width: 40,
@@ -60,7 +59,7 @@ class CustomSeat extends StatelessWidget {
         ),
         alignment: Alignment.center,
         child: Text(
-          seatNumber,
+          seat.seatNumber,
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.bold,

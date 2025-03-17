@@ -1,16 +1,14 @@
-// ignore_for_file: unused_local_variable, use_key_in_widget_constructors, avoid_print
+import 'dart:async';
 
+import 'package:darbelsalib/controllers/auth_controller.dart';
+import 'package:darbelsalib/core/services/api_services.dart';
+import 'package:darbelsalib/core/services/token_storage_service.dart';
+import 'package:darbelsalib/models/seat_model.dart';
 import 'package:darbelsalib/views/widgets/custom_appbar.dart';
 import 'package:darbelsalib/views/widgets/seat_builder.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-bool isLoggedIn() {
-  final user = FirebaseAuth.instance.currentUser;
-  return user != null;
-}
 
 class SelectSeat extends StatefulWidget {
   @override
@@ -19,27 +17,68 @@ class SelectSeat extends StatefulWidget {
 
 class _SelectSeatState extends State<SelectSeat> {
   late final String section;
-  final Map<String, String> seatStatus = {};
   int totalPrice = 0;
   int selectedSeatsCount = 0;
+  final Map<String, Seat> seats = {};
+  final Map<String, Seat> selectedSeats = {};
+  final AuthController _authController = Get.put(AuthController());
+  int seatPrice = 0;
+  final ApiService _apiService = ApiService();
+  final TokenStorageService _tokenStorageService = TokenStorageService();
+  final Completer<void> _initialLoadCompleter = Completer<void>();
 
   @override
   void initState() {
     super.initState();
-    section = Get.parameters['sectionNumber'] ?? '1'; // ✅ Null check here
+    section = Get.parameters['sectionNumber'] ?? '1';
     listenToSeatsUpdates(section);
+    getCart();
+  }
+
+  Future<bool> isLoggedIn() async {
+    String? token = await _authController.getToken();
+    return token != null;
+  }
+
+  void addToCart(Seat seat) async {
+    String? token = await _tokenStorageService.getToken();
+    _apiService.addToCart(token!, {"seat_id": seat.id});
+  }
+
+  void removeFromCart(Seat seat) async {
+    String? token = await _tokenStorageService.getToken();
+    await _apiService.removeFromCart(token!, seat.id);
+  }
+
+  void getCart() async {
+    String? token = await _tokenStorageService.getToken();
+    var response = await _apiService.getUserCart(token!);
+    List<dynamic> items = response['items'];
+    setState(() {
+      for (var item in items) {
+        String seatNumber = item['seat']['seat_number'];
+        if (seats.containsKey(seatNumber)) {
+          seats[seatNumber]?.status = 'selected';
+          selectedSeats[seatNumber] = seats[seatNumber]!;
+        }
+      }
+    });
   }
 
   void _onSeatSelected(String seatNumber) {
     setState(() {
-      if (seatStatus[seatNumber] == "selected") {
-        seatStatus[seatNumber] = "available";
-        totalPrice -= 80;
+      if (seats[seatNumber]?.status == "selected") {
+        seats[seatNumber]?.status = "available";
+        totalPrice -= seats[seatNumber]?.price ?? 0;
         selectedSeatsCount--;
+        selectedSeats.remove(seatNumber);
+        removeFromCart(seats[seatNumber]!);
       } else if (selectedSeatsCount < 5) {
-        seatStatus[seatNumber] = "selected";
-        totalPrice += 80;
+        seats[seatNumber]?.status = "selected";
+        totalPrice += seats[seatNumber]?.price ?? 0;
         selectedSeatsCount++;
+        selectedSeats[seatNumber] = seats[seatNumber]!;
+        addToCart(seats[seatNumber]!);
       } else {
         showDialog(
           context: context,
@@ -94,21 +133,8 @@ class _SelectSeatState extends State<SelectSeat> {
     }
   }
 
-  void listenToSeatsUpdates(String sectionName) {
+  Future<void> listenToSeatsUpdates(String sectionName) async {
     // Swap sections for Firestore structure consistency
-    if (sectionName == '1') {
-      sectionName = '2';
-    } else if (sectionName == '2') {
-      sectionName = '1';
-    } else if (sectionName == '3') {
-      sectionName = '4';
-    } else if (sectionName == '4') {
-      sectionName = '3';
-    } else if (sectionName == '5') {
-      sectionName = '6';
-    } else if (sectionName == '6') {
-      sectionName = '5';
-    }
 
     FirebaseFirestore.instance
         .collection('seats')
@@ -116,38 +142,60 @@ class _SelectSeatState extends State<SelectSeat> {
         .snapshots()
         .listen((DocumentSnapshot snapshot) {
       if (!snapshot.exists || snapshot.data() == null) {
-        print('No seat data found');
+        if (!_initialLoadCompleter.isCompleted) {
+          _initialLoadCompleter.complete();
+        }
         return;
       }
 
       Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
       if (data == null || !data.containsKey('section$sectionName')) {
-        print('Section $sectionName not found');
+        if (!_initialLoadCompleter.isCompleted) {
+          _initialLoadCompleter.complete();
+        }
         return;
       }
 
       Map<String, dynamic>? sectionData =
           data['section$sectionName'] as Map<String, dynamic>?;
       if (sectionData == null || !sectionData.containsKey('seat_names')) {
-        print('No valid seat data in section $sectionName');
+        if (!_initialLoadCompleter.isCompleted) {
+          _initialLoadCompleter.complete();
+        }
         return;
       }
 
       Map<String, dynamic>? seatNames =
           sectionData['seat_names'] as Map<String, dynamic>?;
+      seatPrice = sectionData['price'] ?? 0;
       if (seatNames == null) {
-        print('No seat names found in section $sectionName');
+        if (!_initialLoadCompleter.isCompleted) {
+          _initialLoadCompleter.complete();
+        }
         return;
       }
 
       seatNames.forEach((seatNameKey, seatDetails) {
         if (seatDetails is Map<String, dynamic>) {
-          String status = seatDetails['status'] ?? 'unknown';
-          setState(() {
-            seatStatus[seatNameKey] = status;
-          });
+          Seat seat = Seat.fromMap(seatDetails, seatNameKey);
+          if (mounted) {
+            setState(() {
+              seats[seatNameKey] = seat;
+            });
+          }
         }
       });
+
+      //if selected seats are found in seats change its status to selected
+      selectedSeats.forEach((key, value) {
+        if (seats.containsKey(key)) {
+          seats[key]?.status = "selected";
+        }
+      });
+
+      if (!_initialLoadCompleter.isCompleted) {
+        _initialLoadCompleter.complete();
+      }
     });
   }
 
@@ -159,121 +207,137 @@ class _SelectSeatState extends State<SelectSeat> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: CustomAppBar(title: "Select Seat"),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 30),
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    if (sectionNumber == 1 || sectionNumber == 2)
-                      Image.asset(
-                        "assets/images/screen.png",
-                      ),
-                    Column(
+      body: FutureBuilder<void>(
+        future: _initialLoadCompleter.future,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (seats.isEmpty ||
+              seatPrice == 0 ||
+              seats == null ||
+              seatPrice == null) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 30),
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.arrow_upward,
-                          size: 30,
-                          color: Colors.white,
-                        ),
-                        Text(
-                          neighboringSections[0],
-                          style: TextStyle(
+                        if (sectionNumber == 1 || sectionNumber == 2)
+                          Image.asset(
+                            "assets/images/screen.png",
+                          ),
+                        Column(
+                          children: [
+                            Icon(
+                              Icons.arrow_upward,
+                              size: 30,
                               color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w700),
+                            ),
+                            Text(
+                              neighboringSections[0],
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    SizedBox(height: 30),
-                    Text(
-                      "You are currently in section $sectionNumber",
-                      style: TextStyle(
-                          color: Color(0xffdfa000),
-                          fontSize: 22,
-                          fontWeight: FontWeight.w500),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: SeatBuilder(
-                        sectionNumber: sectionNumber,
-                        seatStatus: seatStatus,
-                        onSeatSelected: _onSeatSelected,
-                      ),
-                    ),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: const [
-                          SeatIndicator(
-                            color: Color(0xff1c1c1c),
-                            description: "Available",
-                          ),
-                          SeatIndicator(
-                            description: "Reserved",
-                            color: Color(0xffdfa000),
-                          ),
-                          SeatIndicator(
-                            description: "Selected",
-                            color: Color(0xff7cc3f6),
-                          ),
-                          SeatIndicator(
-                            description: "On Hold",
-                            color: Colors.red,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            if (selectedSeatsCount > 0) ...[
-              Divider(color: Colors.grey, thickness: 0.5),
-              Padding(
-                padding:
-                    EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Total",
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 16)),
+                        SizedBox(height: 30),
                         Text(
-                          "$totalPrice EGP",
+                          "You are currently in section $sectionNumber",
                           style: TextStyle(
                               color: Color(0xffdfa000),
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold),
+                              fontSize: 22,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: SeatBuilder(
+                            sectionNumber: sectionNumber,
+                            price: seatPrice,
+                            seats: seats,
+                            onSeatSelected: _onSeatSelected,
+                          ),
+                        ),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: const [
+                              SeatIndicator(
+                                color: Color(0xff1c1c1c),
+                                description: "Available",
+                              ),
+                              SeatIndicator(
+                                description: "Reserved",
+                                color: Color(0xffdfa000),
+                              ),
+                              SeatIndicator(
+                                description: "Selected",
+                                color: Color(0xff7cc3f6),
+                              ),
+                              SeatIndicator(
+                                description: "On Hold",
+                                color: Colors.red,
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
-                    CustomButton(
-                      text: "Book",
-                      width: 191,
-                      height: 56,
-                      color: Color(0xffdfa000),
-                      onPressed: () {
-                        if (!isLoggedIn()) {
-                          Get.toNamed("/register");
-                        } else {
-                          Get.toNamed("/payment");
-                        }
-                      },
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
-          ],
-        ),
+                if (selectedSeatsCount > 0) ...[
+                  Divider(color: Colors.grey, thickness: 0.5),
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: 20, right: 20, top: 30, bottom: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Total",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 16)),
+                            Text(
+                              "$totalPrice EGP",
+                              style: TextStyle(
+                                  color: Color(0xffdfa000),
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        CustomButton(
+                          text: "Book",
+                          width: 191,
+                          height: 56,
+                          color: Color(0xffdfa000),
+                          onPressed: () async {
+                            if (!await isLoggedIn()) {
+                              Get.toNamed("/register");
+                            } else {
+                              Get.toNamed("/payment");
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          );
+        },
       ),
     );
   }
