@@ -1,6 +1,7 @@
 import 'package:darbelsalib/views/auth/welcom_page.dart';
 import 'package:darbelsalib/views/home/current_service_page.dart';
 import 'package:darbelsalib/views/payment/checkout_page.dart';
+import 'package:darbelsalib/views/payment/payment_failed_page.dart';
 import 'package:darbelsalib/views/payment/payment_success_page.dart';
 import 'package:darbelsalib/views/tickets/cart.dart';
 import 'package:darbelsalib/views/tickets/my_tickets_page.dart';
@@ -28,6 +29,7 @@ class AppRoutes {
     GetPage(name: '/SelectSection', page: () => const SelectSection()),
     GetPage(name: '/cart', page: () => CartPage()),
     GetPage(name: '/Paymentsuccess', page: () => PaymentSuccessPage()),
+    GetPage(name: '/Paymentfaild', page: () => PaymentFailPage()),
     GetPage(
         name: '/ticketsdetails',
         page: () => TicketDetailsPage(
