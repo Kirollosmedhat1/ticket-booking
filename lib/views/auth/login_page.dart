@@ -1,6 +1,7 @@
 import 'package:darbelsalib/controllers/auth_controller.dart';
 import 'package:darbelsalib/core/utils/validators.dart';
 import 'package:darbelsalib/views/widgets/custom_button.dart';
+import 'package:darbelsalib/views/widgets/custom_text_button.dart';
 import 'package:darbelsalib/views/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -103,8 +104,8 @@ class _LoginPageState extends State<LoginPage> {
                       },
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height / 60),
-                    // TextButton(
-                    //   onPressed: () async {
+                    // CustomTextButton(text: "Forgot Password?" , 
+                    // onPressed: () async {
                     //     String? emailError = Validators.validateEmail(
                     //         emailController.text.trim());
                     //     if (emailError == null) {
@@ -116,29 +117,9 @@ class _LoginPageState extends State<LoginPage> {
                     //     } else {
                     //       Get.snackbar("Error", emailError,
                     //           backgroundColor: Colors.red);
-                    //     }
-                    //   },
-                    //   child: Text(
-                    //     "Forgot Password?",
-                    //     style: TextStyle(
-                    //       fontSize: screenWidth * 0.033,
-                    //       fontWeight: FontWeight.w700,
-                    //       color: Colors.white,
-                    //     ),
-                    //   ),
-                    // ),
+                    //     }}),
                     SizedBox(height: MediaQuery.of(context).size.height / 60),
-                    TextButton(
-                      onPressed: () => Get.offNamed('/register'),
-                      child: Text(
-                        "Don't have an account? Register",
-                        style: TextStyle(
-                          fontSize: screenWidth * 0.033,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
+                    CustomTextButton(text: "Don't have an account? Register", onPressed: () => Get.offNamed('/register')),
                   ],
                 ),
               ),

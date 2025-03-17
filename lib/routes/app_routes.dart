@@ -1,5 +1,7 @@
 import 'package:darbelsalib/views/auth/welcom_page.dart';
 import 'package:darbelsalib/views/home/current_service_page.dart';
+import 'package:darbelsalib/views/payment/checkout_page.dart';
+import 'package:darbelsalib/views/payment/payment_success_page.dart';
 import 'package:darbelsalib/views/tickets/cart.dart';
 import 'package:darbelsalib/views/tickets/my_tickets_page.dart';
 import 'package:darbelsalib/views/tickets/select_section.dart';
@@ -15,6 +17,7 @@ class AppRoutes {
     GetPage(name: '/register', page: () => RegisterPage()),
     GetPage(name: '/home', page: () => HomePage()),
     GetPage(name: '/selectsection', page: () => const SelectSection()),
+    GetPage(name: '/checkout', page: () =>  CheckoutPage()),
     GetPage(name: '/cart', page: () => CartPage()),
     GetPage(name: '/selectsection', page: () => const SelectSection()),
     GetPage(name: '/welcome', page: () => const WelcomPage()),
@@ -22,5 +25,8 @@ class AppRoutes {
     GetPage(name: '/currentservice', page: () => const CurrentServicePage()),
     GetPage(name: '/SelectSection', page: () => const SelectSection()),
     GetPage(name: '/cart', page: () => CartPage()), 
+    GetPage(name: '/Paymentsuccess', page: () =>  PaymentSuccessPage()), 
+    GetPage(name: '/ticketsdetails', page: () =>  TicketDetailsPage(eventBanner:"" , seatNumber: '', seatCategory: '',)),
+
   ];
 }

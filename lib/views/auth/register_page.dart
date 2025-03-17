@@ -1,6 +1,7 @@
 import 'package:darbelsalib/controllers/auth_controller.dart';
 import 'package:darbelsalib/core/utils/validators.dart';
 import 'package:darbelsalib/views/widgets/custom_button.dart';
+import 'package:darbelsalib/views/widgets/custom_text_button.dart';
 import 'package:darbelsalib/views/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -38,7 +39,6 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       ),
       body: Container(
-        
         width: screenWidth,
         height: screenhight,
         decoration: BoxDecoration(
@@ -110,33 +110,19 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                     SizedBox(height: screenhight / 60),
-                    Obx(() => TextButton(
-                          onPressed: authController.canResendEmail.value
-                              ? authController.resendVerificationEmail
-                              : null,
-                          child: Text(
+                    Obx(() => CustomTextButton(
+                          onPressed: () {
                             authController.canResendEmail.value
-                                ? "Resend Verification Email"
-                                : "Wait 1 min to resend",
-                            style: TextStyle(
-                              fontSize: screenWidth * 0.033,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white,
-                            ),
-                          ),
+                                ? authController.resendVerificationEmail
+                                : null;
+                                },
+                          text: authController.canResendEmail.value
+                              ? "Resend Verification Email"
+                              : "Wait 1 min to resend",
                         )),
                     SizedBox(height: screenhight / 60),
-                    TextButton(
-                      onPressed: () => Get.offNamed('/login'),
-                      child: Text(
-                        "Already have an account? Login",
-                        style: TextStyle(
-                          fontSize: screenWidth * 0.033,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
+                    CustomTextButton(text: "Already have an account? Login", onPressed: () => Get.offNamed('/login'))
+                    
                   ],
                 ),
               ),

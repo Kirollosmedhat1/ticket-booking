@@ -1,4 +1,4 @@
-import 'package:darbelsalib/screen_size_handler.dart';
+import 'package:darbelsalib/views/widgets/custom_appbar.dart';
 import 'package:darbelsalib/views/widgets/seat_builder.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -161,18 +161,7 @@ class _SelectSeatState extends State<SelectSeat> {
 
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.black,
-        title: Text(
-          'Select Seat',
-          style: TextStyle(
-              fontSize: ScreenSizeHandler.smaller * 0.065,
-              color: Colors.white,
-              fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-      ),
+      appBar: CustomAppBar(title: "Select Seat"),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 30),
         child: Column(

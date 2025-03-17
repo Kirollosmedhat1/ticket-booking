@@ -101,7 +101,7 @@ class _SeatCardState extends State<SeatCard> {
                   TextSpan(text: "Seat: ${widget.seatNumber} \n"),
                   TextSpan(
                       text:
-                          "Category: ${widget.seatCategory} \nPrice:  ${widget.seatPrice.toStringAsFixed(2)} ",
+                          "Section: ${widget.seatCategory} \nPrice:  ${widget.seatPrice.toStringAsFixed(2)} ",
                       style: TextStyle(
                         fontSize: screenWidth * 0.04,
                         fontWeight: FontWeight.w400,

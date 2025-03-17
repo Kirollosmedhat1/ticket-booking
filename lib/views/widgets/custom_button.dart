@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
@@ -12,35 +14,43 @@ class CustomButton extends StatelessWidget {
     Key? key,
     required this.text,
     required this.onPressed,
-    this.isLoading = false, required this.textcolor, required this.bordercolor, required this.backgroundcolor,
+    this.isLoading = false,
+    required this.textcolor,
+    required this.bordercolor,
+    required this.backgroundcolor,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    return SizedBox(
-      width: screenWidth * 1,
-      height: screenWidth * 0.13,
+
+    return ConstrainedBox(
+      constraints: const BoxConstraints(
+        maxWidth:  400,
+        maxHeight: 60,
+      ),
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
+          minimumSize: Size(screenWidth * 1, screenWidth * 0.13),
           backgroundColor: backgroundcolor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(screenWidth * 0.4),
             side: BorderSide(
               color: bordercolor,
-              width: screenWidth * 0.005
-            )
+              width: screenWidth * 0.005,
+            ),
           ),
         ),
         child: isLoading
-            ? CircularProgressIndicator(color: Colors.blueGrey)
-            : Text(
+            ? const CircularProgressIndicator(color: Colors.blueGrey)
+            :  Text(
                 text,
                 style: TextStyle(
-                    color: textcolor,
-                    fontSize: screenWidth * 0.043,
-                    fontWeight: FontWeight.w900),
+                  color: textcolor,
+                  fontSize: min(screenWidth * 0.043, 28), // Max 18 px font size
+                  fontWeight: FontWeight.w900,
+                ),
               ),
       ),
     );

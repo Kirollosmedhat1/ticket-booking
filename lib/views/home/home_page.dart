@@ -5,6 +5,7 @@ import 'package:darbelsalib/core/services/database_service.dart';
 import 'package:darbelsalib/screen_size_handler.dart';
 import 'package:darbelsalib/views/widgets/contact_us_section.dart';
 import 'package:darbelsalib/views/widgets/current_service_poster.dart';
+import 'package:darbelsalib/views/widgets/custom_appbar.dart';
 import 'package:darbelsalib/views/widgets/home_page_section.dart';
 import 'package:darbelsalib/views/widgets/image_viewer.dart';
 import 'package:darbelsalib/views/widgets/my_tickets_button.dart';
@@ -13,12 +14,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class HomePage extends StatelessWidget {
-   final DatabaseService databaseService = DatabaseService(); 
+  final DatabaseService databaseService = DatabaseService();
   final AuthController authController = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: CustomAppBar(title: ""),
         backgroundColor: Colors.black,
         body: SingleChildScrollView(
           child: Padding(
@@ -38,34 +40,7 @@ class HomePage extends StatelessWidget {
                             fit: BoxFit.fill)),
                   ),
                 ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Obx(() => WelcomeText(name: authController.userName.value)),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        MyTicketsButton(
-                          title: "My tickets",
-                          image: "assets/images/ticket-2.png",
-                          navigate: 'mytickets',
-                        ),
-                        SizedBox(
-                          height: ScreenSizeHandler.smaller * 0.02,
-                        ),
-                        MyTicketsButton(
-                          title: "Cart",
-                          image: "assets/images/cart_icon.png",
-                          navigate: 'cart',
-                        )
-                      ],
-                    )
-                  ],
-                ),
-               
-
+                Obx(() => WelcomeText(name: authController.userName.value)),
                 const HomePageSection(
                   title: "Current Service",
                   content: Center(child: CurrentServicePoster()),

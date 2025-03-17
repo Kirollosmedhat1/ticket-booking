@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
-
 import 'package:darbelsalib/screen_size_handler.dart';
 import 'package:darbelsalib/views/widgets/ticket.dart';
 import 'package:flutter/material.dart';
