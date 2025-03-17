@@ -14,10 +14,11 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final AuthController authController = Get.put(AuthController());
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
+ final TextEditingController phoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController fullNameController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   @override
   void dispose() {
     emailController.dispose();
@@ -27,6 +28,22 @@ class _RegisterPageState extends State<RegisterPage> {
     super.dispose();
   }
 
+  Future<void> register() async {
+  try {
+    final user = await authController.registerWithEmail(
+      emailController.text.trim(),
+      passwordController.text.trim(),
+      fullNameController.text.trim(),
+      phoneController.text.trim(),
+    );
+    if (user != null) {
+      Get.offNamed('/home');
+    }
+  } catch (e) {
+    Get.snackbar("Error", e.toString(), backgroundColor: Colors.red);
+  }
+}
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -34,9 +51,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text(
-          "Sign up",
-        ),
+        title: Text("Sign up"),
       ),
       body: Container(
         width: screenWidth,
@@ -58,7 +73,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Form(
-                      key: _formKey, // Attach form key
+                      key: _formKey,
                       child: Column(
                         children: [
                           CustomTextField(
@@ -75,6 +90,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             controller: phoneController,
                             labelText: "Phone Number",
                             validator: Validators.validatePhone,
+                            keyboardType: TextInputType.phone,
                           ),
                           CustomTextField(
                             controller: passwordController,
@@ -96,33 +112,19 @@ class _RegisterPageState extends State<RegisterPage> {
                               textcolor: Colors.black,
                               bordercolor: Color(0xffDFA000),
                               backgroundcolor: Color(0xffDFA000),
-                              onPressed: () {
+                              onPressed: () async {
                                 if (_formKey.currentState!.validate()) {
-                                  authController.register(
-                                    emailController.text.trim(),
-                                    passwordController.text.trim(),
-                                    fullNameController.text.trim(),
-                                    phoneController.text.trim(),
-                                  );
+                                  await register();
                                 }
                               }),
                         ],
                       ),
                     ),
                     SizedBox(height: screenhight / 60),
-                    Obx(() => CustomTextButton(
-                          onPressed: () {
-                            authController.canResendEmail.value
-                                ? authController.resendVerificationEmail
-                                : null;
-                                },
-                          text: authController.canResendEmail.value
-                              ? "Resend Verification Email"
-                              : "Wait 1 min to resend",
-                        )),
-                    SizedBox(height: screenhight / 60),
-                    CustomTextButton(text: "Already have an account? Login", onPressed: () => Get.offNamed('/login'))
-                    
+                    CustomTextButton(
+                      text: "Already have an account? Login",
+                      onPressed: () => Get.offNamed('/login'),
+                    ),
                   ],
                 ),
               ),

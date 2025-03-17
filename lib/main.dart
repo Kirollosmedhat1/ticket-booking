@@ -31,8 +31,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenhight = MediaQuery.of(context).size.height;
     ScreenSizeHandler.initialize(
         MediaQuery.of(context).size.width, MediaQuery.of(context).size.height);
     return GetMaterialApp(
@@ -52,7 +50,7 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       initialBinding: AuthBinding(),
-      initialRoute: '/home',
+      initialRoute: '/login',
       getPages: AppRoutes.routes,
       unknownRoute: GetPage(
         name: '/notfound',

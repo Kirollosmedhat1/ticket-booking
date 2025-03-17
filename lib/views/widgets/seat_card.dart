@@ -1,8 +1,7 @@
-import 'dart:async';
+// ignore_for_file: unused_field, library_private_types_in_public_api, use_key_in_widget_constructors
 
-import 'package:flutter/foundation.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 // Seat Card for Cart Page
 class SeatCard extends StatefulWidget {
@@ -11,7 +10,7 @@ class SeatCard extends StatefulWidget {
   final double seatPrice;
   // final DateTime? expiryTime;
 
-  SeatCard({
+  const SeatCard({
     required this.seatNumber,
     required this.seatCategory,
     required this.seatPrice, required String eventImage, DateTime? expiryTime,
@@ -24,7 +23,7 @@ class SeatCard extends StatefulWidget {
 
 class _SeatCardState extends State<SeatCard> {
   late Timer _timer;
-  Duration _timeLeft = Duration.zero;
+  final Duration _timeLeft = Duration.zero;
 
 
   // @override

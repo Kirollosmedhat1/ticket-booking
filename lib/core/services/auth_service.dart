@@ -1,104 +1,92 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+// ignore_for_file: avoid_print
+
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:darbelsalib/models/user_model.dart'; // Import the UserModel
 
 class AuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  static const String baseUrl = 'https://darb-el-salib-f3e9ea716f85.herokuapp.com/api';
 
-  /// **🔹 Register a new user and send email verification**
-  Future<User?> registerWithEmail(String email, String password, String fullName, String phone) async {
+  /// **🔹 Register a new user**
+  Future<UserModel?> registerWithEmail(String email, String password, String fullName, String phone) async {
     try {
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: email, 
-        password: password,
+      final url = Uri.parse('$baseUrl/users/register/');
+      print('URL: [$url]');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "phone_number": phone,
+          "password": password,
+          "first_name": fullName.split(" ").first,
+          "last_name": fullName.split(" ").last,
+        }),
       );
-      User? user = userCredential.user;
 
-      if (user != null) {
-        await sendEmailVerification(user);
-
-        // Save user data in Firestore
-        await _firestore.collection('users').doc(user.uid).set({
-          'fullName': fullName,
-          'phone': phone,
-          'email': email,
-          'uid': user.uid,
-          'emailVerified': user.emailVerified, 
-          'phoneVerified': false, // Initially false
-        });
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final responseData = jsonDecode(response.body);
+        return UserModel(
+          id: responseData['id'].toString(),
+          email: email,
+          fullName: fullName,
+          phone: phone,
+          token: responseData['token'], // Ensure the API returns a token
+        );
+      } else {
+        throw Exception("Registration failed: ${response.body}");
       }
-      return user;
     } catch (e) {
       throw Exception("Registration failed: $e");
     }
   }
 
-  /// **🔹 Login only if email is verified**
-  Future<User?> loginWithEmail(String email, String password) async {
+  /// **🔹 Login user**
+  Future<UserModel?> loginWithEmail(String email, String password) async {
     try {
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: email, 
-        password: password,
+      final url = Uri.parse('$baseUrl/users/login/');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "phone_number": email, // Assuming email is used as phone_number
+          "password": password,
+        }),
       );
-      User? user = userCredential.user;
 
-      if (user != null) {
-        await user.reload(); // Refresh user data
-        DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
-
-        if (!user.emailVerified) {
-          throw Exception("Please verify your email before logging in.");
-        }
-
-        return user;
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        return UserModel(
+          id: responseData['id'].toString(),
+          email: email,
+          fullName: "${responseData['first_name']} ${responseData['last_name']}",
+          phone: responseData['phone_number'],
+          token: responseData['token'], // Ensure the API returns a token
+        );
+      } else {
+        throw Exception("Login failed: ${response.body}");
       }
     } catch (e) {
       throw Exception("Login failed: $e");
     }
-    return null;
   }
 
-  /// **🔹 Send Email Verification**
-  Future<void> sendEmailVerification(User user) async {
-    await user.sendEmailVerification();
-  }
-
-  /// **🔹 Send Phone Number Verification (via OTP)**
-  Future<void> verifyPhoneNumber(String phoneNumber, Function(String, int?) codeSentCallback) async {
-    await _auth.verifyPhoneNumber(
-      phoneNumber: phoneNumber,
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        await _auth.currentUser?.updatePhoneNumber(credential);
-        await _firestore.collection('users').doc(_auth.currentUser?.uid).update({'phoneVerified': true});
-      },
-      verificationFailed: (FirebaseAuthException e) {
-        throw Exception("Phone verification failed: ${e.message}");
-      },
-      codeSent: (String verificationId, int? resendToken) {
-        codeSentCallback(verificationId, resendToken);
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {},
-    );
-  }
-
-  /// **🔹 Confirm OTP Code for Phone Verification**
-  Future<void> confirmOtpCode(String verificationId, String smsCode) async {
+  /// **🔹 Send Email Verification (if supported by the API)**
+  Future<void> sendEmailVerification(String email) async {
     try {
-      PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: smsCode);
-      await _auth.currentUser?.updatePhoneNumber(credential);
-      await _firestore.collection('users').doc(_auth.currentUser?.uid).update({'phoneVerified': true});
+      final url = Uri.parse('$baseUrl/users/send-email-verification/');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "email": email,
+        }),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception("Failed to send email verification: ${response.body}");
+      }
     } catch (e) {
-      throw Exception("OTP verification failed: $e");
+      throw Exception("Failed to send email verification: $e");
     }
-  }
-
-  /// **🔹 Logout User**
-  Future<void> signOut() async {
-    await _auth.signOut();
-  }
-
-  /// **🔹 Get Current User**
-  User? getCurrentUser() {
-    return _auth.currentUser;
   }
 }

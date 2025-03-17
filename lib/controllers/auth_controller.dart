@@ -1,138 +1,71 @@
-import 'dart:async';
-import 'dart:convert';
-import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
-import 'package:get_storage/get_storage.dart';
+import 'package:darbelsalib/core/services/auth_service.dart';
+import 'package:darbelsalib/core/services/token_storage_service.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:darbelsalib/models/user_model.dart'; // Import the UserModel
 
 class AuthController extends GetxController {
-  var isLoading = false.obs;
-  var canResendEmail = true.obs;
-  var userName = "Guest".obs;
+  final AuthService _authService = AuthService(); // Initialize AuthService
+  final TokenStorageService _tokenStorageService = TokenStorageService(); // Initialize TokenStorageService
+  var userName = "".obs; // Observable for user name
 
-  Timer? _timer;
-  final storage = GetStorage();
-
-  final String baseUrl = "https://your-api-url.com/api"; // 🔥 Replace with actual API URL
-
-  @override
-  void onInit() {
-    super.onInit();
-    fetchUserName();
-  }
-
-  /// 🔹 Login
-  Future<bool> login(String email, String password) async {
-    isLoading.value = true;
+  // Register user using the API
+  Future<UserModel?> registerWithEmail(String email, String password, String fullName, String phone) async {
     try {
-      final response = await http.post(
-        Uri.parse("$baseUrl/login"),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "email": email,
-          "password": password,
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body);
-        storage.write("token", data["token"]);
-        storage.write("userName", data["user"]["fullName"]);
-        userName.value = data["user"]["fullName"];
-        Get.snackbar("Success", "Logged in successfully!", backgroundColor: Colors.green);
-        return true;
+      final UserModel? user = await _authService.registerWithEmail(email, password, fullName, phone);
+      if (user != null) {
+        userName.value = user.fullName; // Update the observable user name
+        await _tokenStorageService.saveToken(user.token); // Save the token
+        Get.snackbar("Success", "User registered successfully", backgroundColor: Colors.green);
+        return user;
       } else {
-        var error = jsonDecode(response.body);
-        Get.snackbar("Error", error["message"] ?? "Login failed", backgroundColor: Colors.red);
+        Get.snackbar("Error", "Failed to register", backgroundColor: Colors.red);
+        return null;
       }
     } catch (e) {
       Get.snackbar("Error", e.toString(), backgroundColor: Colors.red);
+      return null;
     }
-    isLoading.value = false;
-    return false;
   }
 
-  /// 🔹 Register
-  Future<void> register(String email, String password, String fullName, String phone) async {
-    isLoading.value = true;
+  // Login user using the API
+  Future<UserModel?> loginWithEmail(String email, String password) async {
     try {
-      final response = await http.post(
-        Uri.parse("$baseUrl/register"),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "email": email,
-          "password": password,
-          "fullName": fullName,
-          "phone": phone,
-        }),
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        Get.snackbar("Success", "Registered successfully! Please verify your email.", backgroundColor: Colors.green);
-        startCooldown();
+      final UserModel? user = await _authService.loginWithEmail(email, password);
+      if (user != null) {
+        userName.value = user.fullName; // Update the observable user name
+        await _tokenStorageService.saveToken(user.token); // Save the token
+        Get.snackbar("Success", "Logged in successfully", backgroundColor: Colors.green);
+        return user;
       } else {
-        var error = jsonDecode(response.body);
-        Get.snackbar("Error", error["message"] ?? "Registration failed", backgroundColor: Colors.red);
+        Get.snackbar("Error", "Failed to login", backgroundColor: Colors.red);
+        return null;
       }
     } catch (e) {
       Get.snackbar("Error", e.toString(), backgroundColor: Colors.red);
-    }
-    isLoading.value = false;
-  }
-
-  /// 🔹 Fetch user name from local storage
-  void fetchUserName() {
-    String? name = storage.read("userName");
-    if (name != null) {
-      userName.value = name;
+      return null;
     }
   }
 
-  /// 🔹 Logout
+  // Forgot password
+  Future<void> forgotPassword(String email) async {
+    try {
+      await _authService.sendEmailVerification(email);
+      Get.snackbar("Success", "Password reset email sent", backgroundColor: Colors.green);
+    } catch (e) {
+      Get.snackbar("Error", e.toString(), backgroundColor: Colors.red);
+    }
+  }
+
+  // Logout user
   Future<void> logout() async {
-    await storage.erase();
-    Get.offAllNamed('/login');
+    await _tokenStorageService.clearToken(); // Clear the token
+    userName.value = ""; // Reset the user name
+    Get.offNamed('/login'); // Redirect to the login page
   }
 
-  /// 🔹 Resend verification email
-  Future<void> resendVerificationEmail() async {
-    if (!canResendEmail.value) return;
-    isLoading.value = true;
-    try {
-      final token = storage.read("token");
-      final response = await http.post(
-        Uri.parse("$baseUrl/resend-verification"),
-        headers: {
-          "Authorization": "Bearer $token",
-          "Content-Type": "application/json",
-        },
-      );
-
-      if (response.statusCode == 200) {
-        Get.snackbar("Success", "Verification email sent again!", backgroundColor: Colors.green);
-        startCooldown();
-      } else {
-        var error = jsonDecode(response.body);
-        Get.snackbar("Error", error["message"] ?? "Failed", backgroundColor: Colors.red);
-      }
-    } catch (e) {
-      Get.snackbar("Error", e.toString(), backgroundColor: Colors.red);
-    }
-    isLoading.value = false;
-  }
-
-  /// 🔹 Cooldown Timer
-  void startCooldown() {
-    canResendEmail.value = false;
-    _timer?.cancel();
-    _timer = Timer(Duration(minutes: 1), () {
-      canResendEmail.value = true;
-    });
-  }
-
-  @override
-  void onClose() {
-    _timer?.cancel();
-    super.onClose();
+  // Get the stored token
+  Future<String?> getToken() async {
+    return await _tokenStorageService.getToken();
   }
 }

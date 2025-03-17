@@ -2,100 +2,98 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String baseUrl = 'darb-el-salib-f3e9ea716f85.herokuapp.com'; 
+  final String baseUrl = "https://cors-anywhere.herokuapp.com/https://darb-el-salib-f3e9ea716f85.herokuapp.com/api";
 
-  // Register
-  Future<http.Response> register({
-    required String phoneNumber,
-    required String password,
-    required String firstName,
-    required String lastName,
-  }) async {
+  Future<http.Response> registerUser(Map<String, dynamic> userData) async {
     final url = Uri.parse('$baseUrl/users/register/');
-    final body = {
-      "phone_number": phoneNumber,
-      "password": password,
-      "first_name": firstName,
-      "last_name": lastName,
-    };
-
-    final response = await http.post(url,
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode(body));
-
+    final response = await http.post(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(userData),
+    );
     return response;
   }
 
-  // Login
-  Future<http.Response> login({
-    required String phoneNumber,
-    required String password,
-  }) async {
+  Future<http.Response> loginUser(Map<String, dynamic> credentials) async {
     final url = Uri.parse('$baseUrl/users/login/');
-    final body = {
-      "phone_number": phoneNumber,
-      "password": password,
-    };
-
-    final response = await http.post(url,
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode(body));
-
+    final response = await http.post(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(credentials),
+    );
     return response;
   }
 
-  // Add to cart
-  Future<http.Response> addToCart(String token, String seatId) async {
+  Future<http.Response> addToCart(String token, Map<String, dynamic> seatData) async {
     final url = Uri.parse('$baseUrl/cart/add-to-cart/');
-    final body = {"seat_id": seatId};
-
-    final response = await http.post(url,
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Token $token",
-        },
-        body: jsonEncode(body));
-
+    final response = await http.post(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Token $token',
+      },
+      body: jsonEncode(seatData),
+    );
     return response;
   }
 
-  // Remove from cart
   Future<http.Response> removeFromCart(String token, String seatId) async {
     final url = Uri.parse('$baseUrl/cart/remove/$seatId/');
-    final response = await http.delete(url, headers: {
-      "Authorization": "Token $token",
-    });
-
+    final response = await http.delete(
+      url,
+      headers: <String, String>{
+        'Authorization': 'Token $token',
+      },
+    );
     return response;
   }
 
-  // Get user cart
-  Future<http.Response> getCart(String token) async {
+  Future<http.Response> getUserCart(String token) async {
     final url = Uri.parse('$baseUrl/cart');
-    final response = await http.get(url, headers: {
-      "Authorization": "Token $token",
-    });
-
+    final response = await http.get(
+      url,
+      headers: <String, String>{
+        'Authorization': 'Token $token',
+      },
+    );
     return response;
   }
 
-  // My Tickets
   Future<http.Response> getMyTickets(String token) async {
     final url = Uri.parse('$baseUrl/tickets');
-    final response = await http.get(url, headers: {
-      "Authorization": "Token $token",
-    });
-
+    final response = await http.get(
+      url,
+      headers: <String, String>{
+        'Authorization': 'Token $token',
+      },
+    );
     return response;
   }
 
-  // Checkout
-  Future<http.Response> checkout(String token) async {
+  Future<http.Response> requestPayment(String token) async {
     final url = Uri.parse('$baseUrl/payments/');
-    final response = await http.post(url, headers: {
-      "Authorization": "Token $token",
-    });
+    final response = await http.post(
+      url,
+      headers: <String, String>{
+        'Authorization': 'Token $token',
+      },
+    );
+    return response;
+  }
 
+  Future<http.Response> paymentCallback(Map<String, dynamic> callbackData) async {
+    final url = Uri.parse('$baseUrl/payments/callback/');
+    final response = await http.post(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(callbackData),
+    );
     return response;
   }
 }

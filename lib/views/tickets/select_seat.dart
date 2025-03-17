@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable, use_key_in_widget_constructors, avoid_print
+
 import 'package:darbelsalib/views/widgets/custom_appbar.dart';
 import 'package:darbelsalib/views/widgets/seat_builder.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -5,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-bool isLoggedIn() {
+bool isLoggedIn() { 
   final user = FirebaseAuth.instance.currentUser;
   return user != null;
 }

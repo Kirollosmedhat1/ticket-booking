@@ -1,3 +1,5 @@
+// ignore_for_file: use_key_in_widget_constructors
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:darbelsalib/controllers/ticket_controller.dart';
@@ -25,11 +27,6 @@ class CartPage extends StatelessWidget {
                   String category = ticketController.getSeatCategory(seatNumber);
                   double price = ticketController.getSeatPrice(seatNumber);
                   DateTime? expiryTime = ticketController.reservationTimers[seatNumber];
-
-                  Duration timeLeft = expiryTime != null
-                      ? expiryTime.difference(DateTime.now())
-                      : Duration.zero;
-
                   return SeatCard(
                     seatNumber: seatNumber,
                     seatCategory: category,

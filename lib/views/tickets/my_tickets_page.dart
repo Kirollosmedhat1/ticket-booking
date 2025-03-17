@@ -7,8 +7,6 @@ class MyTicketsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenhight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         title: Text("My tickets"),
