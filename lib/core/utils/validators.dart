@@ -52,7 +52,7 @@ static String? validatePhone(String? value) {
 
     return errorMessage;
   }
-
+ 
   // Generic validation for required fields
   static String? validateNotEmpty(String? value, String fieldName) {
     if (value == null || value.trim().isEmpty) {

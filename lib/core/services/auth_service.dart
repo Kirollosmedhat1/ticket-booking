@@ -41,14 +41,14 @@ class AuthService {
   }
 
   /// **🔹 Login user**
-  Future<UserModel?> loginWithEmail(String email, String password) async {
+   Future<UserModel?> loginWithPhone(String phone, String password) async {
     try {
       final url = Uri.parse('$baseUrl/users/login/');
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          "phone_number": email, // Assuming email is used as phone_number
+          "phone_number": phone, // Use phone number instead of email
           "password": password,
         }),
       );
@@ -57,9 +57,9 @@ class AuthService {
         final responseData = jsonDecode(response.body);
         return UserModel(
           id: responseData['id'].toString(),
-          email: email,
+          email: responseData['email'], // Assuming the API returns an email
           fullName: "${responseData['first_name']} ${responseData['last_name']}",
-          phone: responseData['phone_number'],
+          phone: phone, // Use the provided phone number
           token: responseData['token'], // Ensure the API returns a token
         );
       } else {

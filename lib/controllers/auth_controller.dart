@@ -29,9 +29,9 @@ class AuthController extends GetxController {
   }
 
   // Login user using the API
-  Future<UserModel?> loginWithEmail(String email, String password) async {
+  Future<UserModel?> loginWithPhone(String phone, String password) async {
     try {
-      final UserModel? user = await _authService.loginWithEmail(email, password);
+      final UserModel? user = await _authService.loginWithPhone(phone, password);
       if (user != null) {
         userName.value = user.fullName; // Update the observable user name
         await _tokenStorageService.saveToken(user.token); // Save the token
@@ -46,6 +46,7 @@ class AuthController extends GetxController {
       return null;
     }
   }
+
 
   // Forgot password
   Future<void> forgotPassword(String email) async {

@@ -14,7 +14,7 @@ class TokenStorageService {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_tokenKey);
   }
-
+ 
   // Clear the token (logout)
   Future<void> clearToken() async {
     final prefs = await SharedPreferences.getInstance();
