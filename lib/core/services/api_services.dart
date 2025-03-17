@@ -44,15 +44,20 @@ class ApiService {
     }
   }
 
-  Future<http.Response> getMyTickets(String token) async {
-    final url = Uri.parse('$baseUrl/tickets');
+  Future<dynamic> getMyTickets(String token) async {
+    final url = Uri.parse('$baseUrl/tickets/my-tickets/'); // Adjust the endpoint as needed
     final response = await http.get(
       url,
       headers: <String, String>{
         'Authorization': 'Token $token',
       },
     );
-    return response;
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body); // Return the list of tickets
+    } else {
+      throw Exception("Failed to fetch tickets: ${response.body}");
+    }
   }
 
   Future<http.Response> requestPayment(String token) async {
