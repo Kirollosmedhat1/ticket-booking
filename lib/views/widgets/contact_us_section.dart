@@ -20,7 +20,7 @@ class ContactUsSection extends StatelessWidget {
           iconColor: Colors.white,
         ),
         const ContactUsEntry(
-          text: "0123-4567-899",
+          text: "0120-6539-430",
           isUnderLined: false,
           isNormal: false,
           customIcon: FontAwesomeIcons.whatsapp,
