@@ -73,10 +73,10 @@ class ApiService {
 
   Future<http.Response> paymentCallback(String id, String token) async {
     final url = Uri.parse('$baseUrl/payments/$id');
-    final response = await http.post(
+    print(url);
+    final response = await http.get(
       url,
       headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Token $token',
       },
     );

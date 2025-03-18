@@ -400,7 +400,7 @@ class _SelectSeatState extends State<SelectSeat> {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("Total in Section",
+                                    Text("Total",
                                         style: TextStyle(
                                             color: Colors.white, fontSize: 16)),
                                     Text(

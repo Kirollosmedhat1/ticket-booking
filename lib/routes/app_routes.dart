@@ -21,7 +21,7 @@ class AppRoutes {
     // GetPage(name: '/checkout', page: () => CheckoutPage()),
     GetPage(name: '/cart', page: () => CartPage()),
     GetPage(name: '/welcome', page: () => const WelcomPage()),
-    GetPage(name: '/mytickets', page: () =>  MyTicketsPage()),
+    GetPage(name: '/mytickets', page: () => MyTicketsPage()),
     GetPage(name: '/currentservice', page: () => const CurrentServicePage()),
     GetPage(
       name: '/selectseat/:sectionNumber',
@@ -33,7 +33,7 @@ class AppRoutes {
     // Add the new route for PaymentConfirmationPage
     GetPage(
       name: '/payment-confirmation/:paymentId',
-      page: () => PaymentConfirmationPage(paymentId: Get.parameters['paymentId']!),
+      page: () => PaymentConfirmationPage(),
     ),
   ];
 }
