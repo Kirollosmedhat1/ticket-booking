@@ -318,21 +318,29 @@ class _SelectSeatState extends State<SelectSeat> {
                             Image.asset(
                               "assets/images/screen.png",
                             ),
-                          Column(
-                            children: [
-                              Icon(
-                                Icons.arrow_upward,
-                                size: 30,
-                                color: Colors.white,
-                              ),
-                              Text(
-                                neighboringSections[0],
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700),
-                              ),
-                            ],
+                          GestureDetector(
+                            onTap: () {
+                              if (neighboringSections[0] != "Stage") {
+                                Get.toNamed(
+                                    "/selectseat/${neighboringSections[0].split(" ")[1]}");
+                              }
+                            },
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.keyboard_arrow_up,
+                                  size: 30,
+                                  color: Colors.white,
+                                ),
+                                Text(
+                                  neighboringSections[0],
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700),
+                                ),
+                              ],
+                            ),
                           ),
                           SizedBox(height: 30),
                           Text(
@@ -375,6 +383,89 @@ class _SelectSeatState extends State<SelectSeat> {
                               ],
                             ),
                           ),
+                          if (neighboringSections[3] != "")
+                            GestureDetector(
+                              onTap: () {
+                                Get.toNamed(
+                                    "/selectseat/${neighboringSections[3].split(" ")[1]}");
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 40),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Icon(
+                                      Icons.keyboard_arrow_left,
+                                      size: 30,
+                                      color: Colors.white,
+                                    ),
+                                    Text(
+                                      neighboringSections[3],
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w700),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          if (neighboringSections[2] != "")
+                            GestureDetector(
+                              onTap: () {
+                                Get.toNamed(
+                                    "/selectseat/${neighboringSections[2].split(" ")[1]}");
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 40),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      neighboringSections[2],
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w700),
+                                    ),
+                                    Icon(
+                                      Icons.keyboard_arrow_right,
+                                      size: 30,
+                                      color: Colors.white,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          if (neighboringSections[1] != "")
+                            Padding(
+                              padding: neighboringSections[2] != "" ||
+                                      neighboringSections[3] != ""
+                                  ? const EdgeInsets.only(top: 0)
+                                  : const EdgeInsets.only(top: 40),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Get.toNamed(
+                                      "/selectseat/${neighboringSections[1].split(" ")[1]}");
+                                },
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      Icons.keyboard_arrow_down,
+                                      size: 30,
+                                      color: Colors.white,
+                                    ),
+                                    Text(
+                                      neighboringSections[1],
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w700),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           Padding(
                             padding: const EdgeInsets.only(top: 30.0),
                             child: GoBackText(
