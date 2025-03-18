@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:darbelsalib/controllers/auth_controller.dart';
+import 'package:darbelsalib/controllers/cart_controller.dart';
 import 'package:darbelsalib/core/services/api_services.dart';
 import 'package:darbelsalib/core/services/token_storage_service.dart';
 import 'package:darbelsalib/models/seat_model.dart';
@@ -20,15 +22,14 @@ class SelectSeat extends StatefulWidget {
 
 class _SelectSeatState extends State<SelectSeat> {
   late final String section;
-  int totalPrice = 0;
   int seatPrice = 0;
   int selectedSeatsCount = 0;
   bool _isInitialLoadCompleted = false;
   final Map<String, Seat> seats = {};
-  final Map<String, Seat> selectedSeats = {};
   final AuthController _authController = Get.put(AuthController());
   final ApiService _apiService = ApiService();
   final TokenStorageService _tokenStorageService = TokenStorageService();
+  final CartController _cartController = Get.put(CartController());
   final Completer<void> _initialLoadCompleter = Completer<void>();
 
   @override
@@ -49,9 +50,7 @@ class _SelectSeatState extends State<SelectSeat> {
       var response = await _apiService.addToCart(token!, {"seat_id": seat.id});
       if (response.statusCode == 200 || response.statusCode == 201) {
         seats[seat.seatNumber]?.status = "selected";
-        totalPrice += seats[seat.seatNumber]?.price ?? 0;
-        selectedSeatsCount++;
-        selectedSeats[seat.seatNumber] = seats[seat.seatNumber]!;
+        _cartController.addSeat(seat.seatNumber, seat);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Seat added to cart successfully!'),
@@ -61,7 +60,7 @@ class _SelectSeatState extends State<SelectSeat> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to add seat to cart.'),
+            content: Text('Error, ${jsonDecode(response.body)['error']}'),
             backgroundColor: Colors.red,
           ),
         );
@@ -82,9 +81,7 @@ class _SelectSeatState extends State<SelectSeat> {
       var response = await _apiService.removeFromCart(token!, seat.id);
       if (response.statusCode == 200) {
         seats[seat.seatNumber]?.status = "available";
-        totalPrice -= seats[seat.seatNumber]?.price ?? 0;
-        selectedSeatsCount--;
-        selectedSeats.remove(seat.seatNumber);
+        _cartController.removeSeat(seat.seatNumber);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Seat removed from cart successfully!'),
@@ -120,9 +117,7 @@ class _SelectSeatState extends State<SelectSeat> {
           String seatNumber = item['seat']['seat_number'];
           if (seats.containsKey(seatNumber)) {
             seats[seatNumber]?.status = 'selected';
-            selectedSeats[seatNumber] = seats[seatNumber]!;
-            totalPrice += seats[seatNumber]?.price ?? 0;
-            selectedSeatsCount++;
+            _cartController.addSeat(seatNumber, seats[seatNumber]!);
           }
         }
       });
@@ -133,7 +128,7 @@ class _SelectSeatState extends State<SelectSeat> {
     setState(() {
       if (seats[seatNumber]?.status == "selected") {
         removeFromCart(seats[seatNumber]!);
-      } else if (selectedSeatsCount < 5) {
+      } else if (_cartController.selectedSeats.length < 5) {
         addToCart(seats[seatNumber]!);
       } else {
         showDialog(
@@ -244,7 +239,7 @@ class _SelectSeatState extends State<SelectSeat> {
       });
 
       //if selected seats are found in seats change its status to selected
-      selectedSeats.forEach((key, value) {
+      _cartController.selectedSeats.forEach((key, value) {
         if (seats.containsKey(key)) {
           seats[key]?.status = "selected";
         }
@@ -366,46 +361,54 @@ class _SelectSeatState extends State<SelectSeat> {
                     ),
                   ),
                 ),
-                if (selectedSeatsCount > 0) ...[
-                  Divider(color: Colors.grey, thickness: 0.5),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        left: 20, right: 20, top: 30, bottom: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Obx(() {
+                  if (_cartController.selectedSeats.isNotEmpty) {
+                    return Column(
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Total in Section",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 16)),
-                            Text(
-                              "$totalPrice EGP",
-                              style: TextStyle(
-                                  color: Color(0xffdfa000),
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        BookButton(
-                          text: "Book",
-                          width: 191,
-                          height: 56,
-                          color: Color(0xffdfa000),
-                          onPressed: () async {
-                            if (!await isLoggedIn()) {
-                              Get.toNamed("/register");
-                            } else {
-                              Get.toNamed("/cart");
-                            }
-                          },
+                        Divider(color: Colors.grey, thickness: 0.5),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: 20, right: 20, top: 30, bottom: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Total in Section",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 16)),
+                                  Text(
+                                    "${_cartController.totalPrice.value} EGP",
+                                    style: TextStyle(
+                                        color: Color(0xffdfa000),
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                              BookButton(
+                                text: "Book",
+                                width: 191,
+                                height: 56,
+                                color: Color(0xffdfa000),
+                                onPressed: () async {
+                                  if (!await isLoggedIn()) {
+                                    Get.toNamed("/register");
+                                  } else {
+                                    Get.toNamed("/cart");
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ],
-                    ),
-                  ),
-                ],
+                    );
+                  } else {
+                    return SizedBox.shrink();
+                  }
+                }),
               ],
             ),
           );

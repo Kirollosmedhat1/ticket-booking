@@ -18,7 +18,6 @@ class SeatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
     return Container(
       padding: EdgeInsets.all(screenWidth * 0.03),
       decoration: BoxDecoration(
@@ -34,7 +33,7 @@ class SeatCard extends StatelessWidget {
           Container(
             width: screenWidth * 0.15,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(screenHeight * 0.01),
+              borderRadius: BorderRadius.circular(screenWidth * 0.05),
               image: DecorationImage(
                 image: AssetImage("assets/images/card_image.png"),
                 fit: BoxFit.cover,

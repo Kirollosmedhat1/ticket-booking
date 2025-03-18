@@ -3,12 +3,14 @@ class Seat {
   final String seatNumber;
   String status;
   int price;
+  String section;
 
   Seat({
     required this.id,
     required this.seatNumber,
     required this.status,
     required this.price,
+    this.section = 'unknown',
   });
 
   factory Seat.fromMap(Map<String, dynamic> data, String id) {

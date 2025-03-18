@@ -1,40 +1,22 @@
 import 'dart:convert';
 
+import 'package:darbelsalib/controllers/cart_controller.dart';
 import 'package:darbelsalib/core/services/api_services.dart';
 import 'package:darbelsalib/core/services/token_storage_service.dart';
-import 'package:darbelsalib/views/widgets/custom_loading_indicator.dart';
+import 'package:darbelsalib/models/seat_model.dart';
 import 'package:darbelsalib/views/widgets/go_back_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:darbelsalib/views/widgets/seat_card.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class CartPage extends StatefulWidget {
-  @override
-  _CartPageState createState() => _CartPageState();
-}
-
-class _CartPageState extends State<CartPage> {
+class CartPage extends StatelessWidget {
   final TokenStorageService _tokenStorageService = TokenStorageService();
   final ApiService _apiService = ApiService();
-  final List<Map<String, dynamic>> _selectedSeats = [];
-  double _totalPrice = 0.0;
-  bool isLoading = false;
+  final CartController _cartController = Get.put(CartController());
 
-  @override
-  void initState() {
-    super.initState();
-    if (mounted) {
-      setState(() {
-        isLoading = true;
-      });
-    }
+  CartPage() {
     getCart();
-    if (mounted) {
-      setState(() {
-        isLoading = false;
-      });
-    }
   }
 
   static String _capitalize(String input) {
@@ -45,16 +27,12 @@ class _CartPageState extends State<CartPage> {
             .replaceAllMapped(RegExp(r'(\d+)'), (Match m) => ' ${m[0]}');
   }
 
-  void removeFromCart(String seatID) async {
+  void removeFromCart(BuildContext context, Seat seat) async {
     try {
       String? token = await _tokenStorageService.getToken();
-      var response = await _apiService.removeFromCart(token!, seatID);
+      var response = await _apiService.removeFromCart(token!, seat.id);
       if (response.statusCode == 200) {
-        if (mounted) {
-          setState(() {
-            _selectedSeats.removeWhere((element) => element['id'] == seatID);
-          });
-        }
+        _cartController.removeSeat(seat.seatNumber);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Seat removed from cart successfully!'),
@@ -80,7 +58,7 @@ class _CartPageState extends State<CartPage> {
     }
   }
 
-  void requestPayment() async {
+  void requestPayment(BuildContext context) async {
     String? token = await _tokenStorageService.getToken();
     var response = await _apiService.requestPayment(token!);
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -116,88 +94,97 @@ class _CartPageState extends State<CartPage> {
     var response = await _apiService.getUserCart(token!);
     List<dynamic> items = response['items'];
 
-    setState(() {
-      _selectedSeats.clear();
-      _totalPrice = 0.0;
-      for (var item in items) {
-        String seatNumber = item['seat']['seat_number'];
-        String seatId = item['seat']['id'];
-        String category = _capitalize(item['seat']['category']['name']);
-        int price = category == 'section1' || category == 'section2'
-            ? 100
-            : category == 'section3' || category == 'section4'
-                ? 75
-                : 50;
-        _selectedSeats.add({
-          'seatNumber': seatNumber,
-          'category': category,
-          'price': price,
-          'id': seatId,
-        });
-
-        _totalPrice += price;
-      }
-    });
+    _cartController.selectedSeats.clear();
+    _cartController.totalPrice.value = 0;
+    for (var item in items) {
+      String seatNumber = item['seat']['seat_number'];
+      String seatId = item['seat']['id'];
+      String category = _capitalize(item['seat']['category']['name']);
+      int price = category == 'Section 1' || category == 'Section 2'
+          ? 100
+          : category == 'Section 3' || category == 'Section 4'
+              ? 75
+              : 50;
+      _cartController.addSeat(
+          seatNumber,
+          Seat(
+              id: seatId,
+              seatNumber: seatNumber,
+              status: "selected",
+              price: price,
+              section: category));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Your Cart")),
-      body: isLoading
-          ? CustomLoadingIndicator()
-          : _selectedSeats.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        "No Seats Selected",
-                        style: TextStyle(color: Colors.white, fontSize: 20),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 20.0),
-                        child: GoBackText(
-                          text: "Go Home",
-                          onTap: () => Get.toNamed("/home"),
-                        ),
-                      )
-                    ],
+      body: Obx(() {
+        print(
+            "🔵 UI updated! Current seats: ${_cartController.selectedSeats.keys.toList()}");
+
+        if (_cartController.selectedSeats.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "No Seats Selected",
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20.0),
+                  child: GoBackText(
+                    text: "Go Home",
+                    onTap: () => Get.toNamed("/home"),
                   ),
                 )
-              : Column(
-                  children: [
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: _selectedSeats.length,
-                        itemBuilder: (context, index) {
-                          var seat = _selectedSeats[index];
-                          return SeatCard(
-                            seatNumber: seat['seatNumber'],
-                            seatCategory: seat['category'],
-                            seatPrice: seat['price'],
-                            seatId: seat['id'],
-                            onRemove: () {
-                              removeFromCart(seat['id']);
-                            },
-                          );
+              ],
+            ),
+          );
+        } else {
+          return Column(
+            children: [
+              Expanded(
+                child: Obx(() {
+                  print(
+                      "🔵 UI updated! Current seats: ${_cartController.selectedSeats.keys.toList()}");
+
+                  return ListView.builder(
+                    itemCount: _cartController.selectedSeats.length,
+                    itemBuilder: (context, index) {
+                      var seat =
+                          _cartController.selectedSeats.values.toList()[index];
+                      return SeatCard(
+                        seatNumber: seat.seatNumber,
+                        seatCategory: seat.section,
+                        seatPrice: seat.price.toDouble(),
+                        seatId: seat.id,
+                        onRemove: () {
+                          removeFromCart(context, seat);
                         },
-                      ),
-                    ),
-                    Divider(),
-                    _buildTotalPriceSection(),
-                    SizedBox(height: 10),
-                    _buildCheckoutButton(),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 20.0),
-                      child: GoBackText(
-                        text: "Go Home",
-                        onTap: () => Get.toNamed("/home"),
-                      ),
-                    )
-                  ],
+                      );
+                    },
+                  );
+                }),
+              ),
+              Divider(),
+              _buildTotalPriceSection(),
+              SizedBox(height: 10),
+              _buildCheckoutButton(context),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20.0),
+                child: GoBackText(
+                  text: "Go Home",
+                  onTap: () => Get.toNamed("/home"),
                 ),
+              )
+            ],
+          );
+        }
+      }),
     );
   }
 
@@ -213,23 +200,27 @@ class _CartPageState extends State<CartPage> {
             style: TextStyle(
                 fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
           ),
-          Text(
-            "${_totalPrice.toStringAsFixed(2)} EGP",
-            style: TextStyle(
-                fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-          ),
+          Obx(() {
+            return Text(
+              "${_cartController.totalPrice.value.toStringAsFixed(2)} EGP",
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
+            );
+          }),
         ],
       ),
     );
   }
 
   /// **Navigates to Checkout Page**
-  Widget _buildCheckoutButton() {
+  Widget _buildCheckoutButton(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: ElevatedButton(
         onPressed: () async {
-          requestPayment();
+          requestPayment(context);
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Color(0xffdfa000),
