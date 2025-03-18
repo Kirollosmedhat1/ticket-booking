@@ -11,8 +11,6 @@ class CartController extends GetxController {
       selectedSeats[seatNumber] = seat;
       totalPrice.value += seat.price;
     }
-    print('Seat added: $seatNumber');
-    print('All seat keys: ${selectedSeats.keys}');
   }
 
   void removeSeat(String seatNumber) {
