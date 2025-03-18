@@ -91,7 +91,7 @@ class _HomePageState extends State<HomePage> {
                 HomePageSection(
                   title: "About Us",
                   content: Text(
-                    "We are an amazing team that does amazing things",
+                    "We are a passionate team from Saint George Agouza Church, dedicated to sharing the story of Christ's life, sacrifice, and resurrection through theater. Our plays, inspired by the Gospel, aim to inspire and deepen faith in our community. Through prayer and creativity, we bring the message of Christ's love to life, honoring His teachings and glorifying God. Join us as we celebrate His story and share His enduring hope with the world.\n\nTo God be the glory!",
                     style: TextStyle(
                       fontSize: ScreenSizeHandler.smaller * 0.0372,
                       color: const Color(0xFFF2F2F2),

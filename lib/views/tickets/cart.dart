@@ -95,6 +95,7 @@ class CartPage extends StatelessWidget {
   }
 
   void getCart() async {
+    isLoading.value = true;
     String? token = await _tokenStorageService.getToken();
     var response = await _apiService.getUserCart(token!);
     List<dynamic> items = response['items'];
@@ -119,6 +120,7 @@ class CartPage extends StatelessWidget {
               price: price,
               section: category));
     }
+    isLoading.value = false;
   }
 
   @override

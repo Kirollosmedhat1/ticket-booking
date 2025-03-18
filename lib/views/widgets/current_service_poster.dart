@@ -16,9 +16,12 @@ class CurrentServicePoster extends StatelessWidget {
       child: Column(
         children: [
           const SubtitleText(text: "Friday 4th of April, 7:00 PM"),
-          Image.asset(
-            "assets/images/HomePagePoster.png",
-            width: ScreenSizeHandler.smaller*0.732,
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16.0), // Adjust the radius as needed
+            child: Image.asset(
+              "assets/images/HomePagePoster.png",
+              width: ScreenSizeHandler.smaller * 0.732,
+            ),
           ),
           const TitleText(text: "Adam"),
           const SubtitleText(
