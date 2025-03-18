@@ -6,6 +6,7 @@ import 'package:darbelsalib/controllers/ticket_controller.dart'; // Import the T
 import 'package:darbelsalib/screen_size_handler.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'firebase_options.dart';
@@ -26,6 +27,8 @@ void main() async {
   Get.put(TicketController()); // Initialize the TicketController
 
   await GetStorage.init();
+
+  setUrlStrategy(PathUrlStrategy());
 
   runApp(MyApp());
 }
