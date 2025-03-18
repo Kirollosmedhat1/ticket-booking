@@ -71,15 +71,14 @@ class ApiService {
     return response;
   }
 
-  Future<http.Response> paymentCallback(
-      Map<String, dynamic> callbackData) async {
-    final url = Uri.parse('$baseUrl/payments/callback/');
+  Future<http.Response> paymentCallback(String id, String token) async {
+    final url = Uri.parse('$baseUrl/payments/$id');
     final response = await http.post(
       url,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Token $token',
       },
-      body: jsonEncode(callbackData),
     );
     return response;
   }

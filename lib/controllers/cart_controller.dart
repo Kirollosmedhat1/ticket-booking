@@ -13,13 +13,11 @@ class CartController extends GetxController {
   }
 
   void removeSeat(String seatNumber) {
-    print("🔴 Removing seat: $seatNumber");
 
     selectedSeats.remove(seatNumber); // ✅ This will trigger UI updates
     totalPrice.value =
         selectedSeats.values.fold(0, (sum, seat) => sum + seat.price);
 
-    print("🟢 Remaining seats: ${selectedSeats.keys.toList()}");
   }
 
   void clearCart() {

@@ -1,5 +1,6 @@
 import 'package:darbelsalib/models/ticket_model.dart';
 import 'package:darbelsalib/views/tickets/ticket_detail_page.dart';
+import 'package:darbelsalib/views/widgets/custom_loading_indicator.dart';
 import 'package:darbelsalib/views/widgets/go_back_text.dart';
 import 'package:darbelsalib/views/widgets/ticket.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +36,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
             Expanded(
               child: Obx(() {
                 if (_ticketController.isLoading.value) {
-                  return Center(child: CircularProgressIndicator());
+                  return Center(child: CustomLoadingIndicator());
                 } else if (_ticketController.tickets.isEmpty) {
                   return Center(
               child: Column(

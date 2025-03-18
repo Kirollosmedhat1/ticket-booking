@@ -4,16 +4,19 @@ import 'package:darbelsalib/controllers/cart_controller.dart';
 import 'package:darbelsalib/core/services/api_services.dart';
 import 'package:darbelsalib/core/services/token_storage_service.dart';
 import 'package:darbelsalib/models/seat_model.dart';
+import 'package:darbelsalib/views/widgets/custom_loading_indicator.dart';
 import 'package:darbelsalib/views/widgets/go_back_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:darbelsalib/views/widgets/seat_card.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class CartPage extends StatelessWidget {
   final TokenStorageService _tokenStorageService = TokenStorageService();
   final ApiService _apiService = ApiService();
   final CartController _cartController = Get.put(CartController());
+  final RxBool isLoading = false.obs;
 
   CartPage() {
     getCart();
@@ -28,6 +31,7 @@ class CartPage extends StatelessWidget {
   }
 
   void removeFromCart(BuildContext context, Seat seat) async {
+    isLoading.value = true;
     try {
       String? token = await _tokenStorageService.getToken();
       var response = await _apiService.removeFromCart(token!, seat.id);
@@ -56,6 +60,7 @@ class CartPage extends StatelessWidget {
         ),
       );
     }
+    isLoading.value = false;
   }
 
   void requestPayment(BuildContext context) async {
@@ -121,69 +126,70 @@ class CartPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text("Your Cart")),
       body: Obx(() {
-        print(
-            "🔵 UI updated! Current seats: ${_cartController.selectedSeats.keys.toList()}");
-
-        if (_cartController.selectedSeats.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  "No Seats Selected",
-                  style: TextStyle(color: Colors.white, fontSize: 20),
+        return ModalProgressHUD(
+          inAsyncCall: isLoading.value,
+          progressIndicator: CustomLoadingIndicator(),
+          color: Colors.black,
+          opacity: 0.5,
+          child: Obx(() {
+            if (_cartController.selectedSeats.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "No Seats Selected",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 20.0),
+                      child: GoBackText(
+                        text: "Go Home",
+                        onTap: () => Get.toNamed("/home"),
+                      ),
+                    )
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20.0),
-                  child: GoBackText(
-                    text: "Go Home",
-                    onTap: () => Get.toNamed("/home"),
-                  ),
-                )
-              ],
-            ),
-          );
-        } else {
-          return Column(
-            children: [
-              Expanded(
-                child: Obx(() {
-                  print(
-                      "🔵 UI updated! Current seats: ${_cartController.selectedSeats.keys.toList()}");
-
-                  return ListView.builder(
-                    itemCount: _cartController.selectedSeats.length,
-                    itemBuilder: (context, index) {
-                      var seat =
-                          _cartController.selectedSeats.values.toList()[index];
-                      return SeatCard(
-                        seatNumber: seat.seatNumber,
-                        seatCategory: seat.section,
-                        seatPrice: seat.price.toDouble(),
-                        seatId: seat.id,
-                        onRemove: () {
-                          removeFromCart(context, seat);
+              );
+            } else {
+              return Column(
+                children: [
+                  Expanded(
+                    child: Obx(() {
+                      return ListView.builder(
+                        itemCount: _cartController.selectedSeats.length,
+                        itemBuilder: (context, index) {
+                          var seat = _cartController.selectedSeats.values.toList()[index];
+                          return SeatCard(
+                            seatNumber: seat.seatNumber,
+                            seatCategory: seat.section,
+                            seatPrice: seat.price.toDouble(),
+                            seatId: seat.id,
+                            onRemove: () {
+                              removeFromCart(context, seat);
+                            },
+                          );
                         },
                       );
-                    },
-                  );
-                }),
-              ),
-              Divider(),
-              _buildTotalPriceSection(),
-              SizedBox(height: 10),
-              _buildCheckoutButton(context),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 20.0),
-                child: GoBackText(
-                  text: "Go Home",
-                  onTap: () => Get.toNamed("/home"),
-                ),
-              )
-            ],
-          );
-        }
+                    }),
+                  ),
+                  Divider(),
+                  _buildTotalPriceSection(),
+                  SizedBox(height: 10),
+                  _buildCheckoutButton(context),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20.0),
+                    child: GoBackText(
+                      text: "Go Home",
+                      onTap: () => Get.toNamed("/home"),
+                    ),
+                  )
+                ],
+              );
+            }
+          }),
+        );
       }),
     );
   }

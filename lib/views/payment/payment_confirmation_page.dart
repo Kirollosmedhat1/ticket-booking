@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:darbelsalib/core/services/api_services.dart';
+import 'package:darbelsalib/core/services/token_storage_service.dart';
 import 'package:darbelsalib/views/widgets/custom_button.dart';
 import 'package:darbelsalib/views/widgets/order_details_card.dart';
 import 'package:flutter/material.dart';
@@ -10,9 +14,16 @@ class PaymentConfirmationPage extends StatelessWidget {
 
   // Simulate fetching payment status from backend
   Future<bool> _fetchPaymentStatus() async {
+    print('hena');
+    ApiService apiService = ApiService();
+    TokenStorageService tokenStorageService = TokenStorageService();
+    String? token = await tokenStorageService.getToken();
     // Replace this with actual API call to fetch payment status
-    await Future.delayed(Duration(seconds: 2)); // Simulate network delay
-    return true; // Assume payment is successful for this example
+    var response = await apiService.paymentCallback(paymentId, token!);
+    print(response);
+    print(response.body);
+    print(jsonDecode(response.body));
+    return false;
   }
 
   @override
@@ -26,9 +37,12 @@ class PaymentConfirmationPage extends StatelessWidget {
         future: _fetchPaymentStatus(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator(color: Color(0xffDFA000)));
+            return Center(
+                child: CircularProgressIndicator(color: Color(0xffDFA000)));
           } else if (snapshot.hasError) {
-            return Center(child: Text("Error loading payment status", style: TextStyle(color: Colors.white)));
+            return Center(
+                child: Text("Error loading payment status",
+                    style: TextStyle(color: Colors.white)));
           } else {
             bool isPaymentSuccessful = snapshot.data ?? false;
 
@@ -43,14 +57,20 @@ class PaymentConfirmationPage extends StatelessWidget {
                       children: [
                         // Display success or failure icon
                         Icon(
-                          isPaymentSuccessful ? Icons.check_circle_outline : Icons.error_outline,
+                          isPaymentSuccessful
+                              ? Icons.check_circle_outline
+                              : Icons.error_outline,
                           size: 100,
-                          color: isPaymentSuccessful ? Color(0xffDFA000) : Colors.redAccent,
+                          color: isPaymentSuccessful
+                              ? Color(0xffDFA000)
+                              : Colors.redAccent,
                         ),
                         SizedBox(height: 20),
                         // Display success or failure message
                         Text(
-                          isPaymentSuccessful ? "Payment Successful!" : "Payment Failed!",
+                          isPaymentSuccessful
+                              ? "Payment Successful!"
+                              : "Payment Failed!",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: screenWidth > maxContentWidth ? 24 : 20,
@@ -81,7 +101,9 @@ class PaymentConfirmationPage extends StatelessWidget {
                         SizedBox(height: 30),
                         // Display appropriate button based on payment status
                         CustomButton(
-                          text: isPaymentSuccessful ? "View My Tickets" : "Try Again",
+                          text: isPaymentSuccessful
+                              ? "View My Tickets"
+                              : "Try Again",
                           textcolor: Colors.black,
                           bordercolor: Color(0xffDFA000),
                           backgroundcolor: Color(0xffDFA000),

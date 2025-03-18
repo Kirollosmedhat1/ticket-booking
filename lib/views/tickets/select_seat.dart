@@ -14,6 +14,7 @@ import 'package:darbelsalib/views/widgets/seat_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class SelectSeat extends StatefulWidget {
   @override
@@ -22,6 +23,7 @@ class SelectSeat extends StatefulWidget {
 
 class _SelectSeatState extends State<SelectSeat> {
   late final String section;
+  bool isLoading = false;
   int seatPrice = 0;
   int selectedSeatsCount = 0;
   bool _isInitialLoadCompleted = false;
@@ -45,6 +47,9 @@ class _SelectSeatState extends State<SelectSeat> {
   }
 
   void addToCart(Seat seat) async {
+    setState(() {
+      isLoading = true;
+    });
     try {
       String? token = await _tokenStorageService.getToken();
       var response = await _apiService.addToCart(token!, {"seat_id": seat.id});
@@ -73,9 +78,15 @@ class _SelectSeatState extends State<SelectSeat> {
         ),
       );
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   void removeFromCart(Seat seat) async {
+    setState(() {
+      isLoading = true;
+    });
     try {
       String? token = await _tokenStorageService.getToken();
       var response = await _apiService.removeFromCart(token!, seat.id);
@@ -105,9 +116,15 @@ class _SelectSeatState extends State<SelectSeat> {
         ),
       );
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   void getCart() async {
+    setState(() {
+      isLoading = true;
+    });
     String? token = await _tokenStorageService.getToken();
     var response = await _apiService.getUserCart(token!);
     List<dynamic> items = response['items'];
@@ -122,6 +139,9 @@ class _SelectSeatState extends State<SelectSeat> {
         }
       });
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   void _onSeatSelected(String seatNumber) {
@@ -280,136 +300,142 @@ class _SelectSeatState extends State<SelectSeat> {
             return Center(child: CustomLoadingIndicator());
           }
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 30),
-            child: Column(
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        if (sectionNumber == 1 || sectionNumber == 2)
-                          Image.asset(
-                            "assets/images/screen.png",
-                          ),
-                        Column(
-                          children: [
-                            Icon(
-                              Icons.arrow_upward,
-                              size: 30,
-                              color: Colors.white,
+          return ModalProgressHUD(
+            inAsyncCall: isLoading,
+            progressIndicator: CustomLoadingIndicator(),
+            opacity: 0.5,
+            color: Colors.black,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 30),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          if (sectionNumber == 1 || sectionNumber == 2)
+                            Image.asset(
+                              "assets/images/screen.png",
                             ),
-                            Text(
-                              neighboringSections[0],
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 30),
-                        Text(
-                          "You are currently in Section $sectionNumber",
-                          style: TextStyle(
-                              color: Color(0xffdfa000),
-                              fontSize: 22,
-                              fontWeight: FontWeight.w500),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          child: SeatBuilder(
-                            sectionNumber: sectionNumber,
-                            price: seatPrice,
-                            seats: seats,
-                            onSeatSelected: _onSeatSelected,
-                          ),
-                        ),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: const [
-                              SeatIndicator(
-                                color: Color(0xff1c1c1c),
-                                description: "Available",
+                          Column(
+                            children: [
+                              Icon(
+                                Icons.arrow_upward,
+                                size: 30,
+                                color: Colors.white,
                               ),
-                              SeatIndicator(
-                                description: "Reserved",
-                                color: Color(0xffdfa000),
-                              ),
-                              SeatIndicator(
-                                description: "Selected",
-                                color: Color(0xff7cc3f6),
-                              ),
-                              SeatIndicator(
-                                description: "On Hold",
-                                color: Colors.red,
+                              Text(
+                                neighboringSections[0],
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700),
                               ),
                             ],
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 30.0),
-                          child: GoBackText(
-                            text: "Go Back",
-                            onTap: () => Get.toNamed("/selectsection"),
+                          SizedBox(height: 30),
+                          Text(
+                            "You are currently in Section $sectionNumber",
+                            style: TextStyle(
+                                color: Color(0xffdfa000),
+                                fontSize: 22,
+                                fontWeight: FontWeight.w500),
                           ),
-                        )
-                      ],
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: SeatBuilder(
+                              sectionNumber: sectionNumber,
+                              price: seatPrice,
+                              seats: seats,
+                              onSeatSelected: _onSeatSelected,
+                            ),
+                          ),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: const [
+                                SeatIndicator(
+                                  color: Color(0xff1c1c1c),
+                                  description: "Available",
+                                ),
+                                SeatIndicator(
+                                  description: "Reserved",
+                                  color: Color(0xffdfa000),
+                                ),
+                                SeatIndicator(
+                                  description: "Selected",
+                                  color: Color(0xff7cc3f6),
+                                ),
+                                SeatIndicator(
+                                  description: "On Hold",
+                                  color: Colors.red,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 30.0),
+                            child: GoBackText(
+                              text: "Go Back",
+                              onTap: () => Get.toNamed("/selectsection"),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Obx(() {
-                  if (_cartController.selectedSeats.isNotEmpty) {
-                    return Column(
-                      children: [
-                        Divider(color: Colors.grey, thickness: 0.5),
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: 20, right: 20, top: 30, bottom: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Total in Section",
+                  Obx(() {
+                    if (_cartController.selectedSeats.isNotEmpty) {
+                      return Column(
+                        children: [
+                          Divider(color: Colors.grey, thickness: 0.5),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: 20, right: 20, top: 30, bottom: 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("Total in Section",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 16)),
+                                    Text(
+                                      "${_cartController.totalPrice.value} EGP",
                                       style: TextStyle(
-                                          color: Colors.white, fontSize: 16)),
-                                  Text(
-                                    "${_cartController.totalPrice.value} EGP",
-                                    style: TextStyle(
-                                        color: Color(0xffdfa000),
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                              BookButton(
-                                text: "Book",
-                                width: 191,
-                                height: 56,
-                                color: Color(0xffdfa000),
-                                onPressed: () async {
-                                  if (!await isLoggedIn()) {
-                                    Get.toNamed("/register");
-                                  } else {
-                                    Get.toNamed("/cart");
-                                  }
-                                },
-                              ),
-                            ],
+                                          color: Color(0xffdfa000),
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                                BookButton(
+                                  text: "Book",
+                                  width: 191,
+                                  height: 56,
+                                  color: Color(0xffdfa000),
+                                  onPressed: () async {
+                                    if (!await isLoggedIn()) {
+                                      Get.toNamed("/register");
+                                    } else {
+                                      Get.toNamed("/cart");
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    );
-                  } else {
-                    return SizedBox.shrink();
-                  }
-                }),
-              ],
+                        ],
+                      );
+                    } else {
+                      return SizedBox.shrink();
+                    }
+                  }),
+                ],
+              ),
             ),
           );
         },

@@ -58,6 +58,7 @@ class CustomTextField extends StatelessWidget {
                 ),
               ),
               TextFormField(
+                cursorColor: Color(0xffDFA000),
                 controller: controller,
                 decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
