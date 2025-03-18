@@ -1,14 +1,9 @@
-
 import 'dart:convert';
-import 'package:darbelsalib/core/services/api_services.dart';
-import 'package:darbelsalib/core/services/token_storage_service.dart';
 import 'package:darbelsalib/core/services/api_services.dart';
 import 'package:darbelsalib/views/widgets/custom_button.dart';
 import 'package:darbelsalib/views/widgets/order_details_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class PaymentConfirmationPage extends StatelessWidget {
   final String paymentId;
@@ -17,18 +12,6 @@ class PaymentConfirmationPage extends StatelessWidget {
 
   // Fetch payment status from backend using ApiService
   Future<bool> _fetchPaymentStatus() async {
-// <<<<<<< HEAD
-//     print('hena');
-//     ApiService apiService = ApiService();
-//     TokenStorageService tokenStorageService = TokenStorageService();
-//     String? token = await tokenStorageService.getToken();
-//     // Replace this with actual API call to fetch payment status
-//     var response = await apiService.paymentCallback(paymentId, token!);
-//     print(response);
-//     print(response.body);
-//     print(jsonDecode(response.body));
-//     return false;
-// =======
     final apiService = ApiService();
     final callbackData = {
       "customerReference": paymentId, // Use the paymentId passed to the widget
@@ -36,7 +19,8 @@ class PaymentConfirmationPage extends StatelessWidget {
     };
 
     try {
-      final response = await apiService.paymentCallback(callbackData);
+      // Pass both required arguments to paymentCallback
+      final response = await apiService.paymentCallback(callbackData, "/payment/callback");
 
       // Debug: Print the raw response
       print("Response status code: ${response.statusCode}");
