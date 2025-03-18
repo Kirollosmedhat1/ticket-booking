@@ -11,17 +11,23 @@ class Ticket extends StatelessWidget {
     super.key,
     required this.seatCategory,
     required this.seatNumber,
+    required this.buyerName,
+    required this.buyerPhoneNumber,
   });
 
   final String seatCategory;
   final String seatNumber;
+  final String buyerName;
+  final String buyerPhoneNumber;
 
   @override
   Widget build(BuildContext context) {
     // Encode the seat number and seat category into a JSON string
     final qrData = jsonEncode({
-      'seatNumber': seatNumber,
-      'seatCategory': seatCategory,
+      'Seat Number': seatNumber,
+      'Seat Category': seatCategory,
+      'Buyer Name': buyerName,
+      'Buyer Phone Number': buyerPhoneNumber,
     });
 
     return Container(

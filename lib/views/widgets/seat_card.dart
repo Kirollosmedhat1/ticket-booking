@@ -1,68 +1,24 @@
-// ignore_for_file: unused_field, library_private_types_in_public_api, use_key_in_widget_constructors
-
-import 'dart:async';
 import 'package:flutter/material.dart';
 
-// Seat Card for Cart Page
-class SeatCard extends StatefulWidget {
+class SeatCard extends StatelessWidget {
   final String seatNumber;
   final String seatCategory;
   final double seatPrice;
-  // final DateTime? expiryTime;
+  final String seatId;
+  final VoidCallback onRemove;
 
   const SeatCard({
     required this.seatNumber,
     required this.seatCategory,
-    required this.seatPrice, required String eventImage, DateTime? expiryTime,
-    // required this.expiryTime,
+    required this.seatPrice,
+    required this.seatId,
+    required this.onRemove,
   });
-
-  @override
-  _SeatCardState createState() => _SeatCardState();
-}
-
-class _SeatCardState extends State<SeatCard> {
-
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _updateTimeLeft();
-  //   _startTimer();
-  // }
-
-  // void _updateTimeLeft() {
-  //   if (widget.expiryTime != null) {
-  //     setState(() {
-  //       _timeLeft = widget.expiryTime!.difference(DateTime.now());
-  //     });
-  //   }
-  // }
-
-  // void _startTimer() {
-  //   _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-  //     if (widget.expiryTime != null) {
-  //       setState(() {
-  //         _timeLeft = widget.expiryTime!.difference(DateTime.now());
-
-  //         if (_timeLeft.isNegative) {
-  //           _timeLeft = Duration.zero;
-  //           _timer.cancel();
-  //         }
-  //       });
-  //     }
-  //   });
-  // }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double screenhight = MediaQuery.of(context).size.height;
+    double screenHeight = MediaQuery.of(context).size.height;
     return Container(
       padding: EdgeInsets.all(screenWidth * 0.03),
       decoration: BoxDecoration(
@@ -78,7 +34,7 @@ class _SeatCardState extends State<SeatCard> {
           Container(
             width: screenWidth * 0.15,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(screenhight * 0.01),
+              borderRadius: BorderRadius.circular(screenHeight * 0.01),
               image: DecorationImage(
                 image: AssetImage("assets/images/card_image.png"),
                 fit: BoxFit.cover,
@@ -93,25 +49,15 @@ class _SeatCardState extends State<SeatCard> {
                   color: Color(0xffFCC434),
                 ),
                 children: [
-                  TextSpan(text: "Seat: ${widget.seatNumber} \n"),
+                  TextSpan(text: "Seat: $seatNumber \n"),
                   TextSpan(
                       text:
-                          "Section: ${widget.seatCategory} \nPrice:  ${widget.seatPrice.toStringAsFixed(2)} ",
+                          "Section: $seatCategory \nPrice:  ${seatPrice.toStringAsFixed(2)} ",
                       style: TextStyle(
                         fontSize: screenWidth * 0.04,
                         fontWeight: FontWeight.w400,
                         color: Colors.white,
                       )),
-                  // TextSpan(
-                  //   text:
-                  //       "Time Left: ${_timeLeft.inMinutes}:${(_timeLeft.inSeconds % 60).toString().padLeft(2, '0')}",
-                  //   style: TextStyle(
-                  //       fontSize: screenWidth * 0.04,
-                  //       fontWeight: FontWeight.w400,
-                  //       color: _timeLeft.inSeconds <= 30
-                  //           ? Colors.red
-                  //           : Colors.white),
-                  // ),
                 ]),
           ),
           SizedBox(
@@ -119,9 +65,7 @@ class _SeatCardState extends State<SeatCard> {
           ),
           IconButton(
             icon: Icon(Icons.delete, color: Colors.red),
-            onPressed: () {
-              // ticketController.removeSeat(widget.seatNumber);
-            },
+            onPressed: onRemove,
             tooltip: "Remove Seat",
           ),
         ],

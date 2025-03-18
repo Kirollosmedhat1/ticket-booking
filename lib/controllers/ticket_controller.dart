@@ -1,8 +1,6 @@
-
-  
-
-  import 'package:darbelsalib/core/services/api_services.dart';
+import 'package:darbelsalib/core/services/api_services.dart';
 import 'package:darbelsalib/core/services/token_storage_service.dart';
+import 'package:darbelsalib/models/ticket_model.dart';
 import 'package:get/get.dart'; // For state management (optional)
 
 class TicketController extends GetxController {
@@ -14,32 +12,31 @@ class TicketController extends GetxController {
   var isLoading = false.obs;
 
   // Fetch tickets for the authenticated user
-Future<void> fetchTickets() async {
-  try {
-    isLoading.value = true; // Start loading
-    final token = await _tokenStorageService.getToken();
+  Future<void> fetchTickets() async {
+    try {
+      isLoading.value = true; // Start loading
+      final token = await _tokenStorageService.getToken();
 
-    if (token != null) {
-      final response = await _apiService.getMyTickets(token);
+      if (token != null) {
+        final response = await _apiService.getMyTickets(token);
 
-      // Print the API response for debugging
-      print("API Response: $response");
-
-      if (response is List) {
-        tickets.value = response; // Update the reactive list
+        if (response is List) {
+          tickets.value = response
+              .map((ticket) => TicketModel.fromJson(ticket))
+              .toList(); // Update the reactive list
+        } else {
+          throw Exception("Invalid response format");
+        }
       } else {
-        throw Exception("Invalid response format");
+        throw Exception("User not authenticated");
       }
-    } else {
-      throw Exception("User not authenticated");
+    } catch (e) {
+      // Handle errors
+      Get.snackbar("Error", "Failed to fetch tickets: $e");
+    } finally {
+      isLoading.value = false; // Stop loading
     }
-  } catch (e) {
-    // Handle errors
-    Get.snackbar("Error", "Failed to fetch tickets: $e");
-  } finally {
-    isLoading.value = false; // Stop loading
   }
-}
 
   // Add a ticket (example)
   Future<void> addTicket(Map<String, dynamic> ticketData) async {

@@ -3,9 +3,12 @@ import 'package:darbelsalib/controllers/auth_controller.dart';
 import 'package:darbelsalib/core/services/api_services.dart';
 import 'package:darbelsalib/core/services/token_storage_service.dart';
 import 'package:darbelsalib/models/seat_model.dart';
+import 'package:darbelsalib/views/widgets/book_button.dart';
 import 'package:darbelsalib/views/widgets/custom_appbar.dart';
 import 'package:darbelsalib/views/widgets/custom_loading_indicator.dart';
+import 'package:darbelsalib/views/widgets/go_back_text.dart';
 import 'package:darbelsalib/views/widgets/seat_builder.dart';
+import 'package:darbelsalib/views/widgets/seat_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -43,13 +46,26 @@ class _SelectSeatState extends State<SelectSeat> {
   void addToCart(Seat seat) async {
     try {
       String? token = await _tokenStorageService.getToken();
-      await _apiService.addToCart(token!, {"seat_id": seat.id});
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Seat added to cart successfully!'),
-          backgroundColor: Colors.green,
-        ),
-      );
+      var response = await _apiService.addToCart(token!, {"seat_id": seat.id});
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        seats[seat.seatNumber]?.status = "selected";
+        totalPrice += seats[seat.seatNumber]?.price ?? 0;
+        selectedSeatsCount++;
+        selectedSeats[seat.seatNumber] = seats[seat.seatNumber]!;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Seat added to cart successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to add seat to cart.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -63,13 +79,26 @@ class _SelectSeatState extends State<SelectSeat> {
   void removeFromCart(Seat seat) async {
     try {
       String? token = await _tokenStorageService.getToken();
-      await _apiService.removeFromCart(token!, seat.id);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Seat removed from cart successfully!'),
-          backgroundColor: Colors.green,
-        ),
-      );
+      var response = await _apiService.removeFromCart(token!, seat.id);
+      if (response.statusCode == 200) {
+        seats[seat.seatNumber]?.status = "available";
+        totalPrice -= seats[seat.seatNumber]?.price ?? 0;
+        selectedSeatsCount--;
+        selectedSeats.remove(seat.seatNumber);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Seat removed from cart successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to remove seat from cart.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -82,7 +111,6 @@ class _SelectSeatState extends State<SelectSeat> {
   }
 
   void getCart() async {
-    print('called');
     String? token = await _tokenStorageService.getToken();
     var response = await _apiService.getUserCart(token!);
     List<dynamic> items = response['items'];
@@ -91,7 +119,6 @@ class _SelectSeatState extends State<SelectSeat> {
         for (var item in items) {
           String seatNumber = item['seat']['seat_number'];
           if (seats.containsKey(seatNumber)) {
-            print('in');
             seats[seatNumber]?.status = 'selected';
             selectedSeats[seatNumber] = seats[seatNumber]!;
             totalPrice += seats[seatNumber]?.price ?? 0;
@@ -105,16 +132,8 @@ class _SelectSeatState extends State<SelectSeat> {
   void _onSeatSelected(String seatNumber) {
     setState(() {
       if (seats[seatNumber]?.status == "selected") {
-        seats[seatNumber]?.status = "available";
-        totalPrice -= seats[seatNumber]?.price ?? 0;
-        selectedSeatsCount--;
-        selectedSeats.remove(seatNumber);
         removeFromCart(seats[seatNumber]!);
       } else if (selectedSeatsCount < 5) {
-        seats[seatNumber]?.status = "selected";
-        totalPrice += seats[seatNumber]?.price ?? 0;
-        selectedSeatsCount++;
-        selectedSeats[seatNumber] = seats[seatNumber]!;
         addToCart(seats[seatNumber]!);
       } else {
         showDialog(
@@ -240,7 +259,6 @@ class _SelectSeatState extends State<SelectSeat> {
         _isInitialLoadCompleted = true;
       }
     });
-    print('done');
   }
 
   @override
@@ -337,6 +355,13 @@ class _SelectSeatState extends State<SelectSeat> {
                             ],
                           ),
                         ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 30.0),
+                          child: GoBackText(
+                            text: "Go Back",
+                            onTap: () => Get.toNamed("/selectsection"),
+                          ),
+                        )
                       ],
                     ),
                   ),
@@ -364,7 +389,7 @@ class _SelectSeatState extends State<SelectSeat> {
                             ),
                           ],
                         ),
-                        CustomButton(
+                        BookButton(
                           text: "Book",
                           width: 191,
                           height: 56,
@@ -385,80 +410,6 @@ class _SelectSeatState extends State<SelectSeat> {
             ),
           );
         },
-      ),
-    );
-  }
-}
-
-class SeatIndicator extends StatelessWidget {
-  const SeatIndicator(
-      {super.key, required this.description, required this.color});
-
-  final String description;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
-      child: Row(
-        children: [
-          Container(
-            width: 24,
-            height: 24,
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(5),
-            ),
-          ),
-          const SizedBox(width: 10),
-          Text(
-            description,
-            style: const TextStyle(color: Colors.white, fontSize: 14),
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class CustomButton extends StatelessWidget {
-  final String text;
-  final double width;
-  final double height;
-  final Color color;
-  final VoidCallback onPressed;
-
-  const CustomButton({
-    super.key,
-    required this.text,
-    required this.width,
-    required this.height,
-    required this.color,
-    required this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: width,
-      height: height,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: color,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(100),
-          ),
-        ),
-        onPressed: onPressed,
-        child: Text(
-          text,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
       ),
     );
   }

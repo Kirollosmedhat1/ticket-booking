@@ -1,5 +1,6 @@
 import 'package:darbelsalib/screen_size_handler.dart';
 import 'package:darbelsalib/views/widgets/custom_appbar.dart';
+import 'package:darbelsalib/views/widgets/go_back_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -114,6 +115,11 @@ class SelectSection extends StatelessWidget {
                       color: Colors.grey,
                     ),
                     textAlign: TextAlign.center),
+
+                GoBackText(
+                  text: "Go Back",
+                  onTap: () => Get.toNamed('/home'),
+                )
               ],
             ),
           ),

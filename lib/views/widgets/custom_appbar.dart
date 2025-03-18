@@ -1,16 +1,22 @@
+import 'package:darbelsalib/controllers/auth_controller.dart';
+import 'package:darbelsalib/views/widgets/book_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
+  final bool leading;
   const CustomAppBar({
-    Key? key,
+    super.key,
     required this.title,
-  }) : super(key: key);
+    this.leading = true,
+  });
 
   @override
   Widget build(BuildContext context) {
+    AuthController authController = Get.find<AuthController>();
     return AppBar(
+      automaticallyImplyLeading: leading,
       backgroundColor: Colors.black,
       centerTitle: true,
       iconTheme: const IconThemeData(color: Colors.white),
@@ -20,6 +26,29 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           fontSize: 24,
           fontWeight: FontWeight.w700,
           color: Colors.white,
+        ),
+      ),
+      leading: Padding(
+        padding: const EdgeInsets.only(left: 12.0),
+        child: //add a logout button
+            GestureDetector(
+          onTap: () {
+            authController.logout();
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.logout,
+                color: Color(0xffdfa000),
+              ),
+              const SizedBox(height: 2),
+              const Text(
+                "Logout",
+                style: TextStyle(color: Color(0xffdfa000), fontSize: 12),
+              ),
+            ],
+          ),
         ),
       ),
       actions: [

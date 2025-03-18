@@ -54,6 +54,7 @@ dependencies:
   shared_preferences: ^2.5.2
   flutter_web_browser: ^0.17.3
   webview_flutter: ^4.10.0
+  modal_progress_hud_nsn: ^0.5.1
 
 
 dev_dependencies:

@@ -12,7 +12,6 @@ class DatabaseService {
           .doc(seatNumber)
           .update({'status': status});
     } catch (e) {
-      print("Error updating seat status: $e");
     }
   }
 
