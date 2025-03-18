@@ -84,9 +84,8 @@ class _HomePageState extends State<HomePage> {
                 HomePageSection(
                   title: "Photo Gallery",
                   content: ImageViewer(images: [
-                    for (int year = 2012; year <= 2024; year++)
-                      if (year != 2020 && year != 2021)
-                        {'imgName': year.toString()}
+                    for (int number = 1; number <= 36; number++)
+                      {'imgName': number.toString()}
                   ], hasSubtitles: false),
                 ),
                 HomePageSection(
