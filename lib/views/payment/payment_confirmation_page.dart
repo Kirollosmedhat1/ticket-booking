@@ -1,29 +1,68 @@
-import 'dart:convert';
 
+import 'dart:convert';
 import 'package:darbelsalib/core/services/api_services.dart';
 import 'package:darbelsalib/core/services/token_storage_service.dart';
+import 'package:darbelsalib/core/services/api_services.dart';
 import 'package:darbelsalib/views/widgets/custom_button.dart';
 import 'package:darbelsalib/views/widgets/order_details_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class PaymentConfirmationPage extends StatelessWidget {
   final String paymentId;
 
   const PaymentConfirmationPage({super.key, required this.paymentId});
 
-  // Simulate fetching payment status from backend
+  // Fetch payment status from backend using ApiService
   Future<bool> _fetchPaymentStatus() async {
-    print('hena');
-    ApiService apiService = ApiService();
-    TokenStorageService tokenStorageService = TokenStorageService();
-    String? token = await tokenStorageService.getToken();
-    // Replace this with actual API call to fetch payment status
-    var response = await apiService.paymentCallback(paymentId, token!);
-    print(response);
-    print(response.body);
-    print(jsonDecode(response.body));
-    return false;
+// <<<<<<< HEAD
+//     print('hena');
+//     ApiService apiService = ApiService();
+//     TokenStorageService tokenStorageService = TokenStorageService();
+//     String? token = await tokenStorageService.getToken();
+//     // Replace this with actual API call to fetch payment status
+//     var response = await apiService.paymentCallback(paymentId, token!);
+//     print(response);
+//     print(response.body);
+//     print(jsonDecode(response.body));
+//     return false;
+// =======
+    final apiService = ApiService();
+    final callbackData = {
+      "customerReference": paymentId, // Use the paymentId passed to the widget
+      "status": "success" // or "failed", depending on the actual status
+    };
+
+    try {
+      final response = await apiService.paymentCallback(callbackData);
+
+      // Debug: Print the raw response
+      print("Response status code: ${response.statusCode}");
+      print("Response body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        var responseBody = json.decode(response.body);
+
+        // Debug: Print the parsed response body
+        print("Parsed response body: $responseBody");
+
+        // Check if the response contains a 'status' field and if it is 'success'
+        if (responseBody.containsKey('status')) {
+          return responseBody['status'] == "success";
+        } else {
+          print("Response does not contain a 'status' field");
+          return false;
+        }
+      } else {
+        print("Callback failed: ${response.reasonPhrase}");
+        return false;
+      }
+    } catch (e) {
+      print("Error during callback: $e");
+      return false;
+    }
   }
 
   @override
