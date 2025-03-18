@@ -1,4 +1,5 @@
 import 'package:darbelsalib/controllers/auth_controller.dart';
+import 'package:darbelsalib/controllers/cart_controller.dart';
 import 'package:darbelsalib/views/widgets/book_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,6 +16,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     AuthController authController = Get.find<AuthController>();
+    CartController cartController = Get.put(CartController());
     return AppBar(
       automaticallyImplyLeading: leading,
       backgroundColor: Colors.black,
@@ -34,6 +36,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             GestureDetector(
           onTap: () {
             authController.logout();
+            cartController.clearCart();
           },
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
