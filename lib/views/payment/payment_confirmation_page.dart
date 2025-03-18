@@ -42,7 +42,11 @@ class PaymentConfirmationPage extends StatelessWidget {
           } else {
             var responseData = snapshot.data ?? {};
             String status = responseData['status'] ?? 'failed';
+            status = status.toLowerCase();
             String amount = responseData['amount'] ?? '0.00';
+
+            // Treat pending status as failed
+            bool isSuccess = status == 'paid';
 
             return Center(
               child: SingleChildScrollView(
@@ -53,28 +57,19 @@ class PaymentConfirmationPage extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Display success, failure, or pending icon
+                        // Display success or failure icon
                         Icon(
-                          status == 'successful'
+                          isSuccess
                               ? Icons.check_circle_outline
-                              : status == 'pending'
-                                  ? Icons.hourglass_empty
-                                  : Icons.error_outline,
+                              : Icons.error_outline,
                           size: 100,
-                          color: status == 'successful'
-                              ? Color(0xffDFA000)
-                              : status == 'pending'
-                                  ? Colors.orangeAccent
-                                  : Colors.redAccent,
+                          color:
+                              isSuccess ? Color(0xffDFA000) : Colors.redAccent,
                         ),
                         SizedBox(height: 20),
-                        // Display success, failure, or pending message
+                        // Display success or failure message
                         Text(
-                          status == 'successful'
-                              ? "Payment Successful!"
-                              : status == 'pending'
-                                  ? "Payment Pending!"
-                                  : "Payment Failed!",
+                          isSuccess ? "Payment Successful!" : "Payment Failed!",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: screenWidth > maxContentWidth ? 24 : 20,
@@ -84,11 +79,9 @@ class PaymentConfirmationPage extends StatelessWidget {
                         ),
                         SizedBox(height: 10),
                         Text(
-                          status == 'successful'
+                          isSuccess
                               ? "Thank you for your purchase.\nYour tickets are now confirmed."
-                              : status == 'pending'
-                                  ? "Your payment is still being processed.\nPlease check back later.\nIf successful you should see it in your tickets."
-                                  : "Something went wrong.\nPlease try again.",
+                              : "Something went wrong.\nPlease try again.",
                           style: TextStyle(
                             color: Colors.grey[300],
                             fontSize: screenWidth > maxContentWidth ? 18 : 16,
@@ -97,7 +90,7 @@ class PaymentConfirmationPage extends StatelessWidget {
                         ),
                         SizedBox(height: 30),
                         // Display order details only for successful payment
-                        if (status == 'successful')
+                        if (isSuccess)
                           OrderDetailsCard(
                             orderId:
                                 Get.parameters['paymentId']?.substring(1) ?? '',
@@ -107,19 +100,17 @@ class PaymentConfirmationPage extends StatelessWidget {
                         SizedBox(height: 30),
                         // Display appropriate button based on payment status
                         CustomButton(
-                          text: status == 'successful'
-                              ? "View My Tickets"
-                              : "Try Again",
+                          text: isSuccess ? "View My Tickets" : "Try Again",
                           textcolor: Colors.black,
                           bordercolor: Color(0xffDFA000),
                           backgroundcolor: Color(0xffDFA000),
                           onPressed: () {
-                            if (status == 'successful') {
+                            if (isSuccess) {
                               Get.toNamed("/mytickets");
                             } else {
                               // Refresh Page
                               // pop the current page and push it again
-                              Get.offNamed(Get.currentRoute);
+                              Get.toNamed('/cart');
                             }
                           },
                         ),
