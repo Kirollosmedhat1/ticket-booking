@@ -14,8 +14,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    AuthController authController = Get.find<AuthController>();
-    CartController cartController = Get.put(CartController());
     return AppBar(
       automaticallyImplyLeading: leading,
       backgroundColor: Colors.black,
