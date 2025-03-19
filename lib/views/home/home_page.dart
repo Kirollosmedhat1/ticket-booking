@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> {
                 HomePageSection(
                   title: "Photo Gallery",
                   content: ImageViewer(images: [
-                    for (int number = 1; number <= 36; number++)
+                    for (int number = 1; number <= 39; number++)
                       {'imgName': number.toString()}
                   ], hasSubtitles: false),
                 ),
