@@ -19,7 +19,7 @@ class CurrentServicePoster extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(16.0), // Adjust the radius as needed
             child: Image.asset(
-              "assets/images/currentservicehomepage.png",
+              "assets/images/adamhomepage.jpeg",
               width: ScreenSizeHandler.smaller * 0.732,
             ),
           ),
