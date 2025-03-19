@@ -29,30 +29,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           color: Colors.white,
         ),
       ),
-      leading: Padding(
-        padding: const EdgeInsets.only(left: 12.0),
-        child: //add a logout button
-            GestureDetector(
-          onTap: () {
-            authController.logout();
-            cartController.clearCart();
-          },
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.logout,
-                color: Color(0xffdfa000),
-              ),
-              const SizedBox(height: 2),
-              const Text(
-                "Logout",
-                style: TextStyle(color: Color(0xffdfa000), fontSize: 12),
-              ),
-            ],
-          ),
-        ),
-      ),
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 12.0),

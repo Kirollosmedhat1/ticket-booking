@@ -9,12 +9,17 @@ class WelcomPage extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenhight = MediaQuery.of(context).size.height;
+
+    // Define a maximum width for the content
+    final double maxWidth = 500.0; // Adjust this value as needed
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: ListView(
         children: [
           Center(
             child: Container(
+              constraints: BoxConstraints(maxWidth: maxWidth), // Add max width constraint
               padding: EdgeInsets.all(screenhight * 0.04),
               child: Column(
                 children: [
@@ -47,8 +52,8 @@ class WelcomPage extends StatelessWidget {
                   SizedBox(height: screenhight * 0.025),
                   CustomButton(
                     textcolor: Colors.white,
-                              bordercolor: Colors.white,
-                              backgroundcolor: Colors.black,
+                    bordercolor: Colors.white,
+                    backgroundcolor: Colors.black,
                     text: "Sign up",
                     onPressed: ()  => Get.toNamed('/register'),
                   ),

@@ -1,6 +1,7 @@
 // ignore_for_file: use_key_in_widget_constructors
 
 import 'package:darbelsalib/controllers/auth_controller.dart';
+import 'package:darbelsalib/controllers/cart_controller.dart';
 import 'package:darbelsalib/core/services/user_storage_service.dart';
 import 'package:darbelsalib/screen_size_handler.dart';
 import 'package:darbelsalib/views/widgets/contact_us_section.dart';
@@ -19,6 +20,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final AuthController authController = Get.put(AuthController());
+  final CartController cartController = Get.put(CartController());
   final UserStorageService userStorageService = UserStorageService();
   String userName = "";
 
@@ -101,7 +103,31 @@ class _HomePageState extends State<HomePage> {
                 const HomePageSection(
                   title: "Contact Us",
                   content: ContactUsSection(),
-                )
+                ),
+                Padding(
+        padding: const EdgeInsets.only(left: 7),
+        child: //add a logout button
+            GestureDetector(
+          onTap: () {
+            authController.logout();
+            cartController.clearCart();
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Icon(
+                Icons.logout,
+                color: Color(0xffdfa000),
+              ),
+              const SizedBox(width:  7),
+              const Text(
+                "Logout",
+                style: TextStyle(color: Color(0xffdfa000), fontSize: 17,fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
+      ),
               ],
             ),
           ),

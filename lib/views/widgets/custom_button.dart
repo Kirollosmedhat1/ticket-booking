@@ -26,7 +26,7 @@ class CustomButton extends StatelessWidget {
 
     return ConstrainedBox(
       constraints: const BoxConstraints(
-        maxWidth:  400,
+        maxWidth: 400,
         maxHeight: 60,
       ),
       child: ElevatedButton(
@@ -35,16 +35,16 @@ class CustomButton extends StatelessWidget {
           minimumSize: Size(screenWidth * 1, screenWidth * 0.13),
           backgroundColor: backgroundcolor,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(screenWidth * 0.4),
-            side: BorderSide(
-              color: bordercolor,
-              width: screenWidth * 0.005,
-            ),
-          ),
+              borderRadius: BorderRadius.circular(screenWidth * 0.4),
+              side: BorderSide(
+                color: bordercolor,
+                width:
+                    min(screenWidth * 0.005, 2.0), // Set a maximum width of 2.0
+              )),
         ),
         child: isLoading
             ? const CircularProgressIndicator(color: Colors.blueGrey)
-            :  Text(
+            : Text(
                 text,
                 style: TextStyle(
                   color: textcolor,
