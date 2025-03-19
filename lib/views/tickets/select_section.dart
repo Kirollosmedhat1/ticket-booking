@@ -45,82 +45,84 @@ class SelectSection extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: const CustomAppBar(title: "Select Section"),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 50),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 50),
           child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Center(
-                  child: Image.asset(
-                    "assets/images/screen.png",
-                  ),
-                ),
-                // Wide container to resemble the stage
-                Container(
-                  margin: const EdgeInsets.symmetric(vertical: 15),
-                  height: ScreenSizeHandler.smaller * 0.15,
-                  width: ScreenSizeHandler.smaller * 0.88,
-                  //rounded corners
-                  decoration: BoxDecoration(
-                    color: Color(0xFFDFA000),
-                    //black outline
-                    border: Border.all(
-                      color: Colors.white,
-                      width: 4,
+            scrollDirection: Axis.horizontal,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Center(
+                    child: Image.asset(
+                      "assets/images/screen.png",
                     ),
-                    borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Center(
-                    child: Text("STAGE",
-                        style: TextStyle(
-                          fontSize: ScreenSizeHandler.smaller * 0.05,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    buildSectionTrapezium('Section 2', false, 100, 150),
-                    SizedBox(width: 100),
-                    buildSectionTrapezium('Section 1', false, 100, 150),
-                  ],
-                ),
-                // Second row with 3 boxes
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    buildSectionTrapezium('Section 4', false, 150, 190),
-                    SizedBox(width: 100),
-                    buildSectionTrapezium('Section 3', false, 150, 190)
-                  ],
-                ),
-                // Third row with 4 boxes
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    buildSectionTrapezium('Section 6', true, 120, 140),
-                    SizedBox(width: 90),
-                    buildSectionTrapezium('Section 5', true, 120, 140)
-                  ],
-                ),
-                SizedBox(height: 20),
-                Text("Please Choose a Selection to Proceed",
-                    style: TextStyle(
-                      fontSize: ScreenSizeHandler.smaller * 0.04,
-                      color: Colors.grey,
+                  // Wide container to resemble the stage
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 15),
+                    height: ScreenSizeHandler.smaller * 0.15,
+                    width: ScreenSizeHandler.smaller * 0.88,
+                    //rounded corners
+                    decoration: BoxDecoration(
+                      color: Color(0xFFDFA000),
+                      //black outline
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 4,
+                      ),
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    textAlign: TextAlign.center),
-
-                GoBackText(
-                  text: "Go Back",
-                  onTap: () => Get.toNamed('/home'),
-                )
-              ],
+                    child: Center(
+                      child: Text("STAGE",
+                          style: TextStyle(
+                            fontSize: ScreenSizeHandler.smaller * 0.05,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      buildSectionTrapezium('Section 2', false, 100, 150),
+                      SizedBox(width: 100),
+                      buildSectionTrapezium('Section 1', false, 100, 150),
+                    ],
+                  ),
+                  // Second row with 3 boxes
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      buildSectionTrapezium('Section 4', false, 150, 190),
+                      SizedBox(width: 100),
+                      buildSectionTrapezium('Section 3', false, 150, 190)
+                    ],
+                  ),
+                  // Third row with 4 boxes
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      buildSectionTrapezium('Section 6', true, 120, 140),
+                      SizedBox(width: 90),
+                      buildSectionTrapezium('Section 5', true, 120, 140)
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Text("Please Choose a Selection to Proceed",
+                      style: TextStyle(
+                        fontSize: ScreenSizeHandler.smaller * 0.04,
+                        color: Colors.grey,
+                      ),
+                      textAlign: TextAlign.center),
+        
+                  GoBackText(
+                    text: "Go Back",
+                    onTap: () => Get.toNamed('/home'),
+                  )
+                ],
+              ),
             ),
           ),
         ),
