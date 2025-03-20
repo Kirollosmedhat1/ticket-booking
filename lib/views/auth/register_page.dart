@@ -18,6 +18,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController(); // Add this
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -28,6 +29,7 @@ class _RegisterPageState extends State<RegisterPage> {
     emailController.dispose();
     phoneController.dispose();
     passwordController.dispose();
+    confirmPasswordController.dispose(); // Dispose the confirm password controller
     firstNameController.dispose();
     lastNameController.dispose();
     super.dispose();
@@ -182,6 +184,16 @@ class _RegisterPageState extends State<RegisterPage> {
                               controller: passwordController,
                               labelText: "Password",
                               validator: Validators.validatePassword,
+                              obscureText: true,
+                            ),
+                            // Add the confirm password field
+                            CustomTextField(
+                              controller: confirmPasswordController,
+                              labelText: "Confirm Password",
+                              validator: (value) => Validators.validateConfirmPassword(
+                                value,
+                                passwordController.text, // Pass the original password
+                              ),
                               obscureText: true,
                             ),
                             SizedBox(height: screenHeight * 0.1),

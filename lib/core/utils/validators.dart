@@ -15,13 +15,15 @@ class Validators {
     return null;
   }
 
-static String? validatePhone(String? value) {
-  if (value == null || value.trim().length != 11 || !RegExp(r'^[0-9]+$').hasMatch(value)) {
-    return "Phone number must be 11 digits long.";
+  // Phone number must be 11 digits long
+  static String? validatePhone(String? value) {
+    if (value == null || value.trim().length != 11 || !RegExp(r'^[0-9]+$').hasMatch(value)) {
+      return "Phone number must be 11 digits long.";
+    }
+    return null;
   }
-  return null;
-}
 
+  // Password validation
   static String? validatePassword(String? value) {
     List<String> errors = [];
 
@@ -52,7 +54,18 @@ static String? validatePhone(String? value) {
 
     return errorMessage;
   }
- 
+
+  // Confirm password validation
+  static String? validateConfirmPassword(String? value, String password) {
+    if (value == null || value.isEmpty) {
+      return "Confirm password cannot be empty.";
+    }
+    if (value != password) {
+      return "Passwords do not match.";
+    }
+    return null;
+  }
+
   // Generic validation for required fields
   static String? validateNotEmpty(String? value, String fieldName) {
     if (value == null || value.trim().isEmpty) {
