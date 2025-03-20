@@ -13,28 +13,46 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final AuthController authController = Get.put(AuthController());
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController fullNameController = TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
+    emailController.dispose();
     phoneController.dispose();
     passwordController.dispose();
-    fullNameController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
     super.dispose();
   }
 
   Future<void> register() async {
     try {
-      final user = await authController.registerWithPhone(
+      final user = await authController.registerWithEmail(
+        emailController.text.trim(),
         passwordController.text.trim(),
-        fullNameController.text.trim(),
+        firstNameController.text.trim(),
+        lastNameController.text.trim(),
         phoneController.text.trim(),
       );
       if (user != null) {
-        Get.offNamed('/home');
+        await authController.sendEmailVerification(emailController.text.trim());
+         Get.snackbar(
+  "Email Verification Sent",
+  "Please check your email inbox and click the verification link to activate your account. If you don't see the email, check your spam folder.", // Message
+  backgroundColor: Colors.blue,
+  colorText: Colors.white,
+  duration: Duration(seconds: 10),
+  snackPosition: SnackPosition.TOP, // Position o
+  margin: EdgeInsets.all(10), // Margin around the snackbar
+  borderRadius: 8, // Border radius
+  isDismissible: true, // Allow the user to dismiss the snackbar
+  forwardAnimationCurve: Curves.easeOutBack, // Animation curve
+);
       }
     } catch (e) {
       Get.snackbar("Error", e.toString(), backgroundColor: Colors.red);
@@ -75,9 +93,21 @@ class _RegisterPageState extends State<RegisterPage> {
                       child: Column(
                         children: [
                           CustomTextField(
-                            controller: fullNameController,
-                            labelText: "Full Name",
-                            validator: Validators.validateName,
+                            controller: firstNameController,
+                            labelText: "First Name",
+                            validator: (value) =>
+                                Validators.validateNotEmpty(value, "First Name"),
+                          ),
+                          CustomTextField(
+                            controller: lastNameController,
+                            labelText: "Last Name",
+                            validator: (value) =>
+                                Validators.validateNotEmpty(value, "Last Name"),
+                          ),
+                          CustomTextField(
+                            controller: emailController,
+                            labelText: "Email",
+                            validator: Validators.validateEmail,
                           ),
                           CustomTextField(
                             controller: phoneController,

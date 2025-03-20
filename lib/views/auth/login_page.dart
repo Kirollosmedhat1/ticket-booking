@@ -1,5 +1,4 @@
 import 'package:darbelsalib/controllers/auth_controller.dart';
-import 'package:darbelsalib/core/utils/validators.dart';
 import 'package:darbelsalib/views/widgets/custom_button.dart';
 import 'package:darbelsalib/views/widgets/custom_text_button.dart';
 import 'package:darbelsalib/views/widgets/custom_text_field.dart';
@@ -13,21 +12,21 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final AuthController authController = Get.put(AuthController());
-  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
-    phoneController.dispose();
+    emailController.dispose();
     passwordController.dispose();
     super.dispose();
   }
 
   Future<void> login() async {
     try {
-      final user = await authController.loginWithPhone(
-        phoneController.text.trim(),
+      final user = await authController.loginWithEmail(
+        emailController.text.trim(),
         passwordController.text.trim(),
       );
       if (user != null) {
@@ -72,10 +71,14 @@ class _LoginPageState extends State<LoginPage> {
                       child: Column(
                         children: [
                           CustomTextField(
-                            controller: phoneController,
-                            labelText: "Phone Number",
-                            validator: Validators.validatePhone,
-                            keyboardType: TextInputType.phone,
+                            controller: emailController,
+                            labelText: "Email or Phone Number",
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Email or Phone Number is required";
+                              }
+                              return null;
+                            },
                           ),
                           CustomTextField(
                             controller: passwordController,

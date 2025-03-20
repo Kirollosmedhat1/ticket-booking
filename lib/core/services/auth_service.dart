@@ -7,19 +7,20 @@ class AuthService {
   static const String baseUrl =
       'https://darb-el-salib-f3e9ea716f85.herokuapp.com/api';
 
-  /// **🔹 Register a new user with phone number**
-  Future<UserModel?> registerWithPhone(
-      String password, String fullName, String phone) async {
+  /// **🔹 Register a new user with email**
+  Future<UserModel?> registerWithEmail(
+      String email, String password, String firstName, String lastName, String phone) async {
     try {
       final url = Uri.parse('$baseUrl/users/register/');
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
+          "email": email,
           "phone_number": phone,
           "password": password,
-          "first_name": fullName.split(" ").first,
-          "last_name": fullName.split(" ").last,
+          "first_name": firstName,
+          "last_name": lastName,
         }),
       );
 
@@ -27,10 +28,10 @@ class AuthService {
         final responseData = jsonDecode(response.body);
         return UserModel(
           id: responseData['user']['id'].toString(),
-          fullName:
-              "${responseData['user']['first_name']} ${responseData['user']['last_name']}",
+          fullName: "$firstName $lastName",
           phone: phone,
-          token: responseData['token'], // Ensure the API returns a token
+          email: email,
+          token: responseData['token'],
         );
       } else {
         throw Exception("Registration failed: ${response.body}");
@@ -40,15 +41,15 @@ class AuthService {
     }
   }
 
-  /// **🔹 Login user with phone number**
-  Future<UserModel?> loginWithPhone(String phone, String password) async {
+  /// **🔹 Login user with email**
+  Future<UserModel?> loginWithEmail(String email, String password) async {
     try {
       final url = Uri.parse('$baseUrl/users/login/');
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          "phone_number": phone,
+          "email": email,
           "password": password,
         }),
       );
@@ -59,14 +60,35 @@ class AuthService {
           id: responseData['user']['id'].toString(),
           fullName:
               "${responseData['user']['first_name']} ${responseData['user']['last_name']}",
-          phone: phone,
-          token: responseData['token'], // Ensure the API returns a token
+          phone: responseData['user']['phone_number'],
+          email: email,
+          token: responseData['token'],
         );
       } else {
         throw Exception("Login failed: ${response.body}");
       }
     } catch (e) {
       throw Exception("Login failed: $e");
+    }
+  }
+
+  /// **🔹 Send Email Verification**
+  Future<void> sendEmailVerification(String email) async {
+    try {
+      final url = Uri.parse('$baseUrl/users/send-email-verification/');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "email": email,
+        }),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception("Failed to send email verification: ${response.body}");
+      }
+    } catch (e) {
+      throw Exception("Failed to send email verification: $e");
     }
   }
 }

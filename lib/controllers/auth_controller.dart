@@ -11,29 +11,28 @@ class AuthController extends GetxController {
   final UserStorageService _userStorageService = UserStorageService();
   var userName = "".obs;
 
-  // Register user with phone number
-  Future<UserModel?> registerWithPhone(
-      String password, String fullName, String phone) async {
+  /// **🔹 Register with email**
+  Future<UserModel?> registerWithEmail(
+      String email, String password, String firstName, String lastName, String phone) async {
     try {
-      final UserModel? user =
-          await _authService.registerWithPhone(password, fullName, phone);
+      final UserModel? user = await _authService.registerWithEmail(
+          email, password, firstName, lastName, phone);
       if (user != null) {
-        userName.value = user.fullName; // Update the observable user name
-        await _tokenStorageService.saveToken(user.token); // Save the token
-        await _userStorageService.saveFullName(user.fullName); // Save the full name
-        await _userStorageService.savePhoneNumber(user.phone); // Save the phone number
+        userName.value = user.fullName;
+        await _tokenStorageService.saveToken(user.token);
+        await _userStorageService.saveFullName(user.fullName);
+        await _userStorageService.savePhoneNumber(user.phone);
+        await _userStorageService.saveEmail(user.email);
         Get.snackbar("Success", "User registered successfully",
             backgroundColor: Colors.green);
         return user;
       } else {
-        Get.snackbar("Error", "Failed to register",
-            backgroundColor: Colors.red);
+        Get.snackbar("Error", "Failed to register", backgroundColor: Colors.red);
         return null;
       }
     } catch (e) {
-      //checks if error contains "phone number already exists" and show a snackbar accordingly
-      if (e.toString().contains("phone number already exists")) {
-        Get.snackbar("Error", "A User with this Phone Number Already Exists",
+      if (e.toString().contains("email already exists")) {
+        Get.snackbar("Error", "A User with this Email Already Exists",
             backgroundColor: Colors.red);
       } else {
         Get.snackbar("Error", e.toString(), backgroundColor: Colors.red);
@@ -42,16 +41,16 @@ class AuthController extends GetxController {
     }
   }
 
-  // Login user with phone number
-  Future<UserModel?> loginWithPhone(String phone, String password) async {
+  /// **🔹 Login with email**
+  Future<UserModel?> loginWithEmail(String email, String password) async {
     try {
-      final user =
-          await _authService.loginWithPhone(phone, password);
+      final user = await _authService.loginWithEmail(email, password);
       if (user != null) {
-        userName.value = user.fullName; // Update the observable user name
-        await _tokenStorageService.saveToken(user.token); // Save the token
-        await _userStorageService.saveFullName(user.fullName); // Save the full name
-        await _userStorageService.savePhoneNumber(user.phone); // Save the phone number
+        userName.value = user.fullName;
+        await _tokenStorageService.saveToken(user.token);
+        await _userStorageService.saveFullName(user.fullName);
+        await _userStorageService.savePhoneNumber(user.phone);
+        await _userStorageService.saveEmail(user.email);
         Get.snackbar("Success", "Logged in successfully",
             backgroundColor: Colors.green);
         return user;
@@ -60,28 +59,35 @@ class AuthController extends GetxController {
         return null;
       }
     } catch (e) {
-      //checks if user is unauthorized and show a snackbar accordingly
       if (e.toString().contains("Invalid credentials")) {
-        Get.snackbar("Error", "Invalid phone number or password",
+        Get.snackbar("Error", "Invalid email or password",
             backgroundColor: Colors.red);
       } else {
         Get.snackbar("Error", e.toString(), backgroundColor: Colors.red);
       }
-
       return null;
+    }
+  }
+
+  /// **🔹 Send Email Verification**
+  Future<void> sendEmailVerification(String email) async {
+    try {
+      await _authService.sendEmailVerification(email);
+      Get.snackbar("Success", "Email verification sent",
+          backgroundColor: Colors.green);
+    } catch (e) {
+      Get.snackbar("Error", e.toString(), backgroundColor: Colors.red);
     }
   }
 
   // Logout user (unchanged)
   Future<void> logout() async {
-    await _tokenStorageService.clearToken(); // Clear the token
-    await _userStorageService.clearUserDetails(); // Clear the user details
-    userName.value = ""; // Reset the user name
-    Get.offNamed('/login'); // Redirect to the login page
+    await _tokenStorageService.clearToken();
+    await _userStorageService.clearUserDetails();
+    userName.value = "";
+    Get.offNamed('/login');
   }
-
-  // Get the stored token (unchanged)
-  Future<String?> getToken() async {
+   Future<String?> getToken() async {
     return await _tokenStorageService.getToken();
   }
 

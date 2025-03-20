@@ -61,6 +61,10 @@ class CustomTextField extends StatelessWidget {
                 cursorColor: Color(0xffDFA000),
                 controller: controller,
                 decoration: InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: min(screenWidth * 0.02, 8.0), // Reduce height to half
+                    horizontal: min(screenWidth * 0.03, 12.0),
+                  ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(
                       min(screenWidth * 0.02, maxBorderRadius),
@@ -83,8 +87,9 @@ class CustomTextField extends StatelessWidget {
                       min(screenWidth * 0.02, maxBorderRadius),
                     ),
                     borderSide: BorderSide(
-                        color: const Color(0xffDFA000),
-                        width: min(screenWidth * 0.004, maxBorderWidth)),
+                      color: const Color(0xffDFA000),
+                      width: min(screenWidth * 0.004, maxBorderWidth),
+                    ),
                   ),
                   errorMaxLines: 3,
                   prefixIcon: prefixIcon != null
