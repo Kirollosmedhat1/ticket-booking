@@ -86,10 +86,10 @@ class _LoginPageState extends State<LoginPage> {
                           children: [
                             CustomTextField(
                               controller: emailController,
-                              labelText: "Email or Phone Number",
+                              labelText: "Email",
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return "Email or Phone Number is required";
+                                  return "Email is required";
                                 }
                                 return null;
                               },
