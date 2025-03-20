@@ -25,7 +25,7 @@ class AuthService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final responseData = jsonDecode(response.body);
         if (responseData['message'] != null) {
-          return responseData['message'];
+          return "${responseData['message']}\nIf you don't see it in your mail, check your spam folder.";
         } else {
           return "Registration Failed.";
         }
