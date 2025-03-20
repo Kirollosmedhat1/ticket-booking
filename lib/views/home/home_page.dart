@@ -105,29 +105,32 @@ class _HomePageState extends State<HomePage> {
                   content: ContactUsSection(),
                 ),
                 Padding(
-        padding: const EdgeInsets.only(left: 7),
-        child: //add a logout button
-            GestureDetector(
-          onTap: () {
-            authController.logout();
-            cartController.clearCart();
-          },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Icon(
-                Icons.logout,
-                color: Color(0xffdfa000),
-              ),
-              const SizedBox(width:  7),
-              const Text(
-                "Logout",
-                style: TextStyle(color: Color(0xffdfa000), fontSize: 17,fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-        ),
-      ),
+                  padding: const EdgeInsets.only(left: 7),
+                  child: //add a logout button
+                      GestureDetector(
+                    onTap: () {
+                      authController.logout();
+                      cartController.clearCart();
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.logout,
+                          color: Color(0xffdfa000),
+                        ),
+                        const SizedBox(width: 7),
+                        const Text(
+                          "Logout",
+                          style: TextStyle(
+                              color: Color(0xffdfa000),
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
