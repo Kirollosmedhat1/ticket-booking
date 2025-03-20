@@ -54,9 +54,31 @@ class _RegisterPageState extends State<RegisterPage> {
   forwardAnimationCurve: Curves.easeOutBack, // Animation curve
 );
       }
-    } catch (e) {
-      Get.snackbar("Error", e.toString(), backgroundColor: Colors.red);
-    }
+   } catch (e) {
+  Get.snackbar(
+    "Error", 
+    e.toString(),
+    backgroundColor: Colors.yellow,
+    duration: const Duration(seconds: 10),
+    snackPosition: SnackPosition.BOTTOM, // optional
+    titleText: Text(
+      "Error",
+      style: const TextStyle(
+        fontSize: 10, // Change font size here
+        color: Colors.white,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+    messageText: Text(
+      e.toString(),
+      style: const TextStyle(
+        fontSize: 10, // Change font size here
+        color: Colors.white,
+      ),
+    ),
+  );
+}
+
   }
 
   @override

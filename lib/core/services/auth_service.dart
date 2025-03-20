@@ -7,25 +7,27 @@ class AuthService {
   static const String baseUrl =
       'https://darb-el-salib-f3e9ea716f85.herokuapp.com/api';
 
-  /// **🔹 Register a new user with email**
   Future<UserModel?> registerWithEmail(
-      String email, String password, String firstName, String lastName, String phone) async {
-    try {
-      final url = Uri.parse('$baseUrl/users/register/');
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          "email": email,
-          "phone_number": phone,
-          "password": password,
-          "first_name": firstName,
-          "last_name": lastName,
-        }),
-      );
+    String email, String password, String firstName, String lastName, String phone) async {
+  try {
+    final url = Uri.parse('$baseUrl/users/register/');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        "email": email,
+        "phone_number": phone,
+        "password": password,
+        "first_name": firstName,
+        "last_name": lastName,
+      }),
+    );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final responseData = jsonDecode(response.body);
+    print("API Response: ${response.body}"); // Log the response
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final responseData = jsonDecode(response.body);
+      if (responseData['user'] != null && responseData['token'] != null) {
         return UserModel(
           id: responseData['user']['id'].toString(),
           fullName: "$firstName $lastName",
@@ -34,12 +36,15 @@ class AuthService {
           token: responseData['token'],
         );
       } else {
-        throw Exception("Registration failed: ${response.body}");
+        throw Exception("Invalid API response: Missing required fields");
       }
-    } catch (e) {
-      throw Exception("Registration failed: $e");
+    } else {
+      throw Exception("Registration failed: ${response.body}");
     }
+  } catch (e) {
+    throw Exception("Registration failed: $e");
   }
+}
 
   /// **🔹 Login user with email**
   Future<UserModel?> loginWithEmail(String email, String password) async {
