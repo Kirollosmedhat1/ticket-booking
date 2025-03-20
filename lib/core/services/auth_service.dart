@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:darbelsalib/models/user_model.dart'; // Import the UserModel
@@ -7,44 +6,46 @@ class AuthService {
   static const String baseUrl =
       'https://darb-el-salib-f3e9ea716f85.herokuapp.com/api';
 
-  Future<UserModel?> registerWithEmail(
-    String email, String password, String firstName, String lastName, String phone) async {
-  try {
-    final url = Uri.parse('$baseUrl/users/register/');
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        "email": email,
-        "phone_number": phone,
-        "password": password,
-        "first_name": firstName,
-        "last_name": lastName,
-      }),
-    );
+  Future<String?> registerWithEmail(String email, String password,
+      String firstName, String lastName, String phone) async {
+    try {
+      final url = Uri.parse('$baseUrl/users/register/');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "email": email,
+          "phone_number": phone,
+          "password": password,
+          "first_name": firstName,
+          "last_name": lastName,
+        }),
+      );
 
-    print("API Response: ${response.body}"); // Log the response
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      final responseData = jsonDecode(response.body);
-      if (responseData['user'] != null && responseData['token'] != null) {
-        return UserModel(
-          id: responseData['user']['id'].toString(),
-          fullName: "$firstName $lastName",
-          phone: phone,
-          email: email,
-          token: responseData['token'],
-        );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final responseData = jsonDecode(response.body);
+        if (responseData['message'] != null) {
+          return responseData['message'];
+        } else {
+          return "Registration Failed.";
+        }
       } else {
-        throw Exception("Invalid API response: Missing required fields");
+        final responseData = jsonDecode(response.body);
+        if (responseData.containsKey('phone_number') &&
+            responseData.containsKey('email')) {
+          return "Both email and phone number have been registered before.";
+        } else if (responseData.containsKey('email')) {
+          return "This email has been registered before.";
+        } else if (responseData.containsKey('phone_number')) {
+          return "This phone number has been registered before.";
+        } else {
+          throw Exception("Registration failed");
+        }
       }
-    } else {
-      throw Exception("Registration failed: ${response.body}");
+    } catch (e) {
+      throw Exception("Registration failed: $e");
     }
-  } catch (e) {
-    throw Exception("Registration failed: $e");
   }
-}
 
   /// **🔹 Login user with email**
   Future<UserModel?> loginWithEmail(String email, String password) async {
