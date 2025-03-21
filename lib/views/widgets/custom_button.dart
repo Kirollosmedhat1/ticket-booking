@@ -26,8 +26,8 @@ class CustomButton extends StatelessWidget {
 
     return ConstrainedBox(
       constraints: const BoxConstraints(
-        maxWidth: 400,
-        maxHeight: 60,
+        maxWidth: 350,
+        maxHeight: 50,
       ),
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
@@ -48,7 +48,7 @@ class CustomButton extends StatelessWidget {
                 text,
                 style: TextStyle(
                   color: textcolor,
-                  fontSize: min(screenWidth * 0.043, 28), // Max 18 px font size
+                  fontSize: min(screenWidth * 0.043, 24), // Max 18 px font size
                   fontWeight: FontWeight.w900,
                 ),
               ),

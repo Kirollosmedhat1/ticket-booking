@@ -1,3 +1,4 @@
+import 'package:darbelsalib/screen_size_handler.dart';
 import 'package:darbelsalib/views/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,22 +20,23 @@ class WelcomPage extends StatelessWidget {
         children: [
           Center(
             child: Container(
-              constraints: BoxConstraints(maxWidth: maxWidth), // Add max width constraint
+              constraints: BoxConstraints(
+                  maxWidth: maxWidth), // Add max width constraint
               padding: EdgeInsets.all(screenhight * 0.04),
               child: Column(
                 children: [
                   Container(
-                    height: screenhight * 0.2,
-                    width: screenWidth * 0.7,
+                    height: ScreenSizeHandler.smaller * 0.3,
+                    width: ScreenSizeHandler.smaller * 0.7,
                     decoration: BoxDecoration(
                         // color: Colors.amber,
                         image: DecorationImage(
                             image: AssetImage("assets/images/logo.png"),
-                            fit: BoxFit.fill)),
+                            fit: BoxFit.cover)),
                   ),
                   Container(
-                    height: screenhight * 0.5,
-                    width: screenWidth * 0.6,
+                    height: ScreenSizeHandler.smaller * 0.75,
+                    width: ScreenSizeHandler.smaller * 0.53,
                     decoration: BoxDecoration(
                         // color: Colors.amber,
                         image: DecorationImage(
@@ -47,7 +49,7 @@ class WelcomPage extends StatelessWidget {
                     bordercolor: Color(0xffDFA000),
                     backgroundcolor: Color(0xffDFA000),
                     text: "Login",
-                    onPressed: ()  => Get.toNamed('/login'),
+                    onPressed: () => Get.toNamed('/login'),
                   ),
                   SizedBox(height: screenhight * 0.025),
                   CustomButton(
@@ -55,7 +57,7 @@ class WelcomPage extends StatelessWidget {
                     bordercolor: Colors.white,
                     backgroundcolor: Colors.black,
                     text: "Sign up",
-                    onPressed: ()  => Get.toNamed('/register'),
+                    onPressed: () => Get.toNamed('/register'),
                   ),
                 ],
               ),

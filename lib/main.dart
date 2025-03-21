@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:darbelsalib/%20bindings/%20auth_binding.dart';
+import 'package:darbelsalib/core/services/token_storage_service.dart';
 import 'package:darbelsalib/routes/app_routes.dart';
 import 'package:darbelsalib/controllers/auth_controller.dart';
 import 'package:darbelsalib/controllers/ticket_controller.dart'; // Import the TicketController
@@ -18,46 +19,51 @@ void main() async {
   );
 
   FirebaseFirestore.instance.settings = Settings(
-    persistenceEnabled: false, // Ensure no offline cache issues
-    sslEnabled: true, // Ensure it connects to Firestore
+    persistenceEnabled: false,
+    sslEnabled: true,
   );
 
   // Initialize controllers
   Get.put(AuthController());
-  Get.put(TicketController()); // Initialize the TicketController
+  Get.put(TicketController());
 
   await GetStorage.init();
 
+  TokenStorageService tokenStorageService = TokenStorageService();
+  String? token = await tokenStorageService.getToken();
+
   setUrlStrategy(PathUrlStrategy());
 
-  runApp(MyApp());
+  runApp(MyApp(token: token));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final String? token;
+  
+  const MyApp({super.key, required this.token});
 
   @override
   Widget build(BuildContext context) {
     ScreenSizeHandler.initialize(
         MediaQuery.of(context).size.width, MediaQuery.of(context).size.height);
+    
     return GetMaterialApp(
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.black,
         appBarTheme: AppBarTheme(
-          backgroundColor: Colors.black, // Default black AppBar
-          iconTheme:
-              const IconThemeData(color: Colors.white), // White back button
+          backgroundColor: Colors.black,
+          iconTheme: const IconThemeData(color: Colors.white),
           titleTextStyle: TextStyle(
             fontSize: ScreenSizeHandler.smaller * 0.065,
             fontWeight: FontWeight.w700,
             color: Colors.white,
           ),
-          centerTitle: true, // Center the title (optional)
+          centerTitle: true,
         ),
       ),
       debugShowCheckedModeBanner: false,
       initialBinding: AuthBinding(),
-      initialRoute: '/welcome',
+      initialRoute: token != null ? '/home' : '/welcome', // Check if token exists
       getPages: AppRoutes.routes,
       unknownRoute: GetPage(
         name: '/notfound',
