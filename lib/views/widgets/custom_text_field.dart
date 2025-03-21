@@ -58,7 +58,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "   $widget.labelText",
+                widget.labelText, // Access labelText through widget
                 style: TextStyle(
                   fontSize: min(screenWidth * 0.030, maxFontSize),
                   fontWeight: FontWeight.w700,
