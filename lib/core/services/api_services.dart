@@ -24,6 +24,7 @@ class ApiService {
       url,
       headers: <String, String>{
         'Authorization': 'Token $token',
+        'Content-Type': 'application/json'
       },
     );
     return response;
@@ -35,6 +36,7 @@ class ApiService {
       url,
       headers: <String, String>{
         'Authorization': 'Token $token',
+        'Content-Type': 'application/json'
       },
     );
     if (response.statusCode == 200) {
@@ -50,6 +52,7 @@ class ApiService {
       url,
       headers: <String, String>{
         'Authorization': 'Token $token',
+        'Content-Type': 'application/json'
       },
     );
 
@@ -66,6 +69,7 @@ class ApiService {
       url,
       headers: <String, String>{
         'Authorization': 'Token $token',
+        'Content-Type': 'application/json'
       },
     );
     return response;
@@ -77,6 +81,7 @@ class ApiService {
       url,
       headers: <String, String>{
         'Authorization': 'Token $token',
+        'Content-Type': 'application/json'
       },
     );
     return response;
