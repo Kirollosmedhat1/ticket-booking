@@ -31,7 +31,7 @@ class ApiService {
   }
 
   Future<dynamic> getUserCart(String token) async {
-    final url = Uri.parse('$baseUrl/cart');
+    final url = Uri.parse('$baseUrl/cart/');
     final response = await http.get(
       url,
       headers: <String, String>{
