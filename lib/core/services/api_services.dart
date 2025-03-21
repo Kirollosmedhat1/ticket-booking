@@ -47,7 +47,7 @@ class ApiService {
   }
 
   Future<dynamic> getMyTickets(String token) async {
-    final url = Uri.parse('$baseUrl/tickets');
+    final url = Uri.parse('$baseUrl/tickets/');
     final response = await http.get(
       url,
       headers: <String, String>{
@@ -76,7 +76,7 @@ class ApiService {
   }
 
   Future<http.Response> paymentCallback(String id, String token) async {
-    final url = Uri.parse('$baseUrl/payments/$id');
+    final url = Uri.parse('$baseUrl/payments/$id/');
     final response = await http.get(
       url,
       headers: <String, String>{
