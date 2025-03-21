@@ -13,13 +13,6 @@ class ContactUsSection extends StatelessWidget {
     return Column(
       children: [
         const ContactUsEntry(
-          customIcon: Icons.abc,
-          isNormal: true,
-          isUnderLined: false,
-          text: "darb@email.com",
-          iconColor: Colors.white,
-        ),
-        const ContactUsEntry(
           text: "0120-6539-430",
           isUnderLined: false,
           isNormal: false,
