@@ -7,14 +7,14 @@ class TokenStorageService {
   Future<void> saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_tokenKey, token);
-    print('Token saved: $token'); // Debug print
+    print('Token saved: $token');
   }
 
   // Get the token
   Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString(_tokenKey);
-    print('Token retrieved: $token'); // Debug print
+    print('Token retrieved: $token');
     return token;
   }
 
@@ -22,6 +22,6 @@ class TokenStorageService {
   Future<void> clearToken() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_tokenKey);
-    print('Token cleared'); // Optional: Debug print
+    print('Token cleared'); 
   }
 }
