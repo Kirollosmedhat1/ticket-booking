@@ -95,6 +95,7 @@ class _LoginPageState extends State<LoginPage> {
                               },
                             ),
                             CustomTextField(
+                              showEyeIcon: true,
                               controller: passwordController,
                               labelText: "Password",
                               obscureText: true,

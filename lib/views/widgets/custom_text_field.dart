@@ -1,13 +1,14 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
-class CustomTextField extends StatelessWidget {
+class CustomTextField extends StatefulWidget {
   final TextEditingController controller;
   final String labelText;
   final String? Function(String?)? validator;
   final TextInputType keyboardType;
   final bool obscureText;
   final IconData? prefixIcon;
+  final bool showEyeIcon; // Add this parameter
 
   const CustomTextField({
     super.key,
@@ -17,7 +18,15 @@ class CustomTextField extends StatelessWidget {
     this.keyboardType = TextInputType.text,
     this.obscureText = false,
     this.prefixIcon,
+    this.showEyeIcon = false, // Default to false
   });
+
+  @override
+  _CustomTextFieldState createState() => _CustomTextFieldState();
+}
+
+class _CustomTextFieldState extends State<CustomTextField> {
+  bool _isObscured = true; // Track whether the text is obscured
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +58,7 @@ class CustomTextField extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "   $labelText",
+                "   $widget.labelText",
                 style: TextStyle(
                   fontSize: min(screenWidth * 0.030, maxFontSize),
                   fontWeight: FontWeight.w700,
@@ -59,7 +68,8 @@ class CustomTextField extends StatelessWidget {
               SizedBox(height: 4), // Smaller gap between label and field
               TextFormField(
                 cursorColor: Color(0xffDFA000),
-                controller: controller,
+                controller: widget.controller,
+                obscureText: widget.obscureText && _isObscured, // Toggle obscure text
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.symmetric(
                     vertical: screenWidth * 0.015, // Reduced vertical padding
@@ -91,17 +101,30 @@ class CustomTextField extends StatelessWidget {
                         width: min(screenWidth * 0.004, maxBorderWidth)),
                   ),
                   errorMaxLines: 2,
-                  prefixIcon: prefixIcon != null
+                  prefixIcon: widget.prefixIcon != null
                       ? Icon(
-                          prefixIcon,
+                          widget.prefixIcon,
                           color: Colors.white,
                           size: min(screenWidth * 0.05, maxIconSize),
                         )
                       : null,
+                  suffixIcon: widget.showEyeIcon && widget.obscureText
+                      ? IconButton(
+                          icon: Icon(
+                            _isObscured ? Icons.visibility : Icons.visibility_off,
+                            color: Colors.white,
+                            size: min(screenWidth * 0.05, maxIconSize),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _isObscured = !_isObscured; // Toggle obscure state
+                            });
+                          },
+                        )
+                      : null,
                 ),
-                validator: validator,
-                keyboardType: keyboardType,
-                obscureText: obscureText,
+                validator: widget.validator,
+                keyboardType: widget.keyboardType,
                 style: TextStyle(
                   fontSize: min(screenWidth * 0.030, maxFontSize),
                   fontWeight: FontWeight.w700,

@@ -181,6 +181,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               keyboardType: TextInputType.phone,
                             ),
                             CustomTextField(
+                              showEyeIcon: true,
                               controller: passwordController,
                               labelText: "Password",
                               validator: Validators.validatePassword,
@@ -188,6 +189,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                             // Add the confirm password field
                             CustomTextField(
+                              showEyeIcon: true,
                               controller: confirmPasswordController,
                               labelText: "Confirm Password",
                               validator: (value) => Validators.validateConfirmPassword(
