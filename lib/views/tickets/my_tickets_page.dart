@@ -46,13 +46,6 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                     "No Tickets Found",
                     style: TextStyle(color: Colors.white,fontSize: 20),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 20.0),
-                    child: GoBackText(
-                      text: "Go Home",
-                      onTap: () => Get.toNamed("/home"),
-                    ),
-                  )
                 ],
               ),
             );

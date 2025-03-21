@@ -1,5 +1,4 @@
 import 'package:darbelsalib/screen_size_handler.dart';
-import 'package:darbelsalib/views/widgets/book_button.dart';
 import 'package:darbelsalib/views/widgets/go_back_text.dart';
 import 'package:darbelsalib/views/widgets/subtitle_text.dart';
 import 'package:darbelsalib/views/widgets/title_text.dart';
