@@ -9,8 +9,8 @@ import 'package:darbelsalib/views/widgets/go_back_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:darbelsalib/views/widgets/seat_card.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:web/web.dart' as web;
 
 class CartPage extends StatelessWidget {
   final TokenStorageService _tokenStorageService = TokenStorageService();
@@ -64,24 +64,17 @@ class CartPage extends StatelessWidget {
   }
 
   void requestPayment(BuildContext context) async {
+    isLoading.value = true;
     String? token = await _tokenStorageService.getToken();
     var response = await _apiService.requestPayment(token!);
+
     if (response.statusCode == 200 || response.statusCode == 201) {
       var responseData = json.decode(response.body);
       String paymentUrl = responseData['url'];
       Uri redirectURL = Uri.parse(paymentUrl);
-      if (await canLaunchUrl(redirectURL)) {
-        await launchUrl(redirectURL);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Could not launch payment URL"),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-            margin: EdgeInsets.only(top: 10.0),
-          ),
-        );
-      }
+
+      // Open URL in the same tab
+      web.window.location.href = redirectURL.toString();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -92,6 +85,7 @@ class CartPage extends StatelessWidget {
         ),
       );
     }
+    isLoading.value = false;
   }
 
   void getCart() async {
@@ -162,7 +156,8 @@ class CartPage extends StatelessWidget {
                       return ListView.builder(
                         itemCount: _cartController.selectedSeats.length,
                         itemBuilder: (context, index) {
-                          var seat = _cartController.selectedSeats.values.toList()[index];
+                          var seat = _cartController.selectedSeats.values
+                              .toList()[index];
                           return SeatCard(
                             seatNumber: seat.seatNumber,
                             seatCategory: seat.section,

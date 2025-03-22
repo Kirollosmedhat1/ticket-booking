@@ -254,6 +254,11 @@ class _SelectSeatState extends State<SelectSeat> {
           if (mounted) {
             setState(() {
               seats[seatNameKey] = seat;
+              // check if seat is found in selected seats and its status is available, to remove it from selected seat
+              if (_cartController.selectedSeats.containsKey(seatNameKey) &&
+                  seats[seatNameKey]?.status == "available") {
+                _cartController.removeSeat(seatNameKey);
+              }
             });
             seats[seatNameKey]?.price = seatPrice;
           }
