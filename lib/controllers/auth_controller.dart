@@ -36,19 +36,17 @@ class AuthController extends GetxController {
         await _userStorageService.saveFullName(user.fullName);
         await _userStorageService.savePhoneNumber(user.phone);
         await _userStorageService.saveEmail(user.email);
-        Get.snackbar("Success", "Logged in successfully",
-            backgroundColor: Colors.green);
+        _showSnackBar("Success", "Logged in successfully", Colors.green);
         return user;
       } else {
-        Get.snackbar("Error", "Failed to login", backgroundColor: Colors.red);
+        _showSnackBar("Error", "Failed to login", Colors.red);
         return null;
       }
     } catch (e) {
       if (e.toString().contains("Invalid credentials")) {
-        Get.snackbar("Error", "Invalid email or password",
-            backgroundColor: Colors.red);
+        _showSnackBar("Error", "Invalid email or password", Colors.red);
       } else {
-        Get.snackbar("Error", e.toString(), backgroundColor: Colors.red);
+        _showSnackBar("Error", e.toString(), Colors.red);
       }
       return null;
     }
@@ -72,5 +70,15 @@ class AuthController extends GetxController {
 
   Future<String?> getPhoneNumber() async {
     return await _userStorageService.getPhoneNumber();
+  }
+
+  void _showSnackBar(String title, String message, Color backgroundColor) {
+    ScaffoldMessenger.of(Get.context!).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: backgroundColor,
+        duration: Duration(seconds: 3),
+      ),
+    );
   }
 }

@@ -39,7 +39,12 @@ class _LoginPageState extends State<LoginPage> {
         Get.offNamed('/home');
       }
     } catch (e) {
-      Get.snackbar("Error", e.toString(), backgroundColor: Colors.red);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
     setState(() {
       isLoading = false;

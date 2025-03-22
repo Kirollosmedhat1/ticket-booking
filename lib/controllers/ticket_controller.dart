@@ -2,6 +2,7 @@ import 'package:darbelsalib/core/services/api_services.dart';
 import 'package:darbelsalib/core/services/token_storage_service.dart';
 import 'package:darbelsalib/models/ticket_model.dart';
 import 'package:get/get.dart'; // For state management (optional)
+import 'package:flutter/material.dart';
 
 class TicketController extends GetxController {
   final ApiService _apiService = ApiService();
@@ -32,7 +33,7 @@ class TicketController extends GetxController {
       }
     } catch (e) {
       // Handle errors
-      Get.snackbar("Error", "Failed to fetch tickets: $e");
+      _showSnackBar("Error", "Failed to fetch tickets: $e", Colors.red);
     } finally {
       isLoading.value = false; // Stop loading
     }
@@ -57,7 +58,7 @@ class TicketController extends GetxController {
         throw Exception("User not authenticated");
       }
     } catch (e) {
-      Get.snackbar("Error", "Failed to add ticket: $e");
+      _showSnackBar("Error", "Failed to add ticket: $e", Colors.red);
     } finally {
       isLoading.value = false;
     }
@@ -82,9 +83,19 @@ class TicketController extends GetxController {
         throw Exception("User not authenticated");
       }
     } catch (e) {
-      Get.snackbar("Error", "Failed to remove ticket: $e");
+      _showSnackBar("Error", "Failed to remove ticket: $e", Colors.red);
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void _showSnackBar(String title, String message, Color backgroundColor) {
+    ScaffoldMessenger.of(Get.context!).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: backgroundColor,
+        duration: Duration(seconds: 3),
+      ),
+    );
   }
 }
