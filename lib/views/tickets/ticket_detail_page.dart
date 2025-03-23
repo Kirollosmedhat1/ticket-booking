@@ -67,15 +67,17 @@ class _TicketDetailsPageState extends State<TicketDetailsPage> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.symmetric(vertical: ScreenSizeHandler.smaller * 0.07),
+          padding:
+              EdgeInsets.symmetric(vertical: ScreenSizeHandler.smaller * 0.07),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Center(
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(ScreenSizeHandler.smaller * 0.028),
+                  borderRadius:
+                      BorderRadius.circular(ScreenSizeHandler.smaller * 0.028),
                   child: Image.asset(
-                    "assets/images/WhatsApp Image 2025-02-24 at 7.35.48 AM 1-3.png",
+                    "assets/images/card_image.png",
                     width: ScreenSizeHandler.smaller * 0.894,
                     height: ScreenSizeHandler.smaller * 0.588,
                     fit: BoxFit.cover,
@@ -99,7 +101,8 @@ class _TicketDetailsPageState extends State<TicketDetailsPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(right: ScreenSizeHandler.smaller * 0.023),
+                        padding: EdgeInsets.only(
+                            right: ScreenSizeHandler.smaller * 0.023),
                         child: Icon(
                           Icons.download,
                           size: ScreenSizeHandler.smaller * 0.058,
@@ -113,7 +116,8 @@ class _TicketDetailsPageState extends State<TicketDetailsPage> {
                           fontSize: ScreenSizeHandler.smaller * 0.037,
                           decoration: TextDecoration.underline,
                           decorationColor: Colors.white,
-                          decorationThickness: ScreenSizeHandler.smaller * 0.005,
+                          decorationThickness:
+                              ScreenSizeHandler.smaller * 0.005,
                         ),
                       ),
                     ],
