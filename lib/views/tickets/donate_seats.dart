@@ -59,16 +59,20 @@ class _DonateSeatsPageState extends State<DonateSeatsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Would you like to donate extra seats for someone else?",
+              "You can contribute so that one or more people who can’t afford a ticket can attend the show for free. You do this by choosing the number of tickets you want to buy for people you don’t know.",
               style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.white),
             ),
             SizedBox(height: 16),
             Text(
-              "Each extra donation seat costs 200 EGP and helps provide tickets for those who cannot afford them.",
-              style: TextStyle(fontSize: 16, color: Colors.white70),
+              "تقدر تساهم فأن شخص او اكتر مش عارف يشترى تذكره يحضر العرض مجانا عن طريقه انك تختار عدد من التذاكر تشتريها لاشخاص متعرفهمش.",
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
+              textDirection: TextDirection.rtl,
             ),
             SizedBox(height: 40),
             Text(

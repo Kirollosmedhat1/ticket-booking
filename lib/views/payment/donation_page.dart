@@ -2,13 +2,14 @@ import 'dart:convert';
 
 import 'package:darbelsalib/core/services/api_services.dart';
 import 'package:darbelsalib/core/services/token_storage_service.dart';
+import 'package:darbelsalib/core/services/user_storage_service.dart';
 import 'package:darbelsalib/screen_size_handler.dart';
 import 'package:darbelsalib/views/widgets/custom_button.dart';
 import 'package:darbelsalib/views/widgets/go_back_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart'; 
+import 'package:web/web.dart' as web;
 
 class DonationPage extends StatefulWidget {
   const DonationPage({super.key});
@@ -19,23 +20,35 @@ class DonationPage extends StatefulWidget {
 
 class _DonationPageState extends State<DonationPage> {
   final TokenStorageService _tokenStorageService = TokenStorageService();
+  final UserStorageService _userStorageService = UserStorageService();
   final ApiService _apiService = ApiService();
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _mobileController = TextEditingController();
   final RxBool _isLoading = false.obs;
+  bool _isLoggedIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    final token = await _tokenStorageService.getToken();
+    debugPrint('[DonationPage] _checkLoginStatus: token exists=${token != null && token.isNotEmpty}');
+    if (mounted) {
+      setState(() => _isLoggedIn = token != null && token.isNotEmpty);
+      debugPrint('[DonationPage] _isLoggedIn=$_isLoggedIn');
+    }
+  }
 
   static const String _messageEn =
-      'If you would like to support this mission beyond purchasing a ticket, '
-      'you can make a donation. Every contribution helps us continue producing '
-      'performances that spread hope, faith, and love.\n\n'
-      'Your support truly makes a difference. ❤️';
+      'Darb El Salib delivers a powerful message to everyone… Our goal is to advance the ministry in the best way possible and with the lowest ticket price, so it can have the greatest impact on hearts.If you would like to be part of supporting the ministry, you can donate any amount.';
 
   static const String _messageAr =
-      'إذا كنت ترغب في دعم هذه الرسالة بما يتجاوز شراء تذكرة، يمكنك التبرع. '
-      'كل مساهمة تساعدنا على الاستمرار في إنتاج عروض تنشر الأمل والإيمان والمحبة.\n\n'
-      'دعمك يحدث فرقاً حقيقياً. ❤️';
+      "درب الصليب بيقدم رساله قويه للجميع ... هدفنا الخدمه تتقدم باحس شكل و بأقل سعر للتذكره علشان يكون ليها اقوى تأثير فى النفوس.إذا كنت عايز تكون من المشاركين فى دعم الخدمه ممكن تتبرع بأى مبلغ.";
 
   InputDecoration _inputDecoration(String hint) => InputDecoration(
         hintText: hint,
@@ -69,10 +82,9 @@ class _DonationPageState extends State<DonationPage> {
   }
 
   Future<void> _proceedToPayment() async {
+    debugPrint('[DonationPage] _proceedToPayment called');
     final amountText = _amountController.text.trim();
-    final name = _nameController.text.trim();
-    final email = _emailController.text.trim();
-    final mobile = _mobileController.text.trim();
+    debugPrint('[DonationPage] amountText="$amountText"');
 
     if (amountText.isEmpty) {
       Get.snackbar('Notice', 'Please enter an amount',
@@ -87,31 +99,40 @@ class _DonationPageState extends State<DonationPage> {
       return;
     }
 
-    if (name.isEmpty) {
-      Get.snackbar('Notice', 'Please enter your name',
-          backgroundColor: Colors.red, colorText: Colors.white);
-      return;
-    }
-
-    if (email.isEmpty) {
-      Get.snackbar('Notice', 'Please enter your email',
-          backgroundColor: Colors.red, colorText: Colors.white);
-      return;
-    }
-
-    if (mobile.isEmpty) {
-      Get.snackbar('Notice', 'Please enter your mobile number',
-          backgroundColor: Colors.red, colorText: Colors.white);
-      return;
-    }
-
     final token = await _tokenStorageService.getToken();
-    if (token == null || token.isEmpty) {
-      Get.snackbar('Notice', 'Please log in first',
-          backgroundColor: Colors.red, colorText: Colors.white);
-      return;
+
+    String name;
+    String email;
+    String mobile;
+
+    if (_isLoggedIn) {
+      name = (await _userStorageService.getFullName()) ?? '';
+      email = (await _userStorageService.getEmail()) ?? '';
+      mobile = (await _userStorageService.getPhoneNumber()) ?? '';
+      debugPrint('[DonationPage] Using UserStorageService: name="$name", email="$email", mobile="$mobile"');
+    } else {
+      name = _nameController.text.trim();
+      email = _emailController.text.trim();
+      mobile = _mobileController.text.trim();
+      if (name.isEmpty) {
+        Get.snackbar('Notice', 'Please enter your name',
+            backgroundColor: Colors.red, colorText: Colors.white);
+        return;
+      }
+      if (email.isEmpty) {
+        Get.snackbar('Notice', 'Please enter your email',
+            backgroundColor: Colors.red, colorText: Colors.white);
+        return;
+      }
+      if (mobile.isEmpty) {
+        Get.snackbar('Notice', 'Please enter your mobile number',
+            backgroundColor: Colors.red, colorText: Colors.white);
+        return;
+      }
+      debugPrint('[DonationPage] Using form fields: name="$name", email="$email", mobile="$mobile"');
     }
 
+    debugPrint('[DonationPage] Calling API: amount=$amount, name="$name", email="$email", mobile="$mobile"');
     _isLoading.value = true;
     try {
       final response = await _apiService.requestDonationPayment(
@@ -122,12 +143,14 @@ class _DonationPageState extends State<DonationPage> {
         mobile: mobile,
       );
 
+      debugPrint('[DonationPage] API response: statusCode=${response.statusCode}, body=${response.body}');
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = json.decode(response.body);
         final paymentUrl = data['url'] as String?;
+        debugPrint('[DonationPage] paymentUrl=$paymentUrl');
         if (paymentUrl != null && paymentUrl.isNotEmpty) {
           final uri = Uri.parse(paymentUrl);
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
+          web.window.location.href = uri.toString();
         } else {
           Get.snackbar('Error', 'Payment URL not received',
               backgroundColor: Colors.red, colorText: Colors.white);
@@ -136,7 +159,9 @@ class _DonationPageState extends State<DonationPage> {
         Get.snackbar('Error', 'Failed to request payment',
             backgroundColor: Colors.red, colorText: Colors.white);
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('[DonationPage] Error: $e');
+      debugPrint('[DonationPage] StackTrace: $stackTrace');
       Get.snackbar('Error', 'An error occurred. Please try again.',
           backgroundColor: Colors.red, colorText: Colors.white);
     } finally {
@@ -204,44 +229,49 @@ class _DonationPageState extends State<DonationPage> {
                         style: textStyle,
                         decoration: _inputDecoration('Enter amount'),
                       ),
-                      SizedBox(height: ScreenSizeHandler.smaller * 0.03),
-                      _buildLabel('Name / الاسم'),
-                      TextField(
-                        controller: _nameController,
-                        keyboardType: TextInputType.name,
-                        style: textStyle,
-                        decoration: _inputDecoration('Enter your name'),
-                      ),
-                      SizedBox(height: ScreenSizeHandler.smaller * 0.03),
-                      _buildLabel('Email / البريد الإلكتروني'),
-                      TextField(
-                        controller: _emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        style: textStyle,
-                        decoration: _inputDecoration('Enter your email'),
-                      ),
-                      SizedBox(height: ScreenSizeHandler.smaller * 0.03),
-                      _buildLabel('Mobile / رقم الموبايل'),
-                      TextField(
-                        controller: _mobileController,
-                        keyboardType: TextInputType.phone,
-                        style: textStyle,
-                        decoration:
-                            _inputDecoration('e.g. +201234567890'),
-                      ),
+                      if (!_isLoggedIn) ...[
+                        SizedBox(height: ScreenSizeHandler.smaller * 0.03),
+                        _buildLabel('Name / الاسم'),
+                        TextField(
+                          controller: _nameController,
+                          keyboardType: TextInputType.name,
+                          style: textStyle,
+                          decoration: _inputDecoration('Enter your name'),
+                        ),
+                        SizedBox(height: ScreenSizeHandler.smaller * 0.03),
+                        _buildLabel('Email / البريد الإلكتروني'),
+                        TextField(
+                          controller: _emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          style: textStyle,
+                          decoration: _inputDecoration('Enter your email'),
+                        ),
+                        SizedBox(height: ScreenSizeHandler.smaller * 0.03),
+                        _buildLabel('Mobile / رقم الموبايل'),
+                        TextField(
+                          controller: _mobileController,
+                          keyboardType: TextInputType.phone,
+                          style: textStyle,
+                          decoration:
+                              _inputDecoration('e.g. +201234567890'),
+                        ),
+                      ],
                       SizedBox(height: ScreenSizeHandler.smaller * 0.05),
                       CustomButton(
                         textcolor: Colors.black,
                         bordercolor: const Color(0xffDFA000),
                         backgroundcolor: const Color(0xffDFA000),
-                        text: 'Proceed to EasyCash Payment',
+                        text: 'Proceed to Payment',
                         onPressed: _proceedToPayment,
                       ),
                       SizedBox(height: ScreenSizeHandler.smaller * 0.03),
-                      GoBackText(
+                      Center(
+                        child:GoBackText(
                         text: 'Go Back',
-                        onTap: () => Get.back(),
+                        onTap: () => Get.toNamed('/home'),
                       ),
+                      ),
+                      
                     ],
                   ),
                 ),

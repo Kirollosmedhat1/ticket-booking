@@ -28,7 +28,7 @@ class _PreferredPriceSelectionPageState extends State<PreferredPriceSelectionPag
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Price Selection")),
+      appBar: AppBar(title: Text("Notice | تنبيه")),
       body: Obx(() {
         return ModalProgressHUD(
           inAsyncCall: controller.isLoading.value,
@@ -41,13 +41,22 @@ class _PreferredPriceSelectionPageState extends State<PreferredPriceSelectionPag
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Choose your preferred price option for all tickets:",
+              "The original ticket price is 200 EGP, but we don’t want the cost to prevent anyone from attending the service. You can pay any amount according to your ability.",
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.white),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 16),
+            Text(
+              "السعر الأصلي للتذكرة 200 جنيه مصري، لكننا مش عايزين التكلفة تكون سبب في منع أي شخص من حضور الخدمة. تقدر تدفع اى مبلغ حسب قدرتك. اختار من الاختيارات الاتيه للدفع.",
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
+              textDirection: TextDirection.rtl,
+            ),
+            SizedBox(height: 50),
             Obx(() => RadioListTile<String>(
                   title: Text("200 EGP per ticket",
                       style: TextStyle(color: Colors.white)),
