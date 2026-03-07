@@ -79,7 +79,7 @@ class ApiService {
       requestBody['donation_amount'] = donationAmount;
     }
     
-    print('RequestPayment API - Payload: ${jsonEncode(requestBody)}');
+    ;
     
     final response = await http.post(
       url,
@@ -93,26 +93,38 @@ class ApiService {
   }
 
   Future<http.Response> requestDonationPayment(
-    String token, {
+    String? token, {
     required num amount,
     required String name,
-    required String email,
-    required String mobile,
+    String? email,
+    String? mobile,
   }) async {
-    final url = Uri.parse('$baseUrl/donations/');
+    // print the token
+    ;
+    final url = Uri.parse('$baseUrl/payments/donate/');
+    final requestBody = {
+      'amount': amount,
+      'name': name,
+      'email': email,
+      'mobile': mobile,
+    };
+    ;
+    
+    // Build headers conditionally
+    final headers = <String, String>{
+      'Content-Type': 'application/json',
+    };
+    if (token != null) {
+      headers['Authorization'] = 'Token $token';
+    }
+    
     final response = await http.post(
       url,
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-        'Authorization': 'Token $token',
-      },
-      body: jsonEncode({
-        'amount': amount,
-        'name': name,
-        'email': email,
-        'mobile': mobile,
-      }),
-    );
+      headers: headers,
+      body: jsonEncode(requestBody),
+    );  
+
+    ;
     return response;
   }
 

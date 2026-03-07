@@ -191,7 +191,8 @@ class DonateSeatsController extends GetxController {
           amount = basePrice * (discountPercentage);
         }
       } catch (e) {
-        print("Could not get preferred price option: $e");
+        // If PreferredPriceController doesn't exist, we assume original price, so no amount needed
+        amount = null;
       }
 
       // Get donation amount only if user donated seats
@@ -199,9 +200,6 @@ class DonateSeatsController extends GetxController {
       if (extraSeats.value > 0) {
         donationAmount = extraSeats.value * 200.0; // 200 EGP per seat
       }
-
-      print(
-          'Checkout - Amount: $amount, Donation Amount: $donationAmount, Extra Seats: ${extraSeats.value}');
 
       // Call the API
       var response = await _apiService.requestPayment(
@@ -211,7 +209,7 @@ class DonateSeatsController extends GetxController {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print('Payment request successful: ${response.body}');
+        ;
         var responseData = json.decode(response.body);
         String paymentUrl = responseData['url'];
         Uri redirectURL = Uri.parse(paymentUrl);
@@ -219,7 +217,7 @@ class DonateSeatsController extends GetxController {
         // Open URL in the same tab
         web.window.location.href = redirectURL.toString();
       } else {
-        print('Payment request failed: ${response.statusCode} - ${response.body}');
+        ;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to process payment. Please try again.'),
@@ -230,7 +228,7 @@ class DonateSeatsController extends GetxController {
         );
       }
     } catch (e) {
-      print('Checkout error: $e');
+      ;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('An error occurred. Please try again.'),

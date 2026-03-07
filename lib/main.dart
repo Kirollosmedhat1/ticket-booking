@@ -28,8 +28,7 @@ void main() async {
   Get.put(AuthController());
   Get.lazyPut(() => CartController());  // Use lazy initialization
   Get.put(TicketController());
-  Get.put(TicketController()); 
-
+  
   await GetStorage.init();
 
   TokenStorageService tokenStorageService = TokenStorageService();
