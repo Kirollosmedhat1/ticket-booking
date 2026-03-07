@@ -61,7 +61,7 @@ class SeatCard extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(min(screenWidth * 0.05, maxBorderRadius)), // Maximum border radius
                 image: DecorationImage(
-                  image: AssetImage("assets/images/card_image.png"),
+                  image: AssetImage("assets/images/2026poster.jpeg"),
                   fit: BoxFit.cover,
                 ),
               ),

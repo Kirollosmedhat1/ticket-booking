@@ -46,11 +46,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: "",
-        leading: false,
-      ),
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        appBar: CustomAppBar(
+          title: "",
+          showBackButton: false,
+        ),
       backgroundColor: Colors.black,
       body: SingleChildScrollView(
         child: Padding(
@@ -78,7 +80,7 @@ class _HomePageState extends State<HomePage> {
               HomePageSection(
                 title: "Past Services",
                 content: ImageViewer(images: [
-                  for (int year = 2012; year <= 2024; year++)
+                  for (int year = 2012; year <= 2025; year++)
                     if (year != 2020 && year != 2021)
                       {'imgName': year.toString()}
                 ], hasSubtitles: true),
@@ -136,6 +138,7 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
+      ),
       ),
     );
   }
