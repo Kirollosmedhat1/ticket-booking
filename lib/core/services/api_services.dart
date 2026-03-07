@@ -78,9 +78,6 @@ class ApiService {
       requestBody['donation_amount'] = donationAmount;
     }
 
-  //print request body
-  print('Request body: $requestBody');
-    
     final response = await http.post(
       url,
       headers: <String, String>{
