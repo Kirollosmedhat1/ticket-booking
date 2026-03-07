@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
     String? token = await authController.getToken();
     if (token == null) {
       // Navigate to the login page if no token is found
-      Get.offAllNamed('/welcome');
+      Get.offAllNamed('/login');
     }
   }
 

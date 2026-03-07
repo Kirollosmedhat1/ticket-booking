@@ -20,7 +20,8 @@ class CurrentServicePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final posterAspectRatio = 530 / 542;
     final posterWidth = ScreenSizeHandler.smaller * 0.95;
-    final posterHeight = (posterWidth / posterAspectRatio).clamp(0.0, ScreenSizeHandler.smaller * 0.6);
+    final posterHeight = (posterWidth / posterAspectRatio)
+        .clamp(0.0, ScreenSizeHandler.smaller * 0.6);
 
     return Scaffold(
       appBar: CustomAppBar(title: "Current Service"),
@@ -41,7 +42,6 @@ class CurrentServicePage extends StatelessWidget {
                 ),
                 image: const DecorationImage(
                   image: AssetImage("assets/images/currentservicepage.jpeg"),
-                  // image: AssetImage("assets/images/currentservicehomepage.png"),
                   fit: BoxFit.cover,
                 ),
               ),

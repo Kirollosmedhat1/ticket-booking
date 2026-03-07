@@ -63,68 +63,39 @@ class ApiService {
     }
   }
 
-  Future<http.Response> requestPayment(
-    String token, {
-    double? amount,
-    double? donationAmount,
-  }) async {
+  Future<http.Response> requestPayment(String token) async {
     final url = Uri.parse('$baseUrl/payments/');
-    
-    // Build request body with optional fields
-    Map<String, dynamic> requestBody = {};
-    if (amount != null) {
-      requestBody['amount'] = amount;
-    }
-    if (donationAmount != null) {
-      requestBody['donation_amount'] = donationAmount;
-    }
-    
-    ;
-    
     final response = await http.post(
       url,
       headers: <String, String>{
         'Authorization': 'Token $token',
         'Content-Type': 'application/json'
       },
-      body: requestBody.isNotEmpty ? jsonEncode(requestBody) : null,
     );
     return response;
   }
 
   Future<http.Response> requestDonationPayment(
-    String? token, {
+    String token, {
     required num amount,
     required String name,
-    String? email,
-    String? mobile,
+    required String email,
+    required String mobile,
   }) async {
-    // print the token
-    ;
-    final url = Uri.parse('$baseUrl/payments/donate/');
-    final requestBody = {
-      'amount': amount,
-      'name': name,
-      'email': email,
-      'mobile': mobile,
-    };
-    ;
-    
-    // Build headers conditionally
-    final headers = <String, String>{
-      'Content-Type': 'application/json',
-    };
-    if (token != null) {
-      headers['Authorization'] = 'Token $token';
-    }
-    
+    final url = Uri.parse('$baseUrl/donations/');
     final response = await http.post(
       url,
-      headers: headers,
-      body: jsonEncode(requestBody),
-    );  
-
-    ;
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Token $token',
+      },
+      body: jsonEncode({
+        'amount': amount,
+        'name': name,
+        'email': email,
+        'mobile': mobile,
+      }),
+    );
     return response;
   }
 
