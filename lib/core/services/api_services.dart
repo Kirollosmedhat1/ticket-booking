@@ -63,51 +63,66 @@ class ApiService {
     }
   }
 
-  Future<http.Response> requestPayment(String token) async {
-    final url = Uri.parse('$baseUrl/payments/');
-    final response = await http.post(
-      url,
-      headers: <String, String>{
-        'Authorization': 'Token $token',
-        'Content-Type': 'application/json'
-      },
-    );
-    return response;
-  }
-
-  Future<http.Response> requestDonationPayment(
+  Future<http.Response> requestPayment(
     String token, {
-    required num amount,
-    required String name,
-    required String email,
-    required String mobile,
+    double? amount,
+    double? donationAmount,
   }) async {
-    final url = Uri.parse('$baseUrl/donations/');
-    final response = await http.post(
-      url,
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-        'Authorization': 'Token $token',
-      },
-      body: jsonEncode({
-        'amount': amount,
-        'name': name,
-        'email': email,
-        'mobile': mobile,
-      }),
-    );
-    return response;
-  }
+    final url = Uri.parse('$baseUrl/payments/');
+    // Build request body with optional fields
+    Map<String, dynamic> requestBody = {};
+    if (amount != null) {
+      requestBody['amount'] = amount;
+    }
+    if (donationAmount != null) {
+      requestBody['donation_amount'] = donationAmount;
+    }
 
-  Future<http.Response> paymentCallback(String id, String token) async {
-    final url = Uri.parse('$baseUrl/payments/$id/');
-    final response = await http.get(
+    final response = await http.post(
       url,
       headers: <String, String>{
         'Authorization': 'Token $token',
         'Content-Type': 'application/json'
       },
+      body: requestBody.isNotEmpty ? jsonEncode(requestBody) : null,
     );
+
     return response;
+  } 
+
+    Future<http.Response> requestDonationPayment(
+      String token, {
+      required num amount,
+      required String name,
+      required String email,
+      required String mobile,
+    }) async {
+      final url = Uri.parse('$baseUrl/donations/');
+      final response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Token $token',
+        },
+        body: jsonEncode({
+          'amount': amount,
+          'name': name,
+          'email': email,
+          'mobile': mobile,
+        }),
+      );
+      return response;
+    }
+
+    Future<http.Response> paymentCallback(String id, String token) async {
+      final url = Uri.parse('$baseUrl/payments/$id/');
+      final response = await http.get(
+        url,
+        headers: <String, String>{
+          'Authorization': 'Token $token',
+          'Content-Type': 'application/json'
+        },
+      );
+      return response;
+    }
   }
-}
