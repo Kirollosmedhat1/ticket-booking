@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
 
@@ -11,8 +10,7 @@ class DatabaseService {
           .collection('seats')
           .doc(seatNumber)
           .update({'status': status});
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   // Generate seats with status "available" and user_id as null

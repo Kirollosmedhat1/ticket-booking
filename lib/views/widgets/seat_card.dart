@@ -61,7 +61,7 @@ class SeatCard extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(min(screenWidth * 0.05, maxBorderRadius)), // Maximum border radius
                 image: DecorationImage(
-                  image: AssetImage("assets/images/card_image.png"),
+                  image: AssetImage("assets/images/2026poster.jpeg"),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -76,7 +76,7 @@ class SeatCard extends StatelessWidget {
                 children: [
                   TextSpan(text: "Seat: $seatNumber \n"),
                   TextSpan(
-                    text: "Section: $seatCategory \nPrice:  ${seatPrice.toStringAsFixed(2)} ",
+                    text: seatCategory,
                     style: TextStyle(
                       fontSize: min(screenWidth * 0.04, maxFontSize - 4), // Slightly smaller font
                       fontWeight: FontWeight.w400,

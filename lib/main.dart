@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:darbelsalib/%20bindings/%20auth_binding.dart';
+import 'package:darbelsalib/controllers/cart_controller.dart';
 import 'package:darbelsalib/core/services/token_storage_service.dart';
 import 'package:darbelsalib/routes/app_routes.dart';
 import 'package:darbelsalib/controllers/auth_controller.dart';
@@ -25,8 +26,9 @@ void main() async {
 
   // Initialize controllers
   Get.put(AuthController());
+  Get.lazyPut(() => CartController());  // Use lazy initialization
   Get.put(TicketController());
-
+  
   await GetStorage.init();
 
   TokenStorageService tokenStorageService = TokenStorageService();

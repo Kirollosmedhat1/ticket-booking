@@ -498,11 +498,11 @@ class _SelectSeatState extends State<SelectSeat> {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("Total",
+                                    Text("Selected Seats",
                                         style: TextStyle(
                                             color: Colors.white, fontSize: 16)),
                                     Text(
-                                      "${_cartController.totalPrice.value} EGP",
+                                      "${_cartController.selectedSeats.length} ${_cartController.selectedSeats.length == 1 ? 'Seat' : 'Seats'}",
                                       style: TextStyle(
                                           color: Color(0xffdfa000),
                                           fontSize: 24,

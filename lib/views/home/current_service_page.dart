@@ -18,47 +18,46 @@ class CurrentServicePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar:CustomAppBar(title: "Current Service"),
-      body: SingleChildScrollView(
+    final posterAspectRatio = 530 / 542;
+    final posterWidth = ScreenSizeHandler.smaller * 0.95;
+    final posterHeight = (posterWidth / posterAspectRatio)
+        .clamp(0.0, ScreenSizeHandler.smaller * 0.6);
 
+    return Scaffold(
+      appBar: CustomAppBar(title: "Current Service"),
+      body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(
-              height: ScreenSizeHandler.smaller * 0.05,
-            ),
-           Container(
-          constraints: BoxConstraints(
-            maxHeight: 542,
-            maxWidth: 530,
-          ),
-          height: ScreenSizeHandler.smaller * 1.02,
-          width: ScreenSizeHandler.smaller * 1,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(
-        ScreenSizeHandler.screenWidth * 0.03,
-            ),
-            image: const DecorationImage(
-        image: AssetImage("assets/images/currentservicepage.png"),
-        fit: BoxFit.fill,
-            ),
-          ),
-        ),
+            SizedBox(height: ScreenSizeHandler.smaller * 0.02),
             Container(
-              padding: EdgeInsets.all(
-                ScreenSizeHandler.screenHeight * 0.02,
+              constraints: BoxConstraints(
+                maxHeight: posterHeight,
+                maxWidth: posterWidth,
               ),
+              height: posterHeight,
+              width: posterWidth,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(
+                  ScreenSizeHandler.screenWidth * 0.03,
+                ),
+                image: const DecorationImage(
+                  image: AssetImage("assets/images/currentservicepage.jpeg"),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.all(ScreenSizeHandler.screenHeight * 0.02),
               child: Column(
                 children: [
                   Storyline(),
-                  SizedBox(
-                    height: ScreenSizeHandler.screenWidth * 0.03,
-                  ),
+                  SizedBox(height: ScreenSizeHandler.screenWidth * 0.03),
                   Container(
                     padding: EdgeInsets.symmetric(
-                        vertical: ScreenSizeHandler.screenWidth * 0.5),
-                    height: ScreenSizeHandler.smaller * 0.195,
-                    width: ScreenSizeHandler.smaller * 0.3465,
+                      vertical: ScreenSizeHandler.screenHeight * 0.02,
+                    ),
+                    height: ScreenSizeHandler.smaller * 0.18,
+                    width: ScreenSizeHandler.smaller * 0.32,
                     decoration: BoxDecoration(
                         // color: Colors.amber,
                         image: DecorationImage(
@@ -66,21 +65,13 @@ class CurrentServicePage extends StatelessWidget {
                             fit: BoxFit.contain)),
                   ),
                   CustomButton(
-                      text: "Book your seat",
-                      textcolor: Colors.black,
-                      bordercolor: Color(0xffDFA000),
-                      backgroundcolor: Color(0xffDFA000),
-                      onPressed: () {
-                        // if (isLoggedIn()) {
-                        //   Get.toNamed("/selectsection");
-                        // } else {
-                        //   Get.toNamed("/register");
-                        // }
-                        Get.toNamed("/selectsection");
-                      }),
-                  SizedBox(
-                    height: ScreenSizeHandler.screenWidth * 0.15,
-                  )
+                    text: "Book your seat",
+                    textcolor: Colors.black,
+                    bordercolor: Color(0xffDFA000),
+                    backgroundcolor: Color(0xffDFA000),
+                    onPressed: () => Get.toNamed("/selectsection"),
+                  ),
+                  SizedBox(height: ScreenSizeHandler.screenHeight * 0.03),
                 ],
               ),
             ),
