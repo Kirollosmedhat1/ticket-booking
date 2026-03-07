@@ -8,7 +8,7 @@ import 'package:darbelsalib/views/widgets/go_back_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:web/web.dart' as web;
 
 class DonationPage extends StatefulWidget {
   const DonationPage({super.key});
@@ -74,6 +74,9 @@ class _DonationPageState extends State<DonationPage> {
     final email = _emailController.text.trim();
     final mobile = _mobileController.text.trim();
 
+    // get token if user is logged in, otherwise send null for both email and mobile
+    final token = await _tokenStorageService.getToken();
+
     if (amountText.isEmpty) {
       Get.snackbar('Notice', 'Please enter an amount',
           backgroundColor: Colors.red, colorText: Colors.white);
@@ -86,31 +89,30 @@ class _DonationPageState extends State<DonationPage> {
           backgroundColor: Colors.red, colorText: Colors.white);
       return;
     }
-
+    // check if user is logged in, if not, require email and mobile, otherwise send null for both
     if (name.isEmpty) {
       Get.snackbar('Notice', 'Please enter your name',
           backgroundColor: Colors.red, colorText: Colors.white);
       return;
     }
 
-    if (email.isEmpty) {
+    if (email.isEmpty && token == null) {
       Get.snackbar('Notice', 'Please enter your email',
           backgroundColor: Colors.red, colorText: Colors.white);
       return;
     }
 
-    if (mobile.isEmpty) {
+    if (mobile.isEmpty && token == null) {
       Get.snackbar('Notice', 'Please enter your mobile number',
           backgroundColor: Colors.red, colorText: Colors.white);
       return;
     }
 
-    final token = await _tokenStorageService.getToken();
-    if (token == null || token.isEmpty) {
-      Get.snackbar('Notice', 'Please log in first',
-          backgroundColor: Colors.red, colorText: Colors.white);
-      return;
-    }
+    // If user is logged in, send email and mobile as null
+    final actualEmail = token != null ? null : email;
+    final actualMobile = token != null ? null : mobile;
+
+    ;
 
     _isLoading.value = true;
     try {
@@ -118,16 +120,19 @@ class _DonationPageState extends State<DonationPage> {
         token,
         amount: amount,
         name: name,
-        email: email,
-        mobile: mobile,
+        email: actualEmail,
+        mobile: actualMobile,
       );
+
+      ;
+      ;
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = json.decode(response.body);
         final paymentUrl = data['url'] as String?;
         if (paymentUrl != null && paymentUrl.isNotEmpty) {
           final uri = Uri.parse(paymentUrl);
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
+          web.window.location.href = uri.toString();
         } else {
           Get.snackbar('Error', 'Payment URL not received',
               backgroundColor: Colors.red, colorText: Colors.white);
@@ -137,6 +142,7 @@ class _DonationPageState extends State<DonationPage> {
             backgroundColor: Colors.red, colorText: Colors.white);
       }
     } catch (e) {
+      ;
       Get.snackbar('Error', 'An error occurred. Please try again.',
           backgroundColor: Colors.red, colorText: Colors.white);
     } finally {
@@ -238,9 +244,12 @@ class _DonationPageState extends State<DonationPage> {
                         onPressed: _proceedToPayment,
                       ),
                       SizedBox(height: ScreenSizeHandler.smaller * 0.03),
-                      GoBackText(
-                        text: 'Go Back',
-                        onTap: () => Get.back(),
+                      // Go to home page
+                      Center(
+                        child: GoBackText(
+                          text: 'Go Back',
+                          onTap: () => Get.toNamed('/home'),
+                        ),
                       ),
                     ],
                   ),

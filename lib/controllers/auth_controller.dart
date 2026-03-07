@@ -57,7 +57,7 @@ class AuthController extends GetxController {
     await _tokenStorageService.clearToken();
     await _userStorageService.clearUserDetails();
     userName.value = "";
-    Get.offNamed('/login');
+    Get.offNamed('/welcome');
   }
 
   Future<String?> getToken() async {
