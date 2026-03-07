@@ -40,7 +40,7 @@ class CurrentServicePage extends StatelessWidget {
                   ScreenSizeHandler.screenWidth * 0.03,
                 ),
                 image: const DecorationImage(
-                  image: AssetImage("assets/images/2026poster.jpeg"),
+                  image: AssetImage("assets/images/currentservicepage.jpeg"),
                   fit: BoxFit.cover,
                 ),
               ),
