@@ -182,7 +182,7 @@ class DonateSeatsController extends GetxController {
         seatsPrice = cartController.totalPrice.value.toDouble();
       }
 
-      double donationCost = extraSeats.value * 200.0; // 200 EGP per extra seat
+      double donationCost = extraSeats.value * 100.0; // 100 EGP per extra seat
       
       totalPrice.value = seatsPrice + donationCost;
       displayPrice.value = seatsPrice + donationCost; // Show total to user
@@ -265,7 +265,7 @@ class DonateSeatsController extends GetxController {
       // Get donation amount only if user donated seats
       double? donationAmount;
       if (extraSeats.value > 0) {
-        donationAmount = extraSeats.value * 200.0; // 200 EGP per seat
+        donationAmount = extraSeats.value * 100.0; // 100 EGP per seat
       }
 
       // Call the API

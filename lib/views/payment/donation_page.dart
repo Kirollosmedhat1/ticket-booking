@@ -45,10 +45,10 @@ class _DonationPageState extends State<DonationPage> {
   }
 
   static const String _messageEn =
-      'Darb El Salib delivers a powerful message to everyone… Our goal is to advance the ministry in the best way possible and with the lowest ticket price, so it can have the greatest impact on hearts.If you would like to be part of supporting the ministry, you can donate any amount.';
+      'Darb El Salib delivers a powerful message to everyone… Our goal is to always perform the service in a better way and with the lowest ticket price, So it can have more impact in our hearts. If you would like to be one of who support the service, you can donate with any amount.';
 
   static const String _messageAr =
-      "درب الصليب بيقدم رساله قويه للجميع ... هدفنا الخدمه تتقدم باحس شكل و بأقل سعر للتذكره علشان يكون ليها اقوى تأثير فى النفوس.إذا كنت عايز تكون من المشاركين فى دعم الخدمه ممكن تتبرع بأى مبلغ.";
+      "درب الصليب بيقدم رساله قويه للجميع ... هدفنا الخدمه تتقدم باحس شكل و بأقل سعر للتذكره علشان يكون ليها اقوى تأثير فى النفوس.\nإذا كنت عايز تكون من المشاركين فى دعم الخدمه ممكن تتبرع بأى مبلغ.";
 
   InputDecoration _inputDecoration(String hint) => InputDecoration(
         hintText: hint,

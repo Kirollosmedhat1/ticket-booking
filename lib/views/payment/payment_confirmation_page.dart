@@ -80,7 +80,7 @@ class PaymentConfirmationPage extends StatelessWidget {
                         SizedBox(height: 10),
                         Text(
                           isSuccess
-                              ? "Thank you for your purchase.\nYour tickets are now confirmed."
+                              ? "Thank you for your purchase."
                               : "Something went wrong.\nPlease try again.",
                           style: TextStyle(
                             color: Colors.grey[300],

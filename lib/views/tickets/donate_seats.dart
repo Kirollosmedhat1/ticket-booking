@@ -133,7 +133,7 @@ class _DonateSeatsPageState extends State<DonateSeatsPage> {
             SizedBox(height: 16),
             Obx(() => controller.extraSeats.value > 0
                 ? Text(
-                    "Including ${controller.extraSeats.value} donation seat${controller.extraSeats.value == 1 ? '' : 's'} at 200 EGP each",
+                    "Including ${controller.extraSeats.value} donation seat${controller.extraSeats.value == 1 ? '' : 's'} at 100 EGP each",
                     style: TextStyle(fontSize: 14, color: Colors.white70),
                   )
                 : Container()),
