@@ -2,7 +2,9 @@ import 'package:darbelsalib/views/auth/welcom_page.dart';
 import 'package:darbelsalib/views/home/current_service_page.dart';
 // import 'package:darbelsalib/views/payment/checkout_page.dart';
 import 'package:darbelsalib/views/tickets/cart.dart';
+import 'package:darbelsalib/views/tickets/donate_seats.dart';
 import 'package:darbelsalib/views/tickets/my_tickets_page.dart';
+import 'package:darbelsalib/views/tickets/preferred_price_selection.dart';
 import 'package:darbelsalib/views/tickets/select_seat.dart';
 import 'package:darbelsalib/views/tickets/select_section.dart';
 import 'package:darbelsalib/views/tickets/ticket_detail_page.dart';
@@ -20,6 +22,8 @@ class AppRoutes {
     GetPage(name: '/selectsection', page: () => const SelectSection()),
     // GetPage(name: '/checkout', page: () => CheckoutPage()),
     GetPage(name: '/cart', page: () => CartPage()),
+    GetPage(name: '/preferred-price-selection', page: () => PreferredPriceSelectionPage()),
+    GetPage(name: '/donate-seats', page: () => DonateSeatsPage()),
     GetPage(name: '/welcome', page: () => const WelcomPage()),
     GetPage(name: '/mytickets', page: () => MyTicketsPage()),
     GetPage(name: '/currentservice', page: () => const CurrentServicePage()),

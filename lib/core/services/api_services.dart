@@ -63,14 +63,31 @@ class ApiService {
     }
   }
 
-  Future<http.Response> requestPayment(String token) async {
+  Future<http.Response> requestPayment(
+    String token, {
+    double? amount,
+    double? donationAmount,
+  }) async {
     final url = Uri.parse('$baseUrl/payments/');
+    
+    // Build request body with optional fields
+    Map<String, dynamic> requestBody = {};
+    if (amount != null) {
+      requestBody['amount'] = amount;
+    }
+    if (donationAmount != null) {
+      requestBody['donation_amount'] = donationAmount;
+    }
+    
+    print('RequestPayment API - Payload: ${jsonEncode(requestBody)}');
+    
     final response = await http.post(
       url,
       headers: <String, String>{
         'Authorization': 'Token $token',
         'Content-Type': 'application/json'
       },
+      body: requestBody.isNotEmpty ? jsonEncode(requestBody) : null,
     );
     return response;
   }

@@ -100,11 +100,7 @@ class CartPage extends StatelessWidget {
       String seatNumber = item['seat']['seat_number'];
       String seatId = item['seat']['id'];
       String category = _capitalize(item['seat']['category']['name']);
-      int price = category == 'Section 1' || category == 'Section 2'
-          ? 100
-          : category == 'Section 3' || category == 'Section 4'
-              ? 75
-              : 50;
+      int price = 200;
       _cartController.addSeat(
           seatNumber,
           Seat(
@@ -172,7 +168,7 @@ class CartPage extends StatelessWidget {
                     }),
                   ),
                   Divider(),
-                  _buildTotalPriceSection(),
+                  _buildTotalNumberOfSeats(),
                   SizedBox(height: 10),
                   _buildCheckoutButton(context),
                   Padding(
@@ -191,21 +187,21 @@ class CartPage extends StatelessWidget {
     );
   }
 
-  /// **Displays Total Price**
-  Widget _buildTotalPriceSection() {
+  /// **Displays Total Number of Seats**
+  Widget _buildTotalNumberOfSeats() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            "Total Price:",
+            "Total Number of Seats:",
             style: TextStyle(
                 fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           Obx(() {
             return Text(
-              "${_cartController.totalPrice.value.toStringAsFixed(2)} EGP",
+              "${_cartController.selectedSeats.length} ${_cartController.selectedSeats.length == 1 ? 'Seat' : 'Seats'}",
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -223,14 +219,14 @@ class CartPage extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: ElevatedButton(
         onPressed: () async {
-          requestPayment(context);
+          Get.toNamed('/preferred-price-selection');
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Color(0xffdfa000),
           minimumSize: Size(double.infinity, 50),
         ),
         child: Text(
-          "Proceed to Checkout",
+          "Proceed",
           style: TextStyle(
               color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
         ),

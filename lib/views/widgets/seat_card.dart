@@ -76,7 +76,7 @@ class SeatCard extends StatelessWidget {
                 children: [
                   TextSpan(text: "Seat: $seatNumber \n"),
                   TextSpan(
-                    text: "Section: $seatCategory \nPrice:  ${seatPrice.toStringAsFixed(2)} ",
+                    text: seatCategory,
                     style: TextStyle(
                       fontSize: min(screenWidth * 0.04, maxFontSize - 4), // Slightly smaller font
                       fontWeight: FontWeight.w400,
