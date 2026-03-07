@@ -69,7 +69,6 @@ class ApiService {
     double? donationAmount,
   }) async {
     final url = Uri.parse('$baseUrl/payments/');
-    
     // Build request body with optional fields
     Map<String, dynamic> requestBody = {};
     if (amount != null) {
@@ -78,8 +77,9 @@ class ApiService {
     if (donationAmount != null) {
       requestBody['donation_amount'] = donationAmount;
     }
-    
-    ;
+
+  //print request body
+  print('Request body: $requestBody');
     
     final response = await http.post(
       url,
@@ -89,6 +89,8 @@ class ApiService {
       },
       body: requestBody.isNotEmpty ? jsonEncode(requestBody) : null,
     );
+
+
     return response;
   }
 

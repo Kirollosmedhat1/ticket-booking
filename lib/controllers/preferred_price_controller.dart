@@ -5,8 +5,9 @@ import 'package:darbelsalib/models/seat_model.dart';
 import 'package:get/get.dart';
 
 class PreferredPriceController extends GetxController {
-  var selectedOption = 'original'.obs; // 'original', '50%', '25%'
+  var selectedOption = 'price_200'.obs; // 'price_200', 'price_100', 'price_75'
   late RxDouble totalPrice = 0.0.obs;
+  late RxDouble displayPrice = 0.0.obs; // Price displayed to user (seats price only)
   var isLoading = false.obs;
   
   final TokenStorageService _tokenStorageService = TokenStorageService();
@@ -26,6 +27,7 @@ class PreferredPriceController extends GetxController {
         // Initialize with current cart total value
         double basePrice = cartController.totalPrice.value.toDouble();
         totalPrice.value = basePrice;
+        displayPrice.value = basePrice;
         
       }
       
@@ -35,6 +37,9 @@ class PreferredPriceController extends GetxController {
         
         _updateTotalPrice();
       });
+      
+      // Initialize price based on selected option
+      _updateTotalPrice();
     } catch (e) {
       
       totalPrice.value = 0.0;
@@ -83,6 +88,7 @@ class PreferredPriceController extends GetxController {
       
       // Now update our total price
       totalPrice.value = cartController.totalPrice.value.toDouble();
+      displayPrice.value = cartController.totalPrice.value.toDouble();
       isLoading.value = false;
       
     } catch (e) {
@@ -105,27 +111,37 @@ class PreferredPriceController extends GetxController {
   void _updateTotalPrice() {
     try {
       CartController cartController = Get.find<CartController>();
-      double basePrice = cartController.totalPrice.value.toDouble();
+      int numberOfSeats = cartController.selectedSeats.length;
       
+      double pricePerTicket;
       switch (selectedOption.value) {
-        case '50%':
-          totalPrice.value = basePrice * 0.5;
+        case 'price_100':
+          pricePerTicket = 100.0;
           break;
-        case '25%':
-          totalPrice.value = basePrice * 0.25;
+        case 'price_75':
+          pricePerTicket = 75.0;
           break;
-        case 'original':
+        case 'price_200':
         default:
-          totalPrice.value = basePrice;
+          pricePerTicket = 200.0;
           break;
       }
       
+      double calculatedPrice = numberOfSeats * pricePerTicket;
+      totalPrice.value = calculatedPrice;
+      displayPrice.value = calculatedPrice; // Display shows the seats total
+      
     } catch (e) {
       totalPrice.value = 0.0;
+      displayPrice.value = 0.0;
     }
   }
 
   void setSelectedOption(String option) {
     selectedOption.value = option;
+  }
+
+  void refreshPrice() {
+    _updateTotalPrice();
   }
 }
