@@ -5,9 +5,25 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
-class PreferredPriceSelectionPage extends StatelessWidget {
+class PreferredPriceSelectionPage extends StatefulWidget {
+  const PreferredPriceSelectionPage({Key? key}) : super(key: key);
+
+  @override
+  State<PreferredPriceSelectionPage> createState() => _PreferredPriceSelectionPageState();
+}
+
+class _PreferredPriceSelectionPageState extends State<PreferredPriceSelectionPage> {
   final PreferredPriceController controller =
       Get.put(PreferredPriceController());
+
+  @override
+  void initState() {
+    super.initState();
+    // Ensure price is initialized on page creation
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.refreshPrice();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,32 +49,32 @@ class PreferredPriceSelectionPage extends StatelessWidget {
             ),
             SizedBox(height: 20),
             Obx(() => RadioListTile<String>(
-                  title: Text("Original Price (100%)",
+                  title: Text("200 EGP per ticket",
                       style: TextStyle(color: Colors.white)),
-                  value: 'original',
+                  value: 'price_200',
                   groupValue: controller.selectedOption.value,
                   onChanged: (value) => controller.setSelectedOption(value!),
                   activeColor: Color(0xffdfa000),
                 )),
             Obx(() => RadioListTile<String>(
-                  title: Text("50% of Original Price",
+                  title: Text("100 EGP per ticket",
                       style: TextStyle(color: Colors.white)),
-                  value: '50%',
+                  value: 'price_100',
                   groupValue: controller.selectedOption.value,
                   onChanged: (value) => controller.setSelectedOption(value!),
                   activeColor: Color(0xffdfa000),
                 )),
             Obx(() => RadioListTile<String>(
-                  title: Text("25% of Original Price",
+                  title: Text("75 EGP per ticket",
                       style: TextStyle(color: Colors.white)),
-                  value: '25%',
+                  value: 'price_75',
                   groupValue: controller.selectedOption.value,
                   onChanged: (value) => controller.setSelectedOption(value!),
                   activeColor: Color(0xffdfa000),
                 )),
             Spacer(),
             Obx(() => Text(
-                  "Total Price: ${controller.totalPrice.toStringAsFixed(2)} EGP",
+                  "Total Price: ${controller.displayPrice.toStringAsFixed(2)} EGP",
                   style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,

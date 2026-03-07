@@ -1,12 +1,47 @@
 import 'package:darbelsalib/controllers/donate_seats_controller.dart';
+import 'package:darbelsalib/controllers/preferred_price_controller.dart';
 import 'package:darbelsalib/views/widgets/custom_loading_indicator.dart';
 import 'package:darbelsalib/views/widgets/go_back_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
-class DonateSeatsPage extends StatelessWidget {
-  final DonateSeatsController controller = Get.put(DonateSeatsController());
+class DonateSeatsPage extends StatefulWidget {
+  const DonateSeatsPage({Key? key}) : super(key: key);
+
+  @override
+  State<DonateSeatsPage> createState() => _DonateSeatsPageState();
+}
+
+class _DonateSeatsPageState extends State<DonateSeatsPage> {
+  late DonateSeatsController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    // Ensure PreferredPriceController exists before creating DonateSeatsController
+    try {
+      Get.find<PreferredPriceController>();
+    } catch (e) {
+      Get.put(PreferredPriceController());
+    }
+    
+    // Now initialize DonateSeatsController - PreferredPriceController is guaranteed to exist
+    controller = Get.put(DonateSeatsController());
+    
+    // Refresh price when the page is first created
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.refreshPriceFromPreferred();
+    });
+  }
+
+  @override
+  void didPopNext() {
+    // super.didPopNext();
+    // Re-establish listeners and refresh price when returning from another route
+    controller.setupListenersIfNeeded();
+    controller.refreshPriceFromPreferred();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +67,7 @@ class DonateSeatsPage extends StatelessWidget {
             ),
             SizedBox(height: 16),
             Text(
-              "Each extra seat costs 200 EGP and helps provide tickets for those who cannot afford them.",
+              "Each extra donation seat costs 200 EGP and helps provide tickets for those who cannot afford them.",
               style: TextStyle(fontSize: 16, color: Colors.white70),
             ),
             SizedBox(height: 40),
@@ -85,7 +120,7 @@ class DonateSeatsPage extends StatelessWidget {
             ),
             SizedBox(height: 40),
             Obx(() => Text(
-                  "Total Price: ${controller.totalPrice.toStringAsFixed(2)} EGP",
+                  "Total Price: ${controller.displayPrice.toStringAsFixed(2)} EGP",
                   style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -94,7 +129,7 @@ class DonateSeatsPage extends StatelessWidget {
             SizedBox(height: 16),
             Obx(() => controller.extraSeats.value > 0
                 ? Text(
-                    "Including ${controller.extraSeats.value} extra seat${controller.extraSeats.value == 1 ? '' : 's'} at 200 EGP each",
+                    "Including ${controller.extraSeats.value} donation seat${controller.extraSeats.value == 1 ? '' : 's'} at 200 EGP each",
                     style: TextStyle(fontSize: 14, color: Colors.white70),
                   )
                 : Container()),

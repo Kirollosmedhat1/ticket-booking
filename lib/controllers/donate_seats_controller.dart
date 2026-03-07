@@ -11,6 +11,7 @@ import 'package:web/web.dart' as web;
 class DonateSeatsController extends GetxController {
   var extraSeats = 0.obs;
   late RxDouble totalPrice = 0.0.obs;
+  late RxDouble displayPrice = 0.0.obs; // Total price displayed to user (seats + donations)
   var isLoading = false.obs;
 
   final TokenStorageService _tokenStorageService = TokenStorageService();
@@ -21,7 +22,16 @@ class DonateSeatsController extends GetxController {
     super.onInit();
     _initializeController();
     // Listen for changes in extra seats
-    ever(extraSeats, (_) => _updateTotalPrice());
+    ever(extraSeats, (_) => updateTotalPrice());
+    
+    // Listen for changes in preferred price selection
+    try {
+      PreferredPriceController preferredController = Get.find<PreferredPriceController>();
+      ever(preferredController.selectedOption, (_) => _refreshPreferredPrice());
+      ever(preferredController.displayPrice, (_) => updateTotalPrice());
+    } catch (e) {
+      // PreferredPriceController not available yet, that's ok
+    }
   }
 
   void _initializeController() {
@@ -105,39 +115,81 @@ class DonateSeatsController extends GetxController {
 
   void _initializePreferredPrice() {
     try {
-      // Try to find existing PreferredPriceController
+      // Try to find existing PreferredPriceController and get its display price
       PreferredPriceController preferredController = Get.find<PreferredPriceController>();
-      totalPrice.value = preferredController.totalPrice.value;
+      totalPrice.value = preferredController.displayPrice.value;
+      displayPrice.value = preferredController.displayPrice.value;
       
     } catch (e) {
-      // PreferredPriceController doesn't exist, calculate based on cart total
-      // Default to 'original' price (100%)
+      // PreferredPriceController doesn't exist, calculate based on cart total with default price (200 per ticket)
       CartController cartController = Get.find<CartController>();
-      double basePrice = cartController.totalPrice.value.toDouble();
-      totalPrice.value = basePrice; // Default to original price
-      
+      int numberOfSeats = cartController.selectedSeats.length;
+      double seatPrice = numberOfSeats * 200.0; // Default to 200 EGP per ticket
+      totalPrice.value = seatPrice;
+      displayPrice.value = seatPrice;
     }
   }
 
-  void _updateTotalPrice() {
+  void _refreshPreferredPrice() {
     try {
-      double basePrice;
+      PreferredPriceController preferredController = Get.find<PreferredPriceController>();
+      // Force refresh of the price based on current preferred option
+      double seatsPrice = preferredController.displayPrice.value;
+      double donationCost = extraSeats.value * 200.0;
+      totalPrice.value = seatsPrice + donationCost;
+      displayPrice.value = seatsPrice + donationCost;
+    } catch (e) {
+      // If PreferredPriceController doesn't exist, just update based on current values
+      updateTotalPrice();
+    }
+  }
+
+  void refreshPriceFromPreferred() {
+    try {
+      PreferredPriceController preferredController = Get.find<PreferredPriceController>();
+      double seatsPrice = preferredController.displayPrice.value;
+      double donationCost = extraSeats.value * 200.0;
+      totalPrice.value = seatsPrice + donationCost;
+      displayPrice.value = seatsPrice + donationCost;
+    } catch (e) {
+      // Fallback
+      updateTotalPrice();
+    }
+  }
+
+  void setupListenersIfNeeded() {
+    try {
+      PreferredPriceController preferredController = Get.find<PreferredPriceController>();
+      // Re-establish listeners if they were lost
+      ever(preferredController.selectedOption, (_) => updateTotalPrice());
+      ever(preferredController.displayPrice, (_) => updateTotalPrice());
+    } catch (e) {
+      // Controller still not available
+    }
+  }
+
+  void updateTotalPrice() {
+    try {
+      double seatsPrice;
 
       // Try to get from PreferredPriceController, fallback to cart total
       try {
         PreferredPriceController preferredController = Get.find<PreferredPriceController>();
-        basePrice = preferredController.totalPrice.value;
+        seatsPrice = preferredController.displayPrice.value;
       } catch (e) {
         // Fallback to cart total with original pricing
         CartController cartController = Get.find<CartController>();
-        basePrice = cartController.totalPrice.value.toDouble();
+        seatsPrice = cartController.totalPrice.value.toDouble();
       }
 
-      double extraCost = extraSeats.value * 200.0; // 200 EGP per extra seat
-      totalPrice.value = basePrice + extraCost;
+      double donationCost = extraSeats.value * 200.0; // 200 EGP per extra seat
+      
+      totalPrice.value = seatsPrice + donationCost;
+      displayPrice.value = seatsPrice + donationCost; // Show total to user
       
     } catch (e) {
       totalPrice.value = 0.0;
+      displayPrice.value = 0.0;
     }
   }
 
@@ -176,22 +228,37 @@ class DonateSeatsController extends GetxController {
         return;
       }
 
-      // Get preferred price option to determine if we need to send amount
+      // Get preferred price option to determine the price per ticket
       double? amount;
       try {
         PreferredPriceController preferredController =
             Get.find<PreferredPriceController>();
         String selectedOption = preferredController.selectedOption.value;
+        CartController cartController = Get.find<CartController>();
+        int numberOfSeats = cartController.selectedSeats.length;
 
-        // Only include amount if user selected something other than 'original'
-        if (selectedOption != 'original') {
-          CartController cartController = Get.find<CartController>();
-          double basePrice = cartController.totalPrice.value.toDouble();
-          double discountPercentage = selectedOption == '50%' ? 0.5 : 0.25;
-          amount = basePrice * (discountPercentage);
+        // Only send amount if user selected a price different from 200
+        if (selectedOption != 'price_200') {
+          double pricePerTicket;
+          switch (selectedOption) {
+            case 'price_100':
+              pricePerTicket = 100.0;
+              break;
+            case 'price_75':
+              pricePerTicket = 75.0;
+              break;
+            default:
+              pricePerTicket = 200.0;
+              break;
+          }
+          
+          amount = numberOfSeats * pricePerTicket;
+        } else {
+          // If price_200 is selected, don't send amount (use backend default)
+          amount = null;
         }
       } catch (e) {
-        // If PreferredPriceController doesn't exist, we assume original price, so no amount needed
+        // If PreferredPriceController doesn't exist, use default price (200 per ticket)
         amount = null;
       }
 
