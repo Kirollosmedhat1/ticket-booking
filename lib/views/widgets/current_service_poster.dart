@@ -25,7 +25,7 @@ class CurrentServicePoster extends StatelessWidget {
               width: ScreenSizeHandler.smaller * 0.732,
             ),
           ),
-          const TitleText(text: "Anea"),
+          const TitleText(text: "Anya"),
           const SubtitleText(
               text: "• Biblical, Historical, Contemplation, Musical •"),
           const SubtitleText(text: "2h 29m"),

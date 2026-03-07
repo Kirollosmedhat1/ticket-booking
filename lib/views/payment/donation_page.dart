@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:darbelsalib/core/services/api_services.dart';
 import 'package:darbelsalib/core/services/token_storage_service.dart';
+import 'package:darbelsalib/core/services/user_storage_service.dart';
 import 'package:darbelsalib/screen_size_handler.dart';
 import 'package:darbelsalib/views/widgets/custom_button.dart';
 import 'package:darbelsalib/views/widgets/go_back_text.dart';
@@ -19,12 +20,27 @@ class DonationPage extends StatefulWidget {
 
 class _DonationPageState extends State<DonationPage> {
   final TokenStorageService _tokenStorageService = TokenStorageService();
+  final UserStorageService _userStorageService = UserStorageService();
   final ApiService _apiService = ApiService();
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _mobileController = TextEditingController();
   final RxBool _isLoading = false.obs;
+  bool _isLoggedIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    final token = await _tokenStorageService.getToken();
+    if (mounted) {
+      setState(() => _isLoggedIn = token != null && token.isNotEmpty);
+    }
+  }
 
   static const String _messageEn =
       'If you would like to support this mission beyond purchasing a ticket, '
@@ -70,12 +86,43 @@ class _DonationPageState extends State<DonationPage> {
 
   Future<void> _proceedToPayment() async {
     final amountText = _amountController.text.trim();
-    final name = _nameController.text.trim();
-    final email = _emailController.text.trim();
-    final mobile = _mobileController.text.trim();
-
-    // get token if user is logged in, otherwise send null for both email and mobile
     final token = await _tokenStorageService.getToken();
+
+    String name;
+    String? email;
+    String? mobile;
+
+    if (_isLoggedIn && token != null) {
+      name = await _userStorageService.getFullName() ?? '';
+      email = await _userStorageService.getEmail();
+      mobile = await _userStorageService.getPhoneNumber();
+
+      if (name.isEmpty) {
+        Get.snackbar('Notice', 'User profile incomplete. Please update your name.',
+            backgroundColor: Colors.red, colorText: Colors.white);
+        return;
+      }
+    } else {
+      name = _nameController.text.trim();
+      email = _emailController.text.trim();
+      mobile = _mobileController.text.trim();
+
+      if (name.isEmpty) {
+        Get.snackbar('Notice', 'Please enter your name',
+            backgroundColor: Colors.red, colorText: Colors.white);
+        return;
+      }
+      if (email.isEmpty) {
+        Get.snackbar('Notice', 'Please enter your email',
+            backgroundColor: Colors.red, colorText: Colors.white);
+        return;
+      }
+      if (mobile.isEmpty) {
+        Get.snackbar('Notice', 'Please enter your mobile number',
+            backgroundColor: Colors.red, colorText: Colors.white);
+        return;
+      }
+    }
 
     if (amountText.isEmpty) {
       Get.snackbar('Notice', 'Please enter an amount',
@@ -89,30 +136,6 @@ class _DonationPageState extends State<DonationPage> {
           backgroundColor: Colors.red, colorText: Colors.white);
       return;
     }
-    // check if user is logged in, if not, require email and mobile, otherwise send null for both
-    if (name.isEmpty) {
-      Get.snackbar('Notice', 'Please enter your name',
-          backgroundColor: Colors.red, colorText: Colors.white);
-      return;
-    }
-
-    if (email.isEmpty && token == null) {
-      Get.snackbar('Notice', 'Please enter your email',
-          backgroundColor: Colors.red, colorText: Colors.white);
-      return;
-    }
-
-    if (mobile.isEmpty && token == null) {
-      Get.snackbar('Notice', 'Please enter your mobile number',
-          backgroundColor: Colors.red, colorText: Colors.white);
-      return;
-    }
-
-    // If user is logged in, send email and mobile as null
-    final actualEmail = token != null ? null : email;
-    final actualMobile = token != null ? null : mobile;
-
-    ;
 
     _isLoading.value = true;
     try {
@@ -120,12 +143,9 @@ class _DonationPageState extends State<DonationPage> {
         token,
         amount: amount,
         name: name,
-        email: actualEmail,
-        mobile: actualMobile,
+        email: (email == null || email.isEmpty) ? null : email,
+        mobile: (mobile == null || mobile.isEmpty) ? null : mobile,
       );
-
-      ;
-      ;
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = json.decode(response.body);
@@ -142,7 +162,6 @@ class _DonationPageState extends State<DonationPage> {
             backgroundColor: Colors.red, colorText: Colors.white);
       }
     } catch (e) {
-      ;
       Get.snackbar('Error', 'An error occurred. Please try again.',
           backgroundColor: Colors.red, colorText: Colors.white);
     } finally {
@@ -210,31 +229,33 @@ class _DonationPageState extends State<DonationPage> {
                         style: textStyle,
                         decoration: _inputDecoration('Enter amount'),
                       ),
-                      SizedBox(height: ScreenSizeHandler.smaller * 0.03),
-                      _buildLabel('Name / الاسم'),
-                      TextField(
-                        controller: _nameController,
-                        keyboardType: TextInputType.name,
-                        style: textStyle,
-                        decoration: _inputDecoration('Enter your name'),
-                      ),
-                      SizedBox(height: ScreenSizeHandler.smaller * 0.03),
-                      _buildLabel('Email / البريد الإلكتروني'),
-                      TextField(
-                        controller: _emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        style: textStyle,
-                        decoration: _inputDecoration('Enter your email'),
-                      ),
-                      SizedBox(height: ScreenSizeHandler.smaller * 0.03),
-                      _buildLabel('Mobile / رقم الموبايل'),
-                      TextField(
-                        controller: _mobileController,
-                        keyboardType: TextInputType.phone,
-                        style: textStyle,
-                        decoration:
-                            _inputDecoration('e.g. +201234567890'),
-                      ),
+                      if (!_isLoggedIn) ...[
+                        SizedBox(height: ScreenSizeHandler.smaller * 0.03),
+                        _buildLabel('Name / الاسم'),
+                        TextField(
+                          controller: _nameController,
+                          keyboardType: TextInputType.name,
+                          style: textStyle,
+                          decoration: _inputDecoration('Enter your name'),
+                        ),
+                        SizedBox(height: ScreenSizeHandler.smaller * 0.03),
+                        _buildLabel('Email / البريد الإلكتروني'),
+                        TextField(
+                          controller: _emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          style: textStyle,
+                          decoration: _inputDecoration('Enter your email'),
+                        ),
+                        SizedBox(height: ScreenSizeHandler.smaller * 0.03),
+                        _buildLabel('Mobile / رقم الموبايل'),
+                        TextField(
+                          controller: _mobileController,
+                          keyboardType: TextInputType.phone,
+                          style: textStyle,
+                          decoration:
+                              _inputDecoration('e.g. +201234567890'),
+                        ),
+                      ],
                       SizedBox(height: ScreenSizeHandler.smaller * 0.05),
                       CustomButton(
                         textcolor: Colors.black,
