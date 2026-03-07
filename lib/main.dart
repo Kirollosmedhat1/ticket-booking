@@ -25,7 +25,7 @@ void main() async {
 
   // Initialize controllers
   Get.put(AuthController());
-  Get.put(TicketController());
+  Get.put(TicketController()); 
 
   await GetStorage.init();
 

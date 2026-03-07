@@ -75,6 +75,30 @@ class ApiService {
     return response;
   }
 
+  Future<http.Response> requestDonationPayment(
+    String token, {
+    required num amount,
+    required String name,
+    required String email,
+    required String mobile,
+  }) async {
+    final url = Uri.parse('$baseUrl/donations/');
+    final response = await http.post(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Token $token',
+      },
+      body: jsonEncode({
+        'amount': amount,
+        'name': name,
+        'email': email,
+        'mobile': mobile,
+      }),
+    );
+    return response;
+  }
+
   Future<http.Response> paymentCallback(String id, String token) async {
     final url = Uri.parse('$baseUrl/payments/$id/');
     final response = await http.get(

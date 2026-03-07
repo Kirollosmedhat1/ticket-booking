@@ -10,10 +10,12 @@ import 'package:get/get.dart';
 import '../views/auth/login_page.dart';
 import '../views/auth/register_page.dart';
 import '../views/home/home_page.dart';
-import '../views/payment/payment_confirmation_page.dart'; // Import the new page
+import '../views/payment/payment_confirmation_page.dart';
+import '../views/payment/donation_page.dart'; // Import the new page
 
 class AppRoutes {
   static final routes = [
+    GetPage(name: '/donate', page: () => DonationPage()),
     GetPage(name: '/login', page: () => LoginPage()),
     GetPage(name: '/register', page: () => RegisterPage()),
     GetPage(name: '/home', page: () => HomePage()),
