@@ -72,6 +72,37 @@ class AuthController extends GetxController {
     return await _userStorageService.getPhoneNumber();
   }
 
+  /// **🔹 Send OTP for Password Reset**
+  Future<String?> sendPasswordResetOTP(String email) async {
+    try {
+      await _authService.sendPasswordResetOTP(email);
+      return null; // Success
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  /// **🔹 Verify OTP for Password Reset (returns token)**
+  Future<(String?, String?)> verifyPasswordResetOTP(
+      String email, String otp) async {
+    try {
+      final token = await _authService.verifyPasswordResetOTP(email, otp);
+      return (token, null); // (token, error)
+    } catch (e) {
+      return (null, e.toString()); // (token, error)
+    }
+  }
+
+  /// **🔹 Change Password (authenticated)**
+  Future<String?> changePassword(String token, String newPassword) async {
+    try {
+      await _authService.changePassword(token, newPassword);
+      return null; // Success
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
   void _showSnackBar(String title, String message, Color backgroundColor) {
     ScaffoldMessenger.of(Get.context!).showSnackBar(
       SnackBar(

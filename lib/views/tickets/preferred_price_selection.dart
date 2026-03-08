@@ -9,106 +9,130 @@ class PreferredPriceSelectionPage extends StatefulWidget {
   const PreferredPriceSelectionPage({Key? key}) : super(key: key);
 
   @override
-  State<PreferredPriceSelectionPage> createState() => _PreferredPriceSelectionPageState();
+  State<PreferredPriceSelectionPage> createState() =>
+      _PreferredPriceSelectionPageState();
 }
 
-class _PreferredPriceSelectionPageState extends State<PreferredPriceSelectionPage> {
+class _PreferredPriceSelectionPageState
+    extends State<PreferredPriceSelectionPage> {
   final PreferredPriceController controller =
       Get.put(PreferredPriceController());
 
   @override
   void initState() {
     super.initState();
-    // Ensure price is initialized on page creation
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.refreshPrice();
-    });
+    // Price tier selection is done here, discount will be applied in cart
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Price Selection")),
+      appBar: AppBar(title: Text("Notice | تنبيه")),
       body: Obx(() {
         return ModalProgressHUD(
           inAsyncCall: controller.isLoading.value,
           progressIndicator: CustomLoadingIndicator(),
           color: Colors.black,
           opacity: 0.5,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Choose your preferred price option for all tickets:",
-              style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white),
-            ),
-            SizedBox(height: 20),
-            Obx(() => RadioListTile<String>(
-                  title: Text("200 EGP per ticket",
-                      style: TextStyle(color: Colors.white)),
-                  value: 'price_200',
-                  groupValue: controller.selectedOption.value,
-                  onChanged: (value) => controller.setSelectedOption(value!),
-                  activeColor: Color(0xffdfa000),
-                )),
-            Obx(() => RadioListTile<String>(
-                  title: Text("100 EGP per ticket",
-                      style: TextStyle(color: Colors.white)),
-                  value: 'price_100',
-                  groupValue: controller.selectedOption.value,
-                  onChanged: (value) => controller.setSelectedOption(value!),
-                  activeColor: Color(0xffdfa000),
-                )),
-            Obx(() => RadioListTile<String>(
-                  title: Text("75 EGP per ticket",
-                      style: TextStyle(color: Colors.white)),
-                  value: 'price_75',
-                  groupValue: controller.selectedOption.value,
-                  onChanged: (value) => controller.setSelectedOption(value!),
-                  activeColor: Color(0xffdfa000),
-                )),
-            Spacer(),
-            Obx(() => Text(
-                  "Total Price: ${controller.displayPrice.toStringAsFixed(2)} EGP",
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "The original ticket price is 200 EGP for any seat, but we don’t want the cost to prevent anyone from attending the service.\nYou can pay any amount according to your ability.\n",
                   style: TextStyle(
-                      fontSize: 24,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.white),
-                )),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Get.toNamed('/donate-seats');
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xffdfa000),
-                minimumSize: Size(double.infinity, 50),
-              ),
-              child: Text(
-                "Continue",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  "السعر الأصلي للتذكرة فى اى مكان 200 جنيه، لكن مش عايزين التكلفة تكون سبب في منع أي شخص من حضور الخدمة.\nتقدر تدفع اى مبلغ حسب قدرتك. اختار من الاختيارات الاتيه للدفع.",
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                  textDirection: TextDirection.rtl,
+                ),
+                SizedBox(height: 50),
+                Obx(() => RadioListTile<String>(
+                      title: Text("200 EGP per ticket",
+                          style: TextStyle(color: Colors.white)),
+                      value: 'price_200',
+                      groupValue: controller.selectedOption.value,
+                      onChanged: (value) =>
+                          controller.setSelectedOption(value!),
+                      activeColor: Color(0xffdfa000),
+                    )),
+                Obx(() => RadioListTile<String>(
+                      title: Text("100 EGP per ticket",
+                          style: TextStyle(color: Colors.white)),
+                      value: 'price_100',
+                      groupValue: controller.selectedOption.value,
+                      onChanged: (value) =>
+                          controller.setSelectedOption(value!),
+                      activeColor: Color(0xffdfa000),
+                    )),
+                Obx(() => RadioListTile<String>(
+                      title: Text("75 EGP per ticket",
+                          style: TextStyle(color: Colors.white)),
+                      value: 'price_75',
+                      groupValue: controller.selectedOption.value,
+                      onChanged: (value) =>
+                          controller.setSelectedOption(value!),
+                      activeColor: Color(0xffdfa000),
+                    )),
+                  SizedBox(height: 30),
+                  Container(
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[900],
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Color(0xffdfa000), width: 1),
+                  ),
+                  child: Text(
+                    'Your discount will be applied in the checkout after you select your seats.',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Color(0xffdfa000),
+                      fontStyle: FontStyle.italic,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Get.toNamed('/selectsection');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xffdfa000),
+                    minimumSize: Size(double.infinity, 50),
+                  ),
+                  child: Text(
+                    "Continue",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                SizedBox(height: 40),
+                  Center(
+                    child: GoBackText(
+                      text: 'Back to Home',
+                      // Navigate back to home
+                      onTap: () => Get.toNamed('/home'),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                ],
               ),
             ),
-            SizedBox(height: 40),
-            Center(
-              child: GoBackText(
-                text: "Back to Cart",
-                // Navigate back to cart page
-                onTap: () => Get.toNamed("/cart"),
-              ),
-            ),
-          ],
-        ),
-        ),
-      );
+          ),
+        );
       }),
     );
   }

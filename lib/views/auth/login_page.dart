@@ -105,7 +105,22 @@ class _LoginPageState extends State<LoginPage> {
                               labelText: "Password",
                               obscureText: true,
                             ),
-                            SizedBox(height: screenHeight * 0.1),
+                            SizedBox(height: screenHeight * 0.03),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: TextButton(
+                                onPressed: () =>
+                                    Get.toNamed('/forget-password'),
+                                child: Text(
+                                  "Forgot Password?",
+                                  style: TextStyle(
+                                    color: Color(0xffDFA000),
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: screenHeight * 0.05),
                             CustomButton(
                               text: "Login",
                               textcolor: Colors.black,

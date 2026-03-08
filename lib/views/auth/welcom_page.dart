@@ -61,9 +61,9 @@ class WelcomPage extends StatelessWidget {
                   ),
                   SizedBox(height: screenhight * 0.025),
                   CustomButton(
-                    textcolor: Colors.white,
-                    bordercolor: Colors.white,
-                    backgroundcolor: Colors.black,
+                   textcolor: Colors.black,
+                    bordercolor: Color(0xffDFA000),
+                    backgroundcolor: Color(0xffDFA000),
                     text: "Donate",
                     onPressed: () => Get.toNamed('/donate'),
                   ),

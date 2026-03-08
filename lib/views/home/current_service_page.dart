@@ -20,7 +20,8 @@ class CurrentServicePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final posterAspectRatio = 530 / 542;
     final posterWidth = ScreenSizeHandler.smaller * 0.95;
-    final posterHeight = (posterWidth / posterAspectRatio).clamp(0.0, ScreenSizeHandler.smaller * 0.6);
+    final posterHeight = (posterWidth / posterAspectRatio)
+        .clamp(0.0, ScreenSizeHandler.smaller * 0.6);
 
     return Scaffold(
       appBar: CustomAppBar(title: "Current Service"),
@@ -40,7 +41,7 @@ class CurrentServicePage extends StatelessWidget {
                   ScreenSizeHandler.screenWidth * 0.03,
                 ),
                 image: const DecorationImage(
-                  image: AssetImage("assets/images/2026poster.jpeg"),
+                  image: AssetImage("assets/images/currentservicepage.jpeg"),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -68,7 +69,7 @@ class CurrentServicePage extends StatelessWidget {
                     textcolor: Colors.black,
                     bordercolor: Color(0xffDFA000),
                     backgroundcolor: Color(0xffDFA000),
-                    onPressed: () => Get.toNamed("/selectsection"),
+                    onPressed: () => Get.toNamed("/preferred-price-selection"),
                   ),
                   SizedBox(height: ScreenSizeHandler.screenHeight * 0.03),
                 ],

@@ -97,4 +97,76 @@ class AuthService {
       throw Exception("Failed to send email verification: $e");
     }
   }
+
+  /// **🔹 Send OTP for Password Reset**
+  Future<void> sendPasswordResetOTP(String email) async {
+    try {
+      final url = Uri.parse('$baseUrl/users/forgot-password/');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "email": email,
+        }),
+      );
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception("Failed to send OTP: ${response.body}");
+      }
+    } catch (e) {
+      throw Exception("Failed to send OTP: $e");
+    }
+  }
+
+  /// **🔹 Verify OTP for Password Reset (returns token)**
+  Future<String> verifyPasswordResetOTP(String email, String otp) async {
+    try {
+      final url = Uri.parse('$baseUrl/users/verify-reset-otp/');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "email": email,
+          "otp": otp,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        // Return the token from the response
+        final token = responseData['token'];
+        if (token == null) {
+          throw Exception("Token not received from server");
+        }
+        return token;
+      } else {
+        throw Exception("Invalid OTP: ${response.body}");
+      }
+    } catch (e) {
+      throw Exception("OTP verification failed: $e");
+    }
+  }
+
+  /// **🔹 Change Password (authenticated)**
+  Future<void> changePassword(String token, String newPassword) async {
+    try {
+      final url = Uri.parse('$baseUrl/users/change-password/');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Token $token',
+        },
+        body: jsonEncode({
+          "new_password": newPassword,
+        }),
+      );
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception("Failed to change password: ${response.body}");
+      }
+    } catch (e) {
+      throw Exception("Password change failed: $e");
+    }
+  }
 }

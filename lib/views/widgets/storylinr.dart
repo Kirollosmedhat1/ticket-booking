@@ -48,7 +48,7 @@ class Storyline extends StatelessWidget {
         ),
 
         Text(
-          "\nStory of creation, falling, and the salvation of your soul.",
+          "\nStory of falling and the salvation of your soul.",
           style: TextStyle(
             fontSize: fontSize,
             fontWeight: FontWeight.w400,

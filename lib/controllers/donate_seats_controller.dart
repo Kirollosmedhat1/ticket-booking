@@ -11,7 +11,8 @@ import 'package:web/web.dart' as web;
 class DonateSeatsController extends GetxController {
   var extraSeats = 0.obs;
   late RxDouble totalPrice = 0.0.obs;
-  late RxDouble displayPrice = 0.0.obs; // Total price displayed to user (seats + donations)
+  late RxDouble displayPrice =
+      0.0.obs; // Total price displayed to user (seats + donations)
   var isLoading = false.obs;
 
   final TokenStorageService _tokenStorageService = TokenStorageService();
@@ -23,12 +24,12 @@ class DonateSeatsController extends GetxController {
     _initializeController();
     // Listen for changes in extra seats
     ever(extraSeats, (_) => updateTotalPrice());
-    
+
     // Listen for changes in preferred price selection
     try {
-      PreferredPriceController preferredController = Get.find<PreferredPriceController>();
-      ever(preferredController.selectedOption, (_) => _refreshPreferredPrice());
-      ever(preferredController.displayPrice, (_) => updateTotalPrice());
+      PreferredPriceController preferredController =
+          Get.find<PreferredPriceController>();
+      ever(preferredController.selectedOption, (_) => updateTotalPrice());
     } catch (e) {
       // PreferredPriceController not available yet, that's ok
     }
@@ -40,14 +41,12 @@ class DonateSeatsController extends GetxController {
 
       // If cart total is 0, need to load cart data
       if (cartController.totalPrice.value == 0) {
-        
         _loadCartData(); // No await, it will update totalPrice when done
       } else {
         // Cart already has data, initialize price
         _initializePreferredPrice();
       }
     } catch (e) {
-      
       totalPrice.value = 0.0;
     }
   }
@@ -57,7 +56,6 @@ class DonateSeatsController extends GetxController {
     try {
       String? token = await _tokenStorageService.getToken();
       if (token == null) {
-        
         isLoading.value = false;
         Get.offAllNamed('/home');
         return;
@@ -68,7 +66,6 @@ class DonateSeatsController extends GetxController {
 
       // If no items in cart, go back to home
       if (items.isEmpty) {
-        
         isLoading.value = false;
         Get.offAllNamed('/home');
         return;
@@ -96,9 +93,7 @@ class DonateSeatsController extends GetxController {
       // Now initialize price using preferred controller if available, or cart total as fallback
       _initializePreferredPrice();
       isLoading.value = false;
-      
     } catch (e) {
-      
       totalPrice.value = 0.0;
       isLoading.value = false;
       Get.offAllNamed('/home');
@@ -115,16 +110,20 @@ class DonateSeatsController extends GetxController {
 
   void _initializePreferredPrice() {
     try {
-      // Try to find existing PreferredPriceController and get its display price
-      PreferredPriceController preferredController = Get.find<PreferredPriceController>();
-      totalPrice.value = preferredController.displayPrice.value;
-      displayPrice.value = preferredController.displayPrice.value;
-      
-    } catch (e) {
-      // PreferredPriceController doesn't exist, calculate based on cart total with default price (200 per ticket)
       CartController cartController = Get.find<CartController>();
+      PreferredPriceController preferredController =
+          Get.find<PreferredPriceController>();
+
       int numberOfSeats = cartController.selectedSeats.length;
-      double seatPrice = numberOfSeats * 200.0; // Default to 200 EGP per ticket
+      double pricePerTicket = preferredController.getPricePerTicket();
+      double seatPrice = numberOfSeats * pricePerTicket;
+
+      totalPrice.value = seatPrice;
+      displayPrice.value = seatPrice;
+    } catch (e) {
+      // Fallback: calculate based on cart total
+      CartController cartController = Get.find<CartController>();
+      double seatPrice = cartController.totalPrice.value.toDouble();
       totalPrice.value = seatPrice;
       displayPrice.value = seatPrice;
     }
@@ -132,10 +131,16 @@ class DonateSeatsController extends GetxController {
 
   void _refreshPreferredPrice() {
     try {
-      PreferredPriceController preferredController = Get.find<PreferredPriceController>();
-      // Force refresh of the price based on current preferred option
-      double seatsPrice = preferredController.displayPrice.value;
-      double donationCost = extraSeats.value * 200.0;
+      CartController cartController = Get.find<CartController>();
+      PreferredPriceController preferredController =
+          Get.find<PreferredPriceController>();
+
+      int numberOfSeats = cartController.selectedSeats.length;
+      double pricePerTicket = preferredController.getPricePerTicket();
+      double seatsPrice = numberOfSeats * pricePerTicket;
+      double donationCost =
+          extraSeats.value * 100.0; // 100 EGP per donation seat
+
       totalPrice.value = seatsPrice + donationCost;
       displayPrice.value = seatsPrice + donationCost;
     } catch (e) {
@@ -146,9 +151,16 @@ class DonateSeatsController extends GetxController {
 
   void refreshPriceFromPreferred() {
     try {
-      PreferredPriceController preferredController = Get.find<PreferredPriceController>();
-      double seatsPrice = preferredController.displayPrice.value;
-      double donationCost = extraSeats.value * 200.0;
+      CartController cartController = Get.find<CartController>();
+      PreferredPriceController preferredController =
+          Get.find<PreferredPriceController>();
+
+      int numberOfSeats = cartController.selectedSeats.length;
+      double pricePerTicket = preferredController.getPricePerTicket();
+      double seatsPrice = numberOfSeats * pricePerTicket;
+      double donationCost =
+          extraSeats.value * 100.0; // 100 EGP per donation seat
+
       totalPrice.value = seatsPrice + donationCost;
       displayPrice.value = seatsPrice + donationCost;
     } catch (e) {
@@ -159,10 +171,10 @@ class DonateSeatsController extends GetxController {
 
   void setupListenersIfNeeded() {
     try {
-      PreferredPriceController preferredController = Get.find<PreferredPriceController>();
+      PreferredPriceController preferredController =
+          Get.find<PreferredPriceController>();
       // Re-establish listeners if they were lost
       ever(preferredController.selectedOption, (_) => updateTotalPrice());
-      ever(preferredController.displayPrice, (_) => updateTotalPrice());
     } catch (e) {
       // Controller still not available
     }
@@ -170,23 +182,18 @@ class DonateSeatsController extends GetxController {
 
   void updateTotalPrice() {
     try {
-      double seatsPrice;
+      CartController cartController = Get.find<CartController>();
+      PreferredPriceController preferredController =
+          Get.find<PreferredPriceController>();
 
-      // Try to get from PreferredPriceController, fallback to cart total
-      try {
-        PreferredPriceController preferredController = Get.find<PreferredPriceController>();
-        seatsPrice = preferredController.displayPrice.value;
-      } catch (e) {
-        // Fallback to cart total with original pricing
-        CartController cartController = Get.find<CartController>();
-        seatsPrice = cartController.totalPrice.value.toDouble();
-      }
+      int numberOfSeats = cartController.selectedSeats.length;
+      double pricePerTicket = preferredController.getPricePerTicket();
+      double seatsPrice = numberOfSeats * pricePerTicket;
+      double donationCost =
+          extraSeats.value * 100.0; // 100 EGP per donation seat
 
-      double donationCost = extraSeats.value * 200.0; // 200 EGP per extra seat
-      
       totalPrice.value = seatsPrice + donationCost;
       displayPrice.value = seatsPrice + donationCost; // Show total to user
-      
     } catch (e) {
       totalPrice.value = 0.0;
       displayPrice.value = 0.0;
@@ -251,7 +258,7 @@ class DonateSeatsController extends GetxController {
               pricePerTicket = 200.0;
               break;
           }
-          
+
           amount = numberOfSeats * pricePerTicket;
         } else {
           // If price_200 is selected, don't send amount (use backend default)
@@ -265,7 +272,7 @@ class DonateSeatsController extends GetxController {
       // Get donation amount only if user donated seats
       double? donationAmount;
       if (extraSeats.value > 0) {
-        donationAmount = extraSeats.value * 200.0; // 200 EGP per seat
+        donationAmount = extraSeats.value * 100.0; // 100 EGP per seat
       }
 
       // Call the API

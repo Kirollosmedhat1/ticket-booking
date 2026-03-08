@@ -11,6 +11,7 @@ import 'package:darbelsalib/views/tickets/ticket_detail_page.dart';
 import 'package:get/get.dart';
 import '../views/auth/login_page.dart';
 import '../views/auth/register_page.dart';
+import '../views/auth/forget_password_page.dart';
 import '../views/home/home_page.dart';
 import '../views/payment/payment_confirmation_page.dart';
 import '../views/payment/donation_page.dart'; // Import the new page
@@ -20,11 +21,14 @@ class AppRoutes {
     GetPage(name: '/donate', page: () => DonationPage()),
     GetPage(name: '/login', page: () => LoginPage()),
     GetPage(name: '/register', page: () => RegisterPage()),
+    GetPage(name: '/forget-password', page: () => ForgetPasswordPage()),
     GetPage(name: '/home', page: () => HomePage()),
     GetPage(name: '/selectsection', page: () => const SelectSection()),
     // GetPage(name: '/checkout', page: () => CheckoutPage()),
     GetPage(name: '/cart', page: () => CartPage()),
-    GetPage(name: '/preferred-price-selection', page: () => PreferredPriceSelectionPage()),
+    GetPage(
+        name: '/preferred-price-selection',
+        page: () => PreferredPriceSelectionPage()),
     GetPage(name: '/donate-seats', page: () => DonateSeatsPage()),
     GetPage(name: '/welcome', page: () => const WelcomPage()),
     GetPage(name: '/mytickets', page: () => MyTicketsPage()),
@@ -36,9 +40,14 @@ class AppRoutes {
     GetPage(name: '/SelectSection', page: () => const SelectSection()),
     GetPage(name: '/cart', page: () => CartPage()),
     GetPage(name: '/ticketsdetails', page: () => TicketDetailsPage()),
-    // Add the new route for PaymentConfirmationPage
+    // Add the new route for PaymentConfirmationPage with path parameter
     GetPage(
       name: '/payment-confirmation/:paymentId',
+      page: () => PaymentConfirmationPage(),
+    ),
+    // Add route for PaymentConfirmationPage without parameter (for query string callback)
+    GetPage(
+      name: '/payment-confirmation',
       page: () => PaymentConfirmationPage(),
     ),
   ];

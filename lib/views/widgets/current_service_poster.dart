@@ -16,7 +16,7 @@ class CurrentServicePoster extends StatelessWidget {
       onTap: () => Get.toNamed("/currentservice"),
       child: Column(
         children: [
-          const SubtitleText(text: "Saturday 28th of March, 7:00 PM"),
+          const SubtitleText(text: "Saturday 28th of March, 8:00 PM"),
           ClipRRect(
             borderRadius:
                 BorderRadius.circular(16.0), // Adjust the radius as needed
@@ -25,7 +25,7 @@ class CurrentServicePoster extends StatelessWidget {
               width: ScreenSizeHandler.smaller * 0.732,
             ),
           ),
-          const TitleText(text: "Anea"),
+          const TitleText(text: "Anya"),
           const SubtitleText(
               text: "• Biblical, Historical, Contemplation, Musical •"),
           const SubtitleText(text: "2h 29m"),
