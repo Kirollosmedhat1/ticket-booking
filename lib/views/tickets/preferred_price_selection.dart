@@ -34,10 +34,11 @@ class _PreferredPriceSelectionPageState
           progressIndicator: CustomLoadingIndicator(),
           color: Colors.black,
           opacity: 0.5,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   "The original ticket price is 200 EGP for any seat, but we don’t want the cost to prevent anyone from attending the service.\nYou can pay any amount according to your ability.\n",
@@ -83,8 +84,8 @@ class _PreferredPriceSelectionPageState
                           controller.setSelectedOption(value!),
                       activeColor: Color(0xffdfa000),
                     )),
-                Spacer(),
-                Container(
+                  SizedBox(height: 30),
+                  Container(
                   padding: EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: Colors.grey[900],
@@ -119,14 +120,16 @@ class _PreferredPriceSelectionPageState
                   ),
                 ),
                 SizedBox(height: 40),
-                Center(
-                  child: GoBackText(
-                    text: 'Back to Home',
-                    // Navigate back to home
-                    onTap: () => Get.toNamed('/home'),
+                  Center(
+                    child: GoBackText(
+                      text: 'Back to Home',
+                      // Navigate back to home
+                      onTap: () => Get.toNamed('/home'),
+                    ),
                   ),
-                ),
-              ],
+                  SizedBox(height: 20),
+                ],
+              ),
             ),
           ),
         );
