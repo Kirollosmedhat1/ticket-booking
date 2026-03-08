@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 class PreferredPriceController extends GetxController {
   var selectedOption = 'price_200'.obs; // 'price_200', 'price_100', 'price_75'
   var isLoading = false.obs;
-  
+
   final TokenStorageService _tokenStorageService = TokenStorageService();
   final ApiService _apiService = ApiService();
 

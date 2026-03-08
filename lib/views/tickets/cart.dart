@@ -201,7 +201,9 @@ class CartPage extends StatelessWidget {
               Text(
                 "Total Seats:",
                 style: TextStyle(
-                    fontSize: 16, fontWeight: FontWeight.w500, color: Colors.grey),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey),
               ),
               Obx(() {
                 return Text(
@@ -220,7 +222,9 @@ class CartPage extends StatelessWidget {
               Text(
                 "Total Price:",
                 style: TextStyle(
-                    fontSize: 16, fontWeight: FontWeight.w500, color: Colors.grey),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey),
               ),
               Obx(() {
                 try {

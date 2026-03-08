@@ -13,19 +13,20 @@ class PaymentConfirmationPage extends StatelessWidget {
   String _extractPaymentId() {
     // Try path parameters first (from route like /payment-confirmation/:paymentId)
     String paymentId = Get.parameters['paymentId'] ?? '';
-    
+
     // If not found, try GetX query parameters Map
     if (paymentId.isEmpty && Get.arguments != null) {
       if (Get.arguments is Map) {
         paymentId = Get.arguments['paymentId'] ?? '';
       }
     }
-    
+
     // Remove leading special characters if present
-    if (paymentId.isNotEmpty && (paymentId.startsWith('-') || paymentId.startsWith('_'))) {
+    if (paymentId.isNotEmpty &&
+        (paymentId.startsWith('-') || paymentId.startsWith('_'))) {
       paymentId = paymentId.substring(1);
     }
-    
+
     return paymentId;
   }
 
@@ -34,17 +35,17 @@ class PaymentConfirmationPage extends StatelessWidget {
     ApiService apiService = ApiService();
     TokenStorageService tokenStorageService = TokenStorageService();
     String? token = await tokenStorageService.getToken();
-    
+
     if (token == null) {
       throw Exception('User not authenticated');
     }
-    
+
     String paymentId = _extractPaymentId();
-    
+
     if (paymentId.isEmpty) {
       throw Exception('No payment ID found');
     }
-    
+
     try {
       var response = await apiService.paymentCallback(paymentId, token);
       var responseData = jsonDecode(response.body);
