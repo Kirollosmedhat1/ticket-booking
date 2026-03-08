@@ -27,8 +27,7 @@ class DonateSeatsController extends GetxController {
     // Listen for changes in preferred price selection
     try {
       PreferredPriceController preferredController = Get.find<PreferredPriceController>();
-      ever(preferredController.selectedOption, (_) => _refreshPreferredPrice());
-      ever(preferredController.displayPrice, (_) => updateTotalPrice());
+      ever(preferredController.selectedOption, (_) => updateTotalPrice());
     } catch (e) {
       // PreferredPriceController not available yet, that's ok
     }
@@ -115,16 +114,20 @@ class DonateSeatsController extends GetxController {
 
   void _initializePreferredPrice() {
     try {
-      // Try to find existing PreferredPriceController and get its display price
+      CartController cartController = Get.find<CartController>();
       PreferredPriceController preferredController = Get.find<PreferredPriceController>();
-      totalPrice.value = preferredController.displayPrice.value;
-      displayPrice.value = preferredController.displayPrice.value;
+      
+      int numberOfSeats = cartController.selectedSeats.length;
+      double pricePerTicket = preferredController.getPricePerTicket();
+      double seatPrice = numberOfSeats * pricePerTicket;
+      
+      totalPrice.value = seatPrice;
+      displayPrice.value = seatPrice;
       
     } catch (e) {
-      // PreferredPriceController doesn't exist, calculate based on cart total with default price (200 per ticket)
+      // Fallback: calculate based on cart total
       CartController cartController = Get.find<CartController>();
-      int numberOfSeats = cartController.selectedSeats.length;
-      double seatPrice = numberOfSeats * 200.0; // Default to 200 EGP per ticket
+      double seatPrice = cartController.totalPrice.value.toDouble();
       totalPrice.value = seatPrice;
       displayPrice.value = seatPrice;
     }
@@ -132,10 +135,14 @@ class DonateSeatsController extends GetxController {
 
   void _refreshPreferredPrice() {
     try {
+      CartController cartController = Get.find<CartController>();
       PreferredPriceController preferredController = Get.find<PreferredPriceController>();
-      // Force refresh of the price based on current preferred option
-      double seatsPrice = preferredController.displayPrice.value;
-      double donationCost = extraSeats.value * 200.0;
+      
+      int numberOfSeats = cartController.selectedSeats.length;
+      double pricePerTicket = preferredController.getPricePerTicket();
+      double seatsPrice = numberOfSeats * pricePerTicket;
+      double donationCost = extraSeats.value * 100.0; // 100 EGP per donation seat
+      
       totalPrice.value = seatsPrice + donationCost;
       displayPrice.value = seatsPrice + donationCost;
     } catch (e) {
@@ -146,9 +153,14 @@ class DonateSeatsController extends GetxController {
 
   void refreshPriceFromPreferred() {
     try {
+      CartController cartController = Get.find<CartController>();
       PreferredPriceController preferredController = Get.find<PreferredPriceController>();
-      double seatsPrice = preferredController.displayPrice.value;
-      double donationCost = extraSeats.value * 200.0;
+      
+      int numberOfSeats = cartController.selectedSeats.length;
+      double pricePerTicket = preferredController.getPricePerTicket();
+      double seatsPrice = numberOfSeats * pricePerTicket;
+      double donationCost = extraSeats.value * 100.0; // 100 EGP per donation seat
+      
       totalPrice.value = seatsPrice + donationCost;
       displayPrice.value = seatsPrice + donationCost;
     } catch (e) {
@@ -162,7 +174,6 @@ class DonateSeatsController extends GetxController {
       PreferredPriceController preferredController = Get.find<PreferredPriceController>();
       // Re-establish listeners if they were lost
       ever(preferredController.selectedOption, (_) => updateTotalPrice());
-      ever(preferredController.displayPrice, (_) => updateTotalPrice());
     } catch (e) {
       // Controller still not available
     }
@@ -170,19 +181,13 @@ class DonateSeatsController extends GetxController {
 
   void updateTotalPrice() {
     try {
-      double seatsPrice;
-
-      // Try to get from PreferredPriceController, fallback to cart total
-      try {
-        PreferredPriceController preferredController = Get.find<PreferredPriceController>();
-        seatsPrice = preferredController.displayPrice.value;
-      } catch (e) {
-        // Fallback to cart total with original pricing
-        CartController cartController = Get.find<CartController>();
-        seatsPrice = cartController.totalPrice.value.toDouble();
-      }
-
-      double donationCost = extraSeats.value * 100.0; // 100 EGP per extra seat
+      CartController cartController = Get.find<CartController>();
+      PreferredPriceController preferredController = Get.find<PreferredPriceController>();
+      
+      int numberOfSeats = cartController.selectedSeats.length;
+      double pricePerTicket = preferredController.getPricePerTicket();
+      double seatsPrice = numberOfSeats * pricePerTicket;
+      double donationCost = extraSeats.value * 100.0; // 100 EGP per donation seat
       
       totalPrice.value = seatsPrice + donationCost;
       displayPrice.value = seatsPrice + donationCost; // Show total to user

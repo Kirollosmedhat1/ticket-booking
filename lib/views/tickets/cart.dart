@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:darbelsalib/controllers/cart_controller.dart';
+import 'package:darbelsalib/controllers/preferred_price_controller.dart';
 import 'package:darbelsalib/core/services/api_services.dart';
 import 'package:darbelsalib/core/services/token_storage_service.dart';
 import 'package:darbelsalib/models/seat_model.dart';
@@ -187,39 +188,80 @@ class CartPage extends StatelessWidget {
     );
   }
 
-  /// **Displays Total Number of Seats**
+  /// **Displays Total Price with Discount Applied**
   Widget _buildTotalNumberOfSeats() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            "Total Number of Seats:",
-            style: TextStyle(
-                fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Total Seats:",
+                style: TextStyle(
+                    fontSize: 16, fontWeight: FontWeight.w500, color: Colors.grey),
+              ),
+              Obx(() {
+                return Text(
+                  "${_cartController.selectedSeats.length}",
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                );
+              }),
+            ],
           ),
-          Obx(() {
-            return Text(
-              "${_cartController.selectedSeats.length} ${_cartController.selectedSeats.length == 1 ? 'Seat' : 'Seats'}",
-              style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white),
-            );
-          }),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                "Total Price:",
+                style: TextStyle(
+                    fontSize: 16, fontWeight: FontWeight.w500, color: Colors.grey),
+              ),
+              Obx(() {
+                try {
+                  PreferredPriceController priceController =
+                      Get.find<PreferredPriceController>();
+                  int numberOfSeats = _cartController.selectedSeats.length;
+                  double pricePerTicket = priceController.getPricePerTicket();
+                  double totalPrice = numberOfSeats * pricePerTicket;
+
+                  return Text(
+                    "${totalPrice.toStringAsFixed(2)} EGP",
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xffdfa000)),
+                  );
+                } catch (e) {
+                  // Fallback if PreferredPriceController not available
+                  return Text(
+                    "${_cartController.totalPrice.value.toStringAsFixed(2)} EGP",
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xffdfa000)),
+                  );
+                }
+              }),
+            ],
+          ),
         ],
       ),
     );
   }
 
-  /// **Navigates to Checkout Page**
+  /// **Navigates to Donate Seats Page**
   Widget _buildCheckoutButton(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: ElevatedButton(
         onPressed: () async {
-          Get.toNamed('/preferred-price-selection');
+          Get.toNamed('/donate-seats');
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Color(0xffdfa000),

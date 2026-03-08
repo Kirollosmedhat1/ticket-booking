@@ -69,7 +69,7 @@ class CurrentServicePage extends StatelessWidget {
                     textcolor: Colors.black,
                     bordercolor: Color(0xffDFA000),
                     backgroundcolor: Color(0xffDFA000),
-                    onPressed: () => Get.toNamed("/selectsection"),
+                    onPressed: () => Get.toNamed("/preferred-price-selection"),
                   ),
                   SizedBox(height: ScreenSizeHandler.screenHeight * 0.03),
                 ],

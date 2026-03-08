@@ -6,8 +6,6 @@ import 'package:get/get.dart';
 
 class PreferredPriceController extends GetxController {
   var selectedOption = 'price_200'.obs; // 'price_200', 'price_100', 'price_75'
-  late RxDouble totalPrice = 0.0.obs;
-  late RxDouble displayPrice = 0.0.obs; // Price displayed to user (seats price only)
   var isLoading = false.obs;
   
   final TokenStorageService _tokenStorageService = TokenStorageService();
@@ -16,132 +14,24 @@ class PreferredPriceController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    try {
-      CartController cartController = Get.find<CartController>();
-      
-      // If cart total is 0, try to load cart data
-      if (cartController.totalPrice.value == 0) {
-        
-        _loadCartData();
-      } else {
-        // Initialize with current cart total value
-        double basePrice = cartController.totalPrice.value.toDouble();
-        totalPrice.value = basePrice;
-        displayPrice.value = basePrice;
-        
-      }
-      
-      // Listen for changes in selectedOption and cart total
-      ever(selectedOption, (_) => _updateTotalPrice());
-      ever(cartController.totalPrice, (_) {
-        
-        _updateTotalPrice();
-      });
-      
-      // Initialize price based on selected option
-      _updateTotalPrice();
-    } catch (e) {
-      
-      totalPrice.value = 0.0;
-    }
-  }
-
-  void _loadCartData() async {
-    isLoading.value = true;
-    try {
-      String? token = await _tokenStorageService.getToken();
-      if (token == null) {
-        isLoading.value = false;
-        Get.offAllNamed('/welcome'); // Navigate to home if no token
-        return;
-      }
-      
-      var response = await _apiService.getUserCart(token);
-      List<dynamic> items = response['items'];
-      
-      // If no items in cart, go back to home
-      if (items.isEmpty) {
-        
-        isLoading.value = false;
-        Get.offAllNamed('/home');
-        return;
-      }
-      
-      CartController cartController = Get.find<CartController>();
-      cartController.selectedSeats.clear();
-      cartController.totalPrice.value = 0;
-      
-      for (var item in items) {
-        String seatNumber = item['seat']['seat_number'];
-        String seatId = item['seat']['id'];
-        String category = _capitalize(item['seat']['category']['name']);
-        int price = 200;
-        cartController.addSeat(
-            seatNumber,
-            Seat(
-                id: seatId,
-                seatNumber: seatNumber,
-                status: "selected",
-                price: price,
-                section: category));
-      }
-      
-      // Now update our total price
-      totalPrice.value = cartController.totalPrice.value.toDouble();
-      displayPrice.value = cartController.totalPrice.value.toDouble();
-      isLoading.value = false;
-      
-    } catch (e) {
-      
-      totalPrice.value = 0.0;
-      isLoading.value = false;
-      // On error, also go back to home
-      Get.offAllNamed('/home');
-    }
-  }
-
-  String _capitalize(String input) {
-    if (input.isEmpty) return input;
-    return input[0].toUpperCase() +
-        input
-            .substring(1)
-            .replaceAllMapped(RegExp(r'(\d+)'), (Match m) => ' ${m[0]}');
-  }
-
-  void _updateTotalPrice() {
-    try {
-      CartController cartController = Get.find<CartController>();
-      int numberOfSeats = cartController.selectedSeats.length;
-      
-      double pricePerTicket;
-      switch (selectedOption.value) {
-        case 'price_100':
-          pricePerTicket = 100.0;
-          break;
-        case 'price_75':
-          pricePerTicket = 75.0;
-          break;
-        case 'price_200':
-        default:
-          pricePerTicket = 200.0;
-          break;
-      }
-      
-      double calculatedPrice = numberOfSeats * pricePerTicket;
-      totalPrice.value = calculatedPrice;
-      displayPrice.value = calculatedPrice; // Display shows the seats total
-      
-    } catch (e) {
-      totalPrice.value = 0.0;
-      displayPrice.value = 0.0;
-    }
+    // Just store the selected option, don't calculate prices here
+    // Discount will be applied later in cart page after seats are selected
   }
 
   void setSelectedOption(String option) {
     selectedOption.value = option;
   }
 
-  void refreshPrice() {
-    _updateTotalPrice();
+  // Get the price per ticket based on selected option
+  double getPricePerTicket() {
+    switch (selectedOption.value) {
+      case 'price_100':
+        return 100.0;
+      case 'price_75':
+        return 75.0;
+      case 'price_200':
+      default:
+        return 200.0;
+    }
   }
 }

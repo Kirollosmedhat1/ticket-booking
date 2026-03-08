@@ -40,9 +40,14 @@ class AppRoutes {
     GetPage(name: '/SelectSection', page: () => const SelectSection()),
     GetPage(name: '/cart', page: () => CartPage()),
     GetPage(name: '/ticketsdetails', page: () => TicketDetailsPage()),
-    // Add the new route for PaymentConfirmationPage
+    // Add the new route for PaymentConfirmationPage with path parameter
     GetPage(
       name: '/payment-confirmation/:paymentId',
+      page: () => PaymentConfirmationPage(),
+    ),
+    // Add route for PaymentConfirmationPage without parameter (for query string callback)
+    GetPage(
+      name: '/payment-confirmation',
       page: () => PaymentConfirmationPage(),
     ),
   ];

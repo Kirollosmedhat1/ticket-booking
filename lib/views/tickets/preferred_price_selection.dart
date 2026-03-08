@@ -21,10 +21,7 @@ class _PreferredPriceSelectionPageState
   @override
   void initState() {
     super.initState();
-    // Ensure price is initialized on page creation
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.refreshPrice();
-    });
+    // Price tier selection is done here, discount will be applied in cart
   }
 
   @override
@@ -43,7 +40,7 @@ class _PreferredPriceSelectionPageState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "The original ticket price is 200 EGP, but we don’t want the cost to prevent anyone from attending the service.\nYou can pay any amount according to your ability.\n",
+                  "The original ticket price is 200 EGP for any seat, but we don’t want the cost to prevent anyone from attending the service.\nYou can pay any amount according to your ability.\n",
                   style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -51,7 +48,7 @@ class _PreferredPriceSelectionPageState
                 ),
                 SizedBox(height: 16),
                 Text(
-                  "السعر الأصلي للتذكرة 200 جنيه مصري، لكن مش عايزين التكلفة تكون سبب في منع أي شخص من حضور الخدمة.\nتقدر تدفع اى مبلغ حسب قدرتك. اختار من الاختيارات الاتيه للدفع.",
+                  "السعر الأصلي للتذكرة فى اى مكان 200 جنيه، لكن مش عايزين التكلفة تكون سبب في منع أي شخص من حضور الخدمة.\nتقدر تدفع اى مبلغ حسب قدرتك. اختار من الاختيارات الاتيه للدفع.",
                   style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -87,17 +84,27 @@ class _PreferredPriceSelectionPageState
                       activeColor: Color(0xffdfa000),
                     )),
                 Spacer(),
-                Obx(() => Text(
-                      "Total Price: ${controller.displayPrice.toStringAsFixed(2)} EGP",
-                      style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
-                    )),
+                Container(
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[900],
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Color(0xffdfa000), width: 1),
+                  ),
+                  child: Text(
+                    'Your discount will be applied in the checkout after you select your seats.',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Color(0xffdfa000),
+                      fontStyle: FontStyle.italic,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
                 SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
-                    Get.toNamed('/donate-seats');
+                    Get.toNamed('/selectsection');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xffdfa000),
@@ -114,9 +121,9 @@ class _PreferredPriceSelectionPageState
                 SizedBox(height: 40),
                 Center(
                   child: GoBackText(
-                    text: "Back to Cart",
-                    // Navigate back to cart page
-                    onTap: () => Get.toNamed("/cart"),
+                    text: 'Back to Home',
+                    // Navigate back to home
+                    onTap: () => Get.toNamed('/home'),
                   ),
                 ),
               ],

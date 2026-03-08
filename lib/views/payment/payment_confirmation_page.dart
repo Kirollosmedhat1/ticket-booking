@@ -9,17 +9,49 @@ import 'package:get/get.dart';
 class PaymentConfirmationPage extends StatelessWidget {
   const PaymentConfirmationPage({super.key});
 
+  // Extract payment ID from route or query parameters
+  String _extractPaymentId() {
+    // Try path parameters first (from route like /payment-confirmation/:paymentId)
+    String paymentId = Get.parameters['paymentId'] ?? '';
+    
+    // If not found, try GetX query parameters Map
+    if (paymentId.isEmpty && Get.arguments != null) {
+      if (Get.arguments is Map) {
+        paymentId = Get.arguments['paymentId'] ?? '';
+      }
+    }
+    
+    // Remove leading special characters if present
+    if (paymentId.isNotEmpty && (paymentId.startsWith('-') || paymentId.startsWith('_'))) {
+      paymentId = paymentId.substring(1);
+    }
+    
+    return paymentId;
+  }
+
   // Fetch payment status from backend
   Future<Map<String, dynamic>> _fetchPaymentStatus() async {
     ApiService apiService = ApiService();
     TokenStorageService tokenStorageService = TokenStorageService();
     String? token = await tokenStorageService.getToken();
-    String paymentId = Get.parameters['paymentId'] ?? '';
-    // Remove the first character from payment id
-    String paymentIdModified = paymentId.substring(1);
-    var response = await apiService.paymentCallback(paymentIdModified, token!);
-    var responseData = jsonDecode(response.body);
-    return responseData;
+    
+    if (token == null) {
+      throw Exception('User not authenticated');
+    }
+    
+    String paymentId = _extractPaymentId();
+    
+    if (paymentId.isEmpty) {
+      throw Exception('No payment ID found');
+    }
+    
+    try {
+      var response = await apiService.paymentCallback(paymentId, token);
+      var responseData = jsonDecode(response.body);
+      return responseData;
+    } catch (e) {
+      throw Exception('Failed to fetch payment status: $e');
+    }
   }
 
   @override
@@ -92,8 +124,7 @@ class PaymentConfirmationPage extends StatelessWidget {
                         // Display order details only for successful payment
                         if (isSuccess)
                           OrderDetailsCard(
-                            orderId:
-                                Get.parameters['paymentId']?.substring(1) ?? '',
+                            orderId: _extractPaymentId(),
                             eventName: "Adam", // Replace with actual event name
                             totalPaid: "EGP $amount", // Use the parsed amount
                           ),
