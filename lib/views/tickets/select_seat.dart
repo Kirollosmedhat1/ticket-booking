@@ -23,7 +23,7 @@ class SelectSeat extends StatefulWidget {
   State<SelectSeat> createState() => _SelectSeatState();
 }
 
-class _SelectSeatState extends State<SelectSeat> {
+class _SelectSeatState extends State<SelectSeat> with WidgetsBindingObserver {
   late final String section;
   bool isLoading = false;
   int seatPrice = 0;
@@ -39,8 +39,23 @@ class _SelectSeatState extends State<SelectSeat> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     section = Get.parameters['sectionNumber'] ?? '1';
     listenToSeatsUpdates(section);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && _isInitialLoadCompleted) {
+      // Refresh cart state when returning to the screen
+      getCart();
+    }
   }
 
   Future<bool> isLoggedIn() async {
@@ -127,19 +142,42 @@ class _SelectSeatState extends State<SelectSeat> {
     setState(() {
       isLoading = true;
     });
-    String? token = await _tokenStorageService.getToken();
-    var response = await _apiService.getUserCart(token!);
-    List<dynamic> items = response['items'];
-    if (mounted) {
-      setState(() {
-        for (var item in items) {
-          String seatNumber = item['seat']['seat_number'];
-          if (seats.containsKey(seatNumber)) {
-            seats[seatNumber]?.status = 'selected';
-            _cartController.addSeat(seatNumber, seats[seatNumber]!);
+    try {
+      String? token = await _tokenStorageService.getToken();
+      var response = await _apiService.getUserCart(token!);
+      List<dynamic> items = response['items'];
+      
+      if (mounted) {
+        setState(() {
+          // Get all seat numbers currently in the cart from backend
+          Set<String> seatsInBackendCart = {};
+          for (var item in items) {
+            String seatNumber = item['seat']['seat_number'];
+            seatsInBackendCart.add(seatNumber);
+            if (seats.containsKey(seatNumber)) {
+              seats[seatNumber]?.status = 'selected';
+              _cartController.addSeat(seatNumber, seats[seatNumber]!);
+            }
           }
-        }
-      });
+          
+          // Remove any seats from cart that are no longer in backend cart
+          var seatsToRemove = <String>[];
+          _cartController.selectedSeats.forEach((seatNumber, seat) {
+            if (!seatsInBackendCart.contains(seatNumber)) {
+              seatsToRemove.add(seatNumber);
+              if (seats.containsKey(seatNumber)) {
+                seats[seatNumber]?.status = 'available';
+              }
+            }
+          });
+          
+          for (var seatNumber in seatsToRemove) {
+            _cartController.removeSeat(seatNumber);
+          }
+        });
+      }
+    } catch (e) {
+      // Silent error handling - cart might not be available
     }
     setState(() {
       isLoading = false;
