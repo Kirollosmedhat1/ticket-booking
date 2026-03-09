@@ -288,6 +288,10 @@ class DonateSeatsController extends GetxController {
         String paymentUrl = responseData['url'];
         Uri redirectURL = Uri.parse(paymentUrl);
 
+        // Clear navigation stack - only keep donate-seats screen
+        // This ensures when user comes back from payment, there are no old screens to go back to
+        Get.offAllNamed('/donate-seats');
+
         // Open URL in the same tab
         web.window.location.href = redirectURL.toString();
       } else {
