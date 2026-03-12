@@ -77,7 +77,7 @@ class _TicketDetailsPageState extends State<TicketDetailsPage> {
                   borderRadius:
                       BorderRadius.circular(ScreenSizeHandler.smaller * 0.028),
                   child: Image.asset(
-                    "assets/images/card_image.png",
+                    "assets/images/currentservicepage.jpeg",
                     width: ScreenSizeHandler.smaller * 0.894,
                     height: ScreenSizeHandler.smaller * 0.588,
                     fit: BoxFit.cover,

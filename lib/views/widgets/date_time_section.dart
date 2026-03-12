@@ -13,8 +13,8 @@ class DateTimeSection extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         TicketElement(
-            title: "19h00",
-            subtitle: "04.04.2025",
+            title: "20h00",
+            subtitle: "28.03.2026",
             img: 'assets/images/calendar.png'),
         Row(
           children: [

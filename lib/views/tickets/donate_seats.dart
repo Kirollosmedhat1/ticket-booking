@@ -158,7 +158,8 @@ class _DonateSeatsPageState extends State<DonateSeatsPage> {
             Center(
               child: GoBackText(
                 text: "Back to Price Selection",
-                onTap: () => Get.toNamed("/preferred-price-selection"),
+                // remove all previous screens and go to price selection
+                onTap: () => Get.offAllNamed('/preferred-price-selection'),
               ),
             ),
           ],
