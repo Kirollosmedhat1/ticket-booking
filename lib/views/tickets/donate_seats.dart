@@ -76,7 +76,7 @@ class _DonateSeatsPageState extends State<DonateSeatsPage> {
             ),
             SizedBox(height: 40),
             Text(
-              "Number of Extra Seats:",
+              "Number of Extra Seats (100 EGP each):",
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w500,

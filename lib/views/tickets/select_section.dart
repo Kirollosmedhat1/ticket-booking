@@ -116,7 +116,7 @@ class SelectSection extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 20),
-              Text("Please Choose a Selection to Proceed",
+              Text("Please Choose a Section to Proceed",
                   style: TextStyle(
                     fontSize: ScreenSizeHandler.smaller * 0.04,
                     color: Colors.grey,

@@ -27,7 +27,7 @@ class Storyline extends StatelessWidget {
             SizedBox(width: ScreenSizeHandler.screenWidth*0.1,),
             RichText(
               text: TextSpan(
-                text:  "13+\n\nArabic\n",
+                text:  "10+\n\nArabic\n",
                 style: TextStyle(
                   fontSize: fontSize,
                   fontWeight: FontWeight.w800,
