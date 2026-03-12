@@ -46,7 +46,7 @@ class _DonateSeatsPageState extends State<DonateSeatsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Donate Extra Seats")),
+      appBar: AppBar(title: Text("Donate Extra Seats"), automaticallyImplyLeading: false,),
       body: Obx(() {
         return ModalProgressHUD(
           inAsyncCall: controller.isLoading.value,
