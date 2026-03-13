@@ -59,7 +59,7 @@ class _DonateSeatsPageState extends State<DonateSeatsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "You can contribute so that one or more people who can’t afford a ticket can attend the show for free. You do this by choosing the number of tickets you want to buy for people you don’t know.",
+              "If you’d like, You can contribute so that one or more people who can’t afford a ticket can attend the show for free. You do this by choosing the number of tickets you want to buy for people you don’t know.",
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -67,7 +67,7 @@ class _DonateSeatsPageState extends State<DonateSeatsPage> {
             ),
             SizedBox(height: 16),
             Text(
-              "تقدر تساهم فأن شخص او اكتر مش عارف يشترى تذكره يحضر العرض مجانا عن طريقه انك تختار عدد من التذاكر تشتريها لاشخاص متعرفهمش.",
+              "لو تحب تقدر تساهم فأن شخص او اكتر مش عارف يشترى تذكره يحضر العرض مجانا عن طريقه انك تختار عدد من التذاكر تشتريها لاشخاص متعرفهمش.",
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
