@@ -12,7 +12,7 @@ class LocationSection extends StatelessWidget {
     return GestureDetector(
       onTap: () async {
         final Uri url = Uri.parse(
-            'https://maps.app.goo.gl/nxQRzp27DftN3XqE7?g_st=com.google.maps.preview.copy'); // Replace with the desired coordinates
+            'https://maps.app.goo.gl/e7GuKjFKZL4T4zE77?g_st=ic'); // Replace with the desired coordinates
         if (await canLaunchUrl(url)) {
           await launchUrl(url);
         } else {
@@ -32,7 +32,7 @@ class LocationSection extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(left: ScreenSizeHandler.smaller * 0.018),
                   child: Text(
-                    "Balloon Theatre",
+                    "Qasr El Nile Theatre",
                     style: TextStyle(
                         fontSize: ScreenSizeHandler.smaller * 0.037,
                         fontWeight: FontWeight.w400,
@@ -51,7 +51,7 @@ class LocationSection extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(left: ScreenSizeHandler.smaller * 0.018),
                   child: Text(
-                    "Cornich El Nile, Agouza, Giza Governate",
+                    "Qasr El Nile St., West El Balad,\nCairo Governate (Tap for Location)",
                     style: TextStyle(
                         fontSize: ScreenSizeHandler.smaller * 0.032,
                         color: Colors.black),
